@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:admobsdk="http://schemas.android.com/apk/res/com.techventus.locations"
+    xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:scrollbars="none" xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:orientation="vertical" android:layout_width="fill_parent"
+		android:layout_height="fill_parent" android:layout_alignParentTop="true">
+
+		<LinearLayout
+		    android:id="@+id/WarningPanel"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical" android:background="#FF0000" android:visibility="gone">
+
+			<TextView
+			    android:id="@+id/textView1"
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="Location Ring Service is OFF" android:textStyle="bold" android:textColor="#FFFFFF" android:layout_gravity="center_horizontal"/>
+
+		</LinearLayout>
+
+		<TextView android:id="@+id/TextView03" android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:text="     "
+			android:paddingBottom="5dp" />
+
+		<TextView android:id="@+id/TextView01" android:layout_height="wrap_content"
+			android:text="GPS Coordinates:" android:gravity="center_horizontal"
+			android:layout_width="fill_parent" android:textSize="22sp" />
+
+		<TextView android:layout_height="wrap_content" android:id="@+id/maingpscoords"
+			android:layout_width="fill_parent" android:gravity="center_horizontal"
+			android:paddingTop="10dp" android:text="LAT: -XXX.XXXXX LON: -XXX.XXXXX"
+			android:textColor="#880044" android:textStyle="bold"
+			android:textSize="17dp" />
+		<TextView android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:text="Current Location:"
+			android:id="@+id/currentlocationtitle" android:gravity="center_horizontal"
+			android:paddingBottom="10dp" android:textSize="22sp"
+			android:paddingTop="10dp" />
+		<TextView android:layout_height="wrap_content"
+			android:layout_width="fill_parent" android:id="@+id/currentlocationname"
+			android:text="Elsewhere" android:gravity="center_horizontal"
+			android:textColor="#880044" android:textStyle="bold"
+			android:textSize="17sp" />
+	</LinearLayout>
+	<!--  <Button android:id="@+id/CloseButton" android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:width="250px"
+		android:layout_gravity="center_horizontal"
+		android:layout_alignParentBottom="true" android:layout_marginBottom="45px"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="10px"
+		android:text="Close" />-->
+	<Button android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
+		android:width="250dp" android:text="Settings" android:id="@+id/mainsettingsbutton"
+		android:layout_centerHorizontal="true" android:layout_alignParentBottom="true" android:layout_marginBottom="45dp"
+		android:layout_marginTop="10dp" android:visibility="gone"/>
+	<Button android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:width="250dp"
+		android:layout_gravity="center_horizontal" android:text="Locations"
+		android:id="@+id/mainlocationsbutton" android:layout_centerHorizontal="true"
+		android:layout_above="@+id/mainsettingsbutton"
+		android:layout_marginTop="10dp" android:visibility="gone"/>
+
+  <com.google.ads.AdView android:id="@+id/adView"
+                         android:layout_width="fill_parent"
+                         android:layout_height="wrap_content"
+                         android:layout_alignParentBottom="true"
+                         ads:adUnitId="a14b77659e5ca68"
+                         ads:adSize="BANNER"
+                         ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
+                         ads:loadAdOnCreate="true"/>
+<!--
+	<com.admob.android.ads.AdView android:id="@+id/ad"
+		admobsdk:testing="false" android:layout_width="fill_parent"
+		android:layout_height="wrap_content" admobsdk:backgroundColor="#000000"
+		admobsdk:textColor="#FFFFFF" admobsdk:keywords="Android application"
+		android:layout_alignParentBottom="true" /> 
+		-->
+<!-- 
+	<Button
+	    android:id="@+id/DialerButton"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/mainlocationsbutton"
+	    android:layout_alignLeft="@+id/mainlocationsbutton"
+	    android:layout_marginBottom="14dp"
+	    android:text="Dialer (Preview)"
+	    android:width="250px" /> -->
+	<ImageButton
+	    android:id="@+id/DialerButton"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@+id/adView"
+	    android:layout_centerHorizontal="true"
+	    android:src="@drawable/ic_menu_call" android:scaleType="fitXY" android:fitsSystemWindows="true" android:minWidth="100dp" android:minHeight="100dp"/>
+
+</RelativeLayout>

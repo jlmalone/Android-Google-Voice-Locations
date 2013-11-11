@@ -1,0 +1,29 @@
+
+		    <TableRow
+		        android:id="@+id/tableRow"
+		          xmlns:android="http://schemas.android.com/apk/res/android"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content" >
+
+		        <TextView
+		            android:id="@+id/phoneName"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:text="phoneName"/>
+
+		        <RadioButton
+		            android:id="@+id/enableButton"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content" android:layout_marginLeft="20dp"/>
+
+		        <RadioButton
+		            android:id="@+id/disableButton"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content" android:layout_marginLeft="20dp"/>
+
+		        <RadioButton
+		            android:id="@+id/neutralButton"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content" android:layout_marginLeft="20dp"/>
+
+		    </TableRow>

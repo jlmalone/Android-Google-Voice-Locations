@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:admobsdk="http://schemas.android.com/apk/res/com.techventus.locations"
+    android:id="@+id/mainlayout"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="10dip"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+	android:layout_alignParentTop="true">
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:text="Select a Power Requirement:"
+    />
+
+    <Spinner 
+        android:id="@+id/powerspinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawSelectorOnTop="true"
+        android:prompt="@string/locationmodeprompt"
+    />
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dip"
+        android:text="Select an Accuracy Requirement:"
+    />
+
+    <Spinner 
+        android:id="@+id/accuracyspinner"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:drawSelectorOnTop="true"
+        android:prompt="@string/locationmodeprompt"
+    />
+</LinearLayout>
+
+
+                 <com.admob.android.ads.AdView  
+                        android:id="@+id/ad" 
+                        admobsdk:testing="false"
+                        android:layout_width="fill_parent" 
+                        android:layout_height="wrap_content"
+                        admobsdk:backgroundColor="#000000"
+                        admobsdk:textColor="#FFFFFF"
+                        admobsdk:keywords="Android application"
+                        android:layout_alignParentBottom="true"
+                />
+                
+                
+
+<Button android:text="CANCEL" android:id="@+id/cancelPowerChange" android:layout_gravity="center" android:width="250px" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_above="@+id/ad" android:layout_centerHorizontal="true" android:layout_marginTop="30px"></Button>
+<Button android:text="CONFIRM CHANGES" android:id="@+id/confirmPowerChange" android:layout_width="wrap_content" android:layout_gravity="center" android:width="250px" android:layout_height="wrap_content" android:layout_above="@+id/cancelPowerChange" android:layout_centerHorizontal="true"></Button>
+
+</RelativeLayout>
