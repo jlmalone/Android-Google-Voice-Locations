@@ -122,11 +122,7 @@ public class RowTest extends Activity {
             TextView phone = new TextView(this);
             phone.setText("Phone " + i);
             phone.setPadding(0, 12, 0, 0);
-            //phone.setGravity(Gravity.BOTTOM);
-          //  LinearLayout.LayoutParams p = new LinearLayout.LayoutParams(
-          //          LinearLayout.LayoutParams.FILL_PARENT,
-          //          LinearLayout.LayoutParams.WRAP_CONTENT
-          //  );
+
             phone.setWidth(120);
             inner.addView(phone);
 

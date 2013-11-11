@@ -20,7 +20,7 @@ import android.widget.TextView;
 @Deprecated
 public class TableMaster extends Activity{
 	
-	String TAG = "TECHVENTUS - TableMaster";
+	public static final String TAG = "TableMaster";
 
 
 	GVLServiceInterface mIRemoteService;
@@ -56,23 +56,19 @@ public class TableMaster extends Activity{
         this.setContentView(R.layout.tablemaster);
        TableLayout tl = (TableLayout) findViewById(R.id.tablematrix);
 
-      //  TableLayout tl = new TableLayout(R.id.tablematrix);
         
 
         for(int i=0;i<10;i++){
         	System.out.println("ROW"+i);
         	TableRow tr = new TableRow(this);
             tr.setId(100+i);
-        //   tr.setLayoutParams(new LayoutParams(
-        //            LayoutParams.FILL_PARENT,
-         //           LayoutParams.WRAP_CONTENT)); 
         	TextView tv =new TextView(this);
         	tv.setId(200+i);
         	tv.setGravity(Gravity.LEFT);
         	
         	tv.setText("Hello ");
             tv.setLayoutParams(new LayoutParams(
-                    LayoutParams.FILL_PARENT,
+                    LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
             tr.addView(tv);
 
@@ -80,7 +76,7 @@ public class TableMaster extends Activity{
             Button b = new Button(this);
             b.setText("Dynamic Button");
             b.setLayoutParams(new LayoutParams(
-                      LayoutParams.FILL_PARENT,
+                      LayoutParams.MATCH_PARENT,
                       LayoutParams.WRAP_CONTENT));
             /* Add Button to row. */
             tr.addView(b); 
@@ -90,40 +86,20 @@ public class TableMaster extends Activity{
         	tv2.setId(500+i);
         	tv2.setGravity(Gravity.RIGHT);
         	tv2.setText("Goodbye ");
-        	//tv2.setTextColor(ColorS)
             tv2.setLayoutParams(new LayoutParams(
-                    LayoutParams.FILL_PARENT,
+                    LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
             tr.addView(tv2);
             
             
-            
-            
-        	
-        	//TextView tv2 =new TextView(tr.getContext());
-        	//tv2.setText("Goodbye 200000"+i+"");
-        	
-        	//tv2.setGravity(Gravity.RIGHT);
-        	//tr.addView(tv);
-        	//this.
-        	//tr.addView(tv2);
-        	//TableRow.LayoutParams lp = new TableRow.LayoutParams();
-        	//lp.column
-        	//TableLayout.LayoutParams lp2 = new TableLayout.LayoutParams();
-        	
-        	
-        	//tr.addView(tv);
-        	//tr.addView(tv2);
+
             tl.addView(tr, new TableLayout.LayoutParams(
-                    LayoutParams.FILL_PARENT,
+                    LayoutParams.MATCH_PARENT,
                     LayoutParams.WRAP_CONTENT));
 
 
-        	
         }
        
-        
-        //TableLayout table = (TableLayout)findViewById(R.layout.tablemaster);
 	}
 	
 

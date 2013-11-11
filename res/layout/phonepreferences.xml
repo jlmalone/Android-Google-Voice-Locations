@@ -1,99 +1,99 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:admobsdk="http://schemas.android.com/apk/res/com.techventus.locations"
-        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-        android:id="@+id/relativeLayout1"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent" 
-      
-        android:title="Ring Status"
-         android:label="Ring Status">
-               <TextView
+                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+                android:id="@+id/relativeLayout1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:title="Ring Status"
+                android:label="Ring Status">
+    <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="25dp"
             android:text="Location Ring Preferences"
-            android:textAppearance="?android:attr/textAppearanceLarge" android:gravity="center_horizontal" android:layout_centerHorizontal="true" android:layout_marginBottom="25dp"/>
+            android:textAppearance="?android:attr/textAppearanceLarge" android:gravity="center_horizontal"
+            android:layout_centerHorizontal="true" android:layout_marginBottom="25dp"/>
 
-	<ScrollView 
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:scrollbars="none"
-   
-    android:layout_below="@+id/title"
-    android:layout_above="@+id/actionLayout">
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
 
-		<TableLayout
-		    android:id="@+id/table"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content" >
+            android:layout_below="@+id/title"
+            android:layout_above="@+id/actionLayout">
 
-		    <TableRow
-		        android:id="@+id/titleRow"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content" android:layout_marginBottom="15dp">
+        <TableLayout
+                android:id="@+id/table"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-		        <TextView
-		            android:id="@+id/phoneTitle"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="Phone"
-		            android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="left" android:layout_gravity="center_horizontal" android:layout_marginRight="20dp"/>
+            <TableRow
+                    android:id="@+id/titleRow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:layout_marginBottom="15dp">
 
-		        <TextView
-		            android:id="@+id/enableTitle"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="Enable"
-		            android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginRight="15dp"/>
-
-		        <TextView
-		            android:id="@+id/disableTitle"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="Disable"
-		            android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginRight="15dp"/>
-
-		        <TextView
-		            android:id="@+id/noActionTitle"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="No Action"
-		            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-		    </TableRow>
-		</TableLayout>
-
-</ScrollView>
-
-	<LinearLayout
-	    android:id="@+id/actionLayout"
-	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content" android:layout_above="@+id/ad">
-
-		<Button
-		    android:id="@+id/save"
-		    android:layout_width="150dp"
-		    android:layout_height="wrap_content"
-		    android:text="Save" />
-
-		<Button
-		    android:id="@+id/cancelButton"
-		    android:layout_width="fill_parent"
-		    android:layout_height="wrap_content"
-		    android:text="Cancel" android:layout_marginLeft="40dp"/>
-
-	</LinearLayout>
-
-<com.admob.android.ads.AdView  
-                        android:id="@+id/ad" 
-                        admobsdk:testing="false"
-                        android:layout_width="fill_parent" 
+                <TextView
+                        android:id="@+id/phoneTitle"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        admobsdk:backgroundColor="#000000"
-                        admobsdk:textColor="#FFFFFF"
-                        admobsdk:keywords="Android application"
-                        android:layout_alignParentBottom="true"
-                />
+                        android:text="Phone"
+                        android:textAppearance="?android:attr/textAppearanceMedium" android:gravity="left"
+                        android:layout_gravity="center_horizontal" android:layout_marginRight="20dp"/>
+
+                <TextView
+                        android:id="@+id/enableTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Enable"
+                        android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginRight="15dp"/>
+
+                <TextView
+                        android:id="@+id/disableTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Disable"
+                        android:textAppearance="?android:attr/textAppearanceMedium" android:layout_marginRight="15dp"/>
+
+                <TextView
+                        android:id="@+id/noActionTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No Action"
+                        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+            </TableRow>
+        </TableLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+            android:id="@+id/actionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_above="@+id/ad">
+
+        <Button
+                android:id="@+id/save"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Save"/>
+
+        <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel" android:layout_marginLeft="40dp"/>
+
+    </LinearLayout>
+
+    <com.google.ads.AdView android:id="@+id/ad"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_alignParentBottom="true"
+                           android:layout_centerHorizontal="true"
+                           ads:adUnitId="a14b77659e5ca68"
+                           ads:adSize="BANNER"
+                           ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
+                           ads:loadAdOnCreate="true"/>
+
 </RelativeLayout>
