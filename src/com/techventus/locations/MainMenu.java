@@ -14,20 +14,17 @@ import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -35,16 +32,23 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+import android.widget.*;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesClient;
+import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.LocationClient;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
 
 
 /**
  * The Class MainMenu.
  */
-public class MainMenu extends Activity {
+public class MainMenu extends FragmentActivity implements
+        GooglePlayServicesClient.ConnectionCallbacks,
+        GooglePlayServicesClient.OnConnectionFailedListener {
 	
     /**
      * The current context.
@@ -289,16 +293,33 @@ public class MainMenu extends Activity {
     }
 
 
-	@Override 
+    LocationClient   mLocationClient;
+    Location mCurrentLocation;
+    AdView mAdView;
+
+    @Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
-		
+
+        mAdView= (AdView)this.findViewById(R.id.ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("TEST_DEVICE_ID")
+                .build();
+        mAdView.loadAd(adRequest);
+
+
+        mLocationClient = new LocationClient(this, this, this);
+
+
 		preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
 		
 		checkShowEULA();
 
 		init();
+
+        startLocationTracking();
 	       
 	}
 	
@@ -349,6 +370,7 @@ public class MainMenu extends Activity {
 	
 	@Override
 	protected void onResume(){
+        mAdView.resume();
 		super.onResume();
 		this.mActive = true;
 		
@@ -419,6 +441,7 @@ public class MainMenu extends Activity {
 
 	@Override
 	public void onPause(){
+        mAdView.pause();
 		super.onPause();
 		this.mActive = false;
 		if(timer!=null)
@@ -555,7 +578,157 @@ public class MainMenu extends Activity {
             }
               return text.toString();
      }
-	 
 
-	}
+
+
+
+    protected void startLocationTracking() {
+
+        int errorCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (errorCode != ConnectionResult.SUCCESS) {
+            GooglePlayServicesUtil.getErrorDialog(errorCode, this, 0).show();
+        }
+
+
+        if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this)==ConnectionResult.SUCCESS) {
+            Log.d("Location Updates",
+                    "Google Play services is available.");
+            mLocationClient = new LocationClient(this, this, this);
+            mLocationClient.connect();
+        }
+    }
+
+
+
+
+//    private GooglePlayServicesClient.ConnectionCallbacks mConnectionCallbacks = new ConnectionCallbacks() {
+//
+//        @Override
+//        public void onDisconnected() {
+//        }
+//
+//        @Override
+//        public void onConnected(Bundle arg0) {
+//
+//        }
+//    };
+
+//    private GooglePlayServicesClient.OnConnectionFailedListener mConnectionFailedListener = new GooglePlayServicesClient.OnConnectionFailedListener() {
+//
+//        @Override
+//        public void onConnectionFailed(ConnectionResult arg0) {
+//            Log.e(TAG, "ConnectionFailed");
+//        }
+//    };
+
+    private LocationListener mLocationListener = new LocationListener() {
+
+        private long mLastEventTime = 0;
+
+        @Override
+        public void onLocationChanged(Location location) {
+            double delayBtnEvents = (System.nanoTime()- mLastEventTime )/(1000000000.0);
+            mLastEventTime = System.nanoTime();
+
+            //Sampling rate is the frequency at which updates are received
+//            String samplingRate = (new DecimalFormat("0.0000").format(1/delayBtnEvents));
+
+
+
+            Toast.makeText(MainMenu.this, "Location Changed " + location.getLatitude()+" "+location.getAccuracy(), Toast.LENGTH_SHORT).show();
+
+//            float speed = (float) (location.getSpeed() * 3.6);  // Converting m/s to Km/hr
+//            tv.setText(speed + " kmph" + ", " + samplingRate + " Hz"); //Updating UI
+        }
+    };
+
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        Toast.makeText(this, "on Connected",
+                Toast.LENGTH_SHORT).show();
+
+        LocationRequest locationRequest = LocationRequest.create();
+
+        locationRequest.setInterval(40000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000).setPriority(LocationRequest.PRIORITY_NO_POWER);
+        locationRequest.setFastestInterval(10000);
+        mLocationClient.requestLocationUpdates(locationRequest, mLocationListener);
+
+
+    }
+
+    @Override
+    public void onDisconnected()
+    {
+        Toast.makeText(this, "Disconnected. Please re-connect.",
+                Toast.LENGTH_SHORT).show();
+    }
+
+    // Global constants
+    /*
+     * Define a request code to send to Google Play services
+     * This code is returned in Activity.onActivityResult
+     */
+    private final static int
+            CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+
+    static final int REQUEST_CODE_RECOVER_PLAY_SERVICES = 1001;
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        if (connectionResult.hasResolution()) {
+            try {
+                // Start an Activity that tries to resolve the error
+                connectionResult.startResolutionForResult(
+                        this,
+                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
+                /*
+                 * Thrown if Google Play services canceled the original
+                 * PendingIntent
+                 */
+            } catch (IntentSender.SendIntentException e) {
+                // Log the error
+                e.printStackTrace();
+            }
+        } else {
+            /*
+             * If no resolution is available, display a dialog to the
+             * user with the error.
+             */
+            showErrorDialog(connectionResult.getErrorCode());
+        }
+    }
+
+
+    private boolean checkPlayServices() {
+        int status = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            if (GooglePlayServicesUtil.isUserRecoverableError(status)) {
+                showErrorDialog(status);
+            } else {
+                Toast.makeText(this, "This device is not supported.",
+                        Toast.LENGTH_LONG).show();
+                finish();
+            }
+            return false;
+        }
+        return true;
+    }
+
+    void showErrorDialog(int code) {
+        GooglePlayServicesUtil.getErrorDialog(code, this,
+                REQUEST_CODE_RECOVER_PLAY_SERVICES).show();
+    }
+
+
+
+
+
+    @Override
+    public void onDestroy() {
+        mAdView.destroy();
+        super.onDestroy();
+    }
+}
 

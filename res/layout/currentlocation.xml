@@ -6,6 +6,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+    <com.google.ads.AdView android:id="@+id/ad"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_alignParentBottom="true"
+                           ads:adUnitId="a14b77659e5ca68"
+                           ads:adSize="BANNER"
+                           ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
+                           ads:loadAdOnCreate="true"/>
+    <com.google.android.maps.MapView
+            android:id="@+id/mapview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="true"
+            android:apiKey="0aZe4GxBZQ49gl15exUbF1FbYiq9yT8bMUe4caA"
+            android:layout_above="@id/ad"/>
+
 
     <Button android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -20,7 +36,7 @@
             android:layout_gravity="right"
             android:layout_marginLeft="120px"
             android:layout_alignParentRight="true"
-            android:width="150sp"/>
+            android:width="150dp"/>
     <Button android:id="@+id/thisLocation"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/blue_dot_circle"
@@ -29,21 +45,6 @@
             android:layout_above="@+id/ad"/>
 
 
-    <com.google.ads.AdView android:id="@+id/ad"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:layout_alignParentBottom="true"
-                           ads:adUnitId="a14b77659e5ca68"
-                           ads:adSize="BANNER"
-                           ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
-                           ads:loadAdOnCreate="true"/>
 
-    <com.google.android.maps.MapView
-            android:id="@+id/mapview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clickable="true"
-            android:apiKey="0aZe4GxBZQ49gl15exUbF1FbYiq9yT8bMUe4caA"
-            android:layout_above="@id/ad"/>
 
 </RelativeLayout>

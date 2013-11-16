@@ -105,7 +105,6 @@
             </TableLayout>
 
 
-            <!--<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:width="250px" android:text="Enable" android:id="@+id/enabledisablebutton" android:layout_marginTop="15px"></Button>-->
 
 
         </LinearLayout>

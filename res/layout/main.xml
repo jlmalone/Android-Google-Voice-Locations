@@ -60,19 +60,29 @@
 		android:layout_above="@+id/mainsettingsbutton"
 		android:layout_marginTop="10dp" android:visibility="gone"/>
 
-  <com.google.ads.AdView android:id="@+id/ad"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_alignParentBottom="true"
-                         ads:adUnitId="a14b77659e5ca68"
-                         ads:adSize="BANNER"
-                         ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
-                         ads:loadAdOnCreate="true"/>
+    <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adUnitId="a14b77659e5ca68"
+            ads:adSize="BANNER"/>
+
+  <!--<com.google.ads.AdView android:id="@+id/ad"-->
+                         <!--android:layout_width="match_parent"-->
+                         <!--android:layout_height="wrap_content"-->
+                         <!--android:layout_alignParentBottom="true"-->
+                         <!--ads:adUnitId="a14b77659e5ca68"-->
+                         <!--ads:adSize="BANNER"-->
+                         <!--ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"-->
+                         <!--ads:loadAdOnCreate="true"/>-->
 	<ImageButton
 	    android:id="@+id/DialerButton"
 	    android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_above="@+id/adView"
+	    android:layout_above="@+id/ad"
 	    android:layout_centerHorizontal="true"
 	    android:src="@drawable/ic_menu_call" android:scaleType="fitXY" android:fitsSystemWindows="true" android:minWidth="100dp" android:minHeight="100dp"/>
 
