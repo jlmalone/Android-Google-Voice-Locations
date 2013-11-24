@@ -44,6 +44,6 @@ interface GVLServiceInterface{
 	
 //	void delete(String location);
 
-	String[] listProviders();
+//	String[] listProviders();
 	
 }
