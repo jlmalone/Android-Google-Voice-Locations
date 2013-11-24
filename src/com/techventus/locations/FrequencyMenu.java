@@ -1,12 +1,6 @@
 package com.techventus.locations;
 
 
-
-
-//import android.content.ServiceConnection;
-//import android.os.IBinder;
-//import android.content.ComponentName;
-//import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,40 +31,16 @@ public class FrequencyMenu extends Activity{
 	
 	
 	//REQUEST CODES (may be extraneous)
-	int LOCATION_METHOD = 723;
 	int LOCATION_FREQUENCY = 724;
 	int GOOGLE_SYNC = 725;
-	int POWER_LEVEL = 726;
-	
 
-//	GVLServiceInterface mIRemoteService;
-	
+
 	boolean RESET_SERVICE_FLAG =false;
 	
 	
-//	private ServiceConnection mConnection = new ServiceConnection() {
-//	    // Called when the connection with the service is established
-//	    public void onServiceConnected(ComponentName className, IBinder service) {
-//	        // Following the example above for an AIDL interface,
-//	        // this gets an instance of the IRemoteInterface, which we can use to call on the service
-//	        mIRemoteService = GVLServiceInterface.Stub.asInterface(service);
-//	   
-//	    }
-//
-//	    // Called when the connection with the service disconnects unexpectedly
-//	    public void onServiceDisconnected(ComponentName className) {
-//	        Log.e(TAG, "Service has unexpectedly disconnected");
-//	        mIRemoteService = null;
-//	    }
-//	};
-
 	
-	
-	
-	protected void onActivityResult(int requestCode, int resultCode,
-            Intent data) {
-      //  if (requestCode == LOCATION_METHOD) {
-	      //  }
+	protected void onActivityResult(int requestCode, int resultCode,Intent data)
+	{
             if (resultCode == RESULT_OK) {
             	displayValues();
             	setResult(999);
@@ -84,7 +54,8 @@ public class FrequencyMenu extends Activity{
 		
 		int location_frequency = settings.getInt("LOCATION_FREQUENCY", 5);
 
-		if(location_frequency==-1){
+		if(location_frequency==-1)
+		{
 			locationfreqvalue.setText("OFF");
 		}else{
 			locationfreqvalue.setText(location_frequency+"m");
@@ -133,13 +104,6 @@ public class FrequencyMenu extends Activity{
 		 displayValues();
 	}
 	
-	OnClickListener closeClick = new OnClickListener(){
-		@Override
-		public void onClick(View arg0) {
-			FrequencyMenu.this.finish();
-		}
-	};
-	
 	OnClickListener clicklistener = new OnClickListener(){
 		@Override
 		public void onClick(View view) {
@@ -168,111 +132,17 @@ public class FrequencyMenu extends Activity{
 		
 	};
 	
-	
 
-//	
-//	@Override 
-//	public void onResume(){
-//		super.onResume();
-//		
-
-//	}
-
-//	@Override
-//	public void onPause(){
-//		try{
-//			unbindService(mConnection);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		super.onPause();
-//	}
-//	
 	@Override
 	public void onDestroy(){
 		try{
 			if(this.RESET_SERVICE_FLAG){
-				//Intent intent = new Intent();
 				setResult(999);
 				finish();
-//				setResult()
-//			    Intent hello_service = new Intent(this, LocationService.class);
-//			    
-//				bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
-//				if(settings.getBoolean("ENABLED", true))
-//					mIRemoteService.reset();
 			}
-		//	unbindService(mConnection);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		super.onDestroy();
 	}		
 }
-
-
-
-
-
-
-//
-////
-//OnClickListener destroyClick(final String locationName){
-//	
-//	OnClickListener ret = new OnClickListener(){
-//	
-//
-//		@Override
-//		public void onClick(View v) {
-//			try{
-//				
-//				Bundle b = new Bundle();
-//				b.putString("locationName", locationName);
-//				Intent i = new Intent(FrequencyMenu.this,ConfirmDelete.class);
-//				i.putExtras( b);
-//				FrequencyMenu.this.startActivity(i);
-//			
-//				FrequencyMenu.this.finish();
-//
-//				
-//				
-//				//SQLiteDatabase sql = openOrCreateDatabase("db",0,null);
-//				//sql.execSQL("DELETE FROM LOCATIONS WHERE locationName = '"+locationName+"';");
-//				//sql.close();
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//			//ADD MORE SHIT LATER
-//			FrequencyMenu.this.finish();
-//		}
-//		
-//	};
-//	
-//	return ret;
-//}
-//
-//private String[] getStringArSQLVertical(String query, SQLiteDatabase sql){
-//	String[] ret = new String[0];
-//	try{
-//		Cursor c = sql.rawQuery(query, null);
-//		List<String> list = new ArrayList<String>();
-//		if(c!=null){
-//			while(c.moveToNext()){
-//				list.add(c.getString(0));
-//				Log.e("TECHVENTUS","DIRECT FROM QUERY +"+c.getString(0));
-//			}
-//			if(list.size()>0){
-//				ret = list.toArray(new String[list.size()]);
-//				//for(int i=0;i<list.size();i++){
-//				//	ret[i] = list.get(i);
-//				//}
-//			}
-//			c.close();
-//		}
-//		
-//
-//	}catch(Exception o){
-//		o.printStackTrace();
-//	}
-//	return ret;
-//}

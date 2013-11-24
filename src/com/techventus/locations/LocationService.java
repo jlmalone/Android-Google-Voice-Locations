@@ -637,11 +637,11 @@ public class LocationService extends Service {
 
 
 
-		@Override
-		public String[] listProviders() throws RemoteException {
-			// TODO Auto-generated method stub
-			return null;
-		}
+
+//		public String[] listProviders() throws RemoteException {
+//			// TODO Auto-generated method stub
+//			return null;
+//		}
 	    
 	    
 	};

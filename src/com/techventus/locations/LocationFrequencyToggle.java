@@ -24,7 +24,6 @@ public class LocationFrequencyToggle extends Activity{
 
 
 	private final String TAG="TECHVENTUS - "+this.getClass().getSimpleName();
-//	String PREFERENCENAME = "TECHVENTUS";
 	String TOGGLE_KEY = Settings.LOCATION_FREQUENCY;
 	SharedPreferences settings;
 	
@@ -39,17 +38,19 @@ public class LocationFrequencyToggle extends Activity{
 	final public static int tenmin = 10;
 	final public static int thirtymin = 30;
 	final public static int hourly = 60;
-//	final public static int daily = 1440;
 	final public static int off = -1;
-//	final public static int fortnightly = 20160;
+
 	
-	
-	
+	 Settings mSettings;
 	
 
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
 		Log.d(TAG,"search dialog is created!!!");
 		super.onCreate(savedInstanceState);
+
+		mSettings = Settings.getInstance();
+
 		setContentView(R.layout.location_check_frequency);
 		
 		settings = this.getSharedPreferences(Settings.PREFERENCENAME, 0);
@@ -58,7 +59,8 @@ public class LocationFrequencyToggle extends Activity{
 		
 		m_iCheckedTime =  settings.getInt(TOGGLE_KEY, fivemin);
 				
-		switch(m_iCheckedTime){
+		switch(m_iCheckedTime)
+		{
 			case onemin:
 				m_RadioGroup.check(R.id.rb_OneMin);
 				break;
@@ -83,10 +85,12 @@ public class LocationFrequencyToggle extends Activity{
 				break;
 		}
 		
-		m_RadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+		m_RadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
+		{
 			
 			@Override
-			public void onCheckedChanged(RadioGroup group, int checkedId) {
+			public void onCheckedChanged(RadioGroup group, int checkedId)
+			{
 				switch(checkedId){
 				case R.id.rb_OneMin:
 					m_iCheckedTime = onemin;
@@ -118,14 +122,16 @@ public class LocationFrequencyToggle extends Activity{
 		m_btnOK = (Button)findViewById(R.id.btn_SetFrequencyOK);
 		m_btnCancel = (Button)findViewById(R.id.btn_SetFrequencyCancel);
 		
-		m_btnOK.setOnClickListener(new OnClickListener(){
+		m_btnOK.setOnClickListener(new OnClickListener()
+		{
 
 			/* (non-Javadoc)
 			 * @see android.view.View.OnClickListener#onClick(android.view.View)
 			 */
 			@Override
-			public void onClick(View v) {
-			    Settings.RESTART_SERVICE_FLAG = true;
+			public void onClick(View v)
+			{
+			    mSettings.setRestartServiceFlag(true);
 				Intent intent = new Intent();
 				intent.putExtra("RefreshFrequencyTime", m_iCheckedTime);
 				setResult(RESULT_OK, intent);
@@ -134,22 +140,18 @@ public class LocationFrequencyToggle extends Activity{
 			    editor.putInt(TOGGLE_KEY, m_iCheckedTime);
 			    editor.commit();
 
-			    
-//				settings.getInt(TOGGLE_KEY, fivemin);
-		
 				finish();
 			}});
 		
-		m_btnCancel.setOnClickListener(new OnClickListener(){
+		m_btnCancel.setOnClickListener(new OnClickListener()
+		{
 
 			@Override
-			public void onClick(View v) {
+			public void onClick(View v)
+			{
 				setResult(RESULT_CANCELED);
 				finish();
 			}});
 	}
-	
-	
-	
-	
+
 }

@@ -76,9 +76,7 @@ public class BackgroundService extends Service{
 	 /** The preferences. */
  	SharedPreferences preferences ;
 	 
-	 /** The UPDAT e_ flag. */
- 	boolean UPDATE_FLAG = false;
-	 
+
 	 /** The pref list. */
  	List<LPEPref> prefList = new ArrayList<LPEPref>();
 	 
@@ -95,11 +93,12 @@ public class BackgroundService extends Service{
 	private final GVLServiceInterface.Stub mBinder = new GVLServiceInterface.Stub() {
 
 		@Override
-		public int[] getCurrentCoordinatesE6() throws RemoteException {
+		public int[] getCurrentCoordinatesE6() throws RemoteException
+		{
 		
 			int[] ret = {Status.locationGeoPoint.getLatitudeE6(),Status.locationGeoPoint.getLongitudeE6()};
 			 
-			return ret;	//return null;
+			return ret;
 		}
 
 		@Override
@@ -111,22 +110,19 @@ public class BackgroundService extends Service{
 				 try{geoHandle = new GeoUpdateHandler();}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","geohandle Exception");}
 				 try{status.reset();}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","status Exception");}
 
-//				 try{settings.reset();}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","settings Exception");}
 
 				 try{VoiceSingleton.reset()/*voiceFact=null*/;}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","voice Exception");}
-//				 try{locationPreferences.reset(); }catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","preferences Exception");}
 				 try{startupStarted = false;startupComplete = false;}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","Startup Flag Exception");}
 				 SQLiteDatabase db = null;
 				 try{
 					 db= openOrCreateDatabase("db",0,null);
 			    	SQLHelper.exec(db,SQLHelper.dropLocationPhoneEnable );
-					if(SQLHelper.isTableExists("COMMAND",db) ||SQLHelper.isTableExists("PHONE",db) ){
-//						SQLHelper.exec(db, SQLHelper.dropLocationPhoneEnable);
+					if(SQLHelper.isTableExists("COMMAND",db) ||SQLHelper.isTableExists("PHONE",db) )
+					{
 						SQLHelper.exec(db,SQLHelper.dropPhone );
 						SQLHelper.exec(db,SQLHelper.dropGoogle );
 						SQLHelper.exec(db,SQLHelper.dropLocations );
 						SQLHelper.exec(db,SQLHelper.dropLocation );
-						SQLHelper.exec(db, SQLHelper.dropCommand);
 						SQLHelper.exec(db, SQLHelper.dropStatus);
 						SQLHelper.exec(db, SQLHelper.dropServiceStatus);
 						SQLHelper.exec(db, SQLHelper.dropSettings);
@@ -152,28 +148,18 @@ public class BackgroundService extends Service{
 		@Override
 		public void restart() throws RemoteException {
 			BackgroundService.this.startupStarted = false;
-			//Settings.PHONE_UPDATE_FLAG=true;
 			BackgroundService.this.getStartupTask().execute();
 		}
 
 		@Override
 		public void update() throws RemoteException {
 			BackgroundService.this.startupStarted = false;
-			//Settings.PHONE_UPDATE_FLAG=true;
 			getStartupTask().execute();
 		}
-		
-		@Override
-		public String[] listProviders() throws RemoteException {
-			if(locationManager!=null){
-				return  locationManager.getAllProviders().toArray(new String[locationManager.getAllProviders().size()]);
-			}else{
-				return new String[0];
-			}
-		}
-		
-		
+
 	};
+
+	Settings mSettings;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Service#onCreate()
@@ -182,7 +168,8 @@ public class BackgroundService extends Service{
 	public void onCreate() {
 		  super.onCreate();
 
-			  Log.e(TAG, "STARTING "+TAG+" onCreate");
+		mSettings = Settings.getInstance();
+
 			  //Awareness of Network Change
 				IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);        
 				registerReceiver(networkStateReceiver, filter);
@@ -193,9 +180,8 @@ public class BackgroundService extends Service{
 				  return;
 			  }else
 			  if(!startupStarted){
-	//		  this.notifyUserLocationChange("STARTINGtest");
 				  startupStarted = true;
-				  Log.e("TECHVENTUS", "Starting OnCreate BackgroundService");
+				  //Starting OnCreate BackgroundService
 				  getStartupTask().execute();
 			  }
 
@@ -209,7 +195,6 @@ public class BackgroundService extends Service{
 		try{
 			SQLiteDatabase db =  openOrCreateDatabase("db",0,null);
 			SQLHelper.exec(db, SQLHelper.createLocationPhoneEnable);
-//			if(locationName!=null){
 			Cursor c = db.query("LOCATIONPHONEENABLE", null
 	        , null ,null, null, null, null);
 			if(c!=null){
@@ -224,7 +209,6 @@ public class BackgroundService extends Service{
 							Integer radius = c.getInt(c.getColumnIndex("radius"));
 							LPEPref lpe = new LPEPref(locationName, phoneName, radius, pref, latitude, longitude);
 							ret.add(lpe);
-//							ret.put(phoneName, pref);
 						}catch(Exception e){
 							e.printStackTrace();
 						}
@@ -240,8 +224,7 @@ public class BackgroundService extends Service{
 	}
 	
 	
-	//AsyncTasks
-	
+
 	/**
 	 * Gets the startup task.
 	 *
@@ -252,25 +235,27 @@ public class BackgroundService extends Service{
 	
 			@Override
 			protected void onPreExecute(){
-				Settings.RESTART_SERVICE_FLAG = false;
+				mSettings.setRestartServiceFlag(false);
 				
-				if(timer!=null){
+				if(timer!=null)
+                {
 					timer.cancel();
 				}
 				
 				super.onPreExecute();
-				if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+				if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+                {
 
-					
-					
-					if(!BackgroundService.this.isNetworkConnected()){
+					if(!BackgroundService.this.isNetworkConnected())
+                    {
 						startupStarted = false;
 						this.cancel(true);
 					}
-				}else{
+				}
+                else
+                {
 					this.cancel(true);
 					BackgroundService.this.stopSelf();
-//					cancel();
 				}
 			}
 			
@@ -290,7 +275,6 @@ public class BackgroundService extends Service{
 						SQLHelper.exec(sql,SQLHelper.dropGoogle );
 						SQLHelper.exec(sql,SQLHelper.dropLocations );
 						SQLHelper.exec(sql,SQLHelper.dropLocation );
-						SQLHelper.exec(sql, SQLHelper.dropCommand);
 						SQLHelper.exec(sql, SQLHelper.dropStatus);
 						SQLHelper.exec(sql, SQLHelper.dropServiceStatus);
 						SQLHelper.exec(sql, SQLHelper.dropSettings);
@@ -305,13 +289,11 @@ public class BackgroundService extends Service{
 						 
 					reconnectToVoice();
 					
-//					BackgroundService.this.
-					
+
 	
 				}catch(Exception e){
 						
 						Log.e("TECHVENTUS","Startup First EstablishTestDB exception"); 
-	//					Toast.makeText(BackgroundService.this, "GVL BACKGROUND SERVICE Excpetion Establish DBSettings", Toast.LENGTH_SHORT);
 						e.printStackTrace();
 				}finally{
 					if(sql!=null)
@@ -344,12 +326,11 @@ public class BackgroundService extends Service{
 				try{
 					reconnectToVoice();
 				}catch (com.techventus.server.voice.exception.BadAuthenticationException ba){
-//	    			Toast.makeText(getApplicationContext(), "Google Voice Locations - Google Credentials Authentication Error.", Toast.LENGTH_LONG).show();
 	    			preferences.edit().remove("username").remove("password").apply();
 	    			
 	    		}catch(Exception f){
 	    			f.printStackTrace();
-	    			Settings.RECONNECT_TO_VOICE_FLAG = true;
+					mSettings.setReconnectToVoiceFlag(true);
 	    		}
 				return null;
 			}
@@ -358,7 +339,7 @@ public class BackgroundService extends Service{
 				super.onPreExecute();
 				if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
 					
-		    		   if(Settings.RESTART_SERVICE_FLAG){
+		    		   if(mSettings.getRestartServiceFlag()){
 		    			   try {
 		    				   this.cancel(true);
 							BackgroundService.this.mBinder.restart();
@@ -422,31 +403,34 @@ public class BackgroundService extends Service{
 
 				if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
 					
-		    		   if(Settings.RESTART_SERVICE_FLAG){
-		    			   try {
-		    				   this.cancel(true);
-							BackgroundService.this.mBinder.restart();
-							return;
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
+		    		   if(mSettings.getRestartServiceFlag())
+				       {
+		    			    try
+					        {
+		    				    this.cancel(true);
+								BackgroundService.this.mBinder.restart();
+								return;
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 		    		   }
 					
 					
-					if(!BackgroundService.this.isNetworkConnected()){
-						Settings.PHONE_UPDATE_FLAG = true;
-//						startupStarted = false;
+					if(!BackgroundService.this.isNetworkConnected())
+					{
+						mSettings.setPhoneUpdateFlag(true);
 						this.cancel(true);
 					}
-				}else{
+				}else
+				{
 					this.cancel(true);
 					BackgroundService.this.stopSelf();
-//					cancel();
 				}
 			}
 			
 			@Override
-			protected Void doInBackground(Void... params) {
+			protected Void doInBackground(Void... params)
+			{
 				triggerLocationChange();
 				
 				return null;
@@ -456,11 +440,13 @@ public class BackgroundService extends Service{
 			 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
 			 */
 			@Override
-			protected void onPostExecute(Void params){
-				if(!Settings.RECONNECT_TO_VOICE_FLAG && !Settings.PHONE_UPDATE_FLAG && Settings.LOCATION_CHANGED){
-					Settings.LOCATION_CHANGED = false;
+			protected void onPostExecute(Void params)
+			{
+
+				if(!mSettings.getPhoneUpdateFlag() && ! mSettings.getReconnectToVoiceFlag() && mSettings.getLocationChanged() )
+				{
+					mSettings.setLocationChanged(false);
 					notifyUserLocationChange(com.techventus.locations.Status.currentLocationString);
-					
 				}
 					
 			}
@@ -477,8 +463,7 @@ public class BackgroundService extends Service{
 				if(isNetworkConnected())
 					LocationChangeTask().execute();
 				else{
-					Settings.PHONE_UPDATE_FLAG = true;
-	
+					mSettings.setPhoneUpdateFlag(true);
 				}
 			}
 		};
@@ -510,20 +495,9 @@ public class BackgroundService extends Service{
 	 */
 	//ELIMINATE PERHAPS
 	boolean runLocationCheckCondition(){
-//		return true;
-//		if(LocationPhoneEnablePreference.getLocations(BackgroundService.this).length>1)
-	//	if(locationPreferences.getLocations().length>1)
-//		boolean cond = false;
-//		for(LPEPref pref:prefList){
-//			if(!pref.location.equals("Elsewhere"))
-//				cond =  true;
-//		}
-//		
-//		
-//		if(cond)
+
 			if(preferences.getInt(Settings.LOCATION_FREQUENCY, LocationFrequencyToggle.hourly)!=-1)
 				return true;
-//		
 		return false;
 	}
 	
@@ -551,15 +525,11 @@ public class BackgroundService extends Service{
 					locationManager.removeUpdates(geoHandle);
 					Log.e(TAG, "**********GEOHANDLE REMOVED HOPEFULLY**********");
 				}
-//				locationManager.
-				//geoHandle.
-				//if(locationManager.)
-//				locationManager.
+
 				if(runLocationCheckCondition()){
 					geoHandle = new GeoUpdateHandler();
 					locationManager.requestLocationUpdates( provider, preferences.getInt(Settings.LOCATION_FREQUENCY, LocationFrequencyToggle.fivemin)*60000 , 0, geoHandle);
-//					Toast.makeText(BackgroundService.this, "Location Manager ("+provider +") engaged on a frequency of " +preferences.getInt(Settings.LOCATION_FREQUENCY, 5) +" minutes." , Toast.LENGTH_LONG).show();
-					
+
 				}
 			}catch(Exception e){
 			  e.printStackTrace();
@@ -574,7 +544,7 @@ public class BackgroundService extends Service{
 	 */
 	protected void reconnectToVoice() throws IOException{
 		if(!isNetworkConnected()){
-			Settings.RECONNECT_TO_VOICE_FLAG = true;
+			mSettings.setReconnectToVoiceFlag(true);
 			return;
 		}
 		
@@ -582,9 +552,7 @@ public class BackgroundService extends Service{
 	    	String password = preferences.getString("password", "");
 	    	if(!username.equals("")&&!password.equals("")){
 	    		VoiceSingleton.getOrCreateVoiceSingleton(username,Settings.decrypt(password, 10));
-	    		Settings.RECONNECT_TO_VOICE_FLAG = false;
-//	    		voice = VoiceSingleton.getOrCreateVoiceSingleton(username,Settings.decrypt(password, 10)).getVoice();
-//	    		voice = new Voice(username,Settings.decrypt(password, 10));
+			    mSettings.setReconnectToVoiceFlag(false);
 	    	}else{
 
 	    		VoiceSingleton.reset();
@@ -614,13 +582,13 @@ public class BackgroundService extends Service{
 								if(lpe.enablePref==1){
 									if(voiceSettings.isPhoneDisabled(phone.getId())){
 										voice.phoneEnable(phone.getId());
-										Settings.LOCATION_CHANGED = true;
+										mSettings.setLocationChanged(true);
 									}
 										
 								}else if(lpe.enablePref==-1){
 									if(!voiceSettings.isPhoneDisabled(phone.getId())){
 										Log.e(TAG, "DISABLE "+phone.getId());
-										Settings.LOCATION_CHANGED = true;
+										mSettings.setLocationChanged(true);
 										voice.phoneDisable(phone.getId());
 									}
 										
@@ -630,14 +598,16 @@ public class BackgroundService extends Service{
 					}
 				}
 				voice.getSettings(true);
-				Settings.RECONNECT_TO_VOICE_FLAG = false;
-				Settings.PHONE_UPDATE_FLAG = false;
+				mSettings.setReconnectToVoiceFlag(false);
+				mSettings.setPhoneUpdateFlag(false);
 			} catch (Exception e) {
-				Settings.RECONNECT_TO_VOICE_FLAG = true;
+				mSettings.setReconnectToVoiceFlag(true);
 				e.printStackTrace();
 			}
-		}else{
-			Settings.PHONE_UPDATE_FLAG = true;
+		}
+		else
+		{
+			mSettings.setPhoneUpdateFlag(true);
 		}
 	}
 	
@@ -661,8 +631,7 @@ public class BackgroundService extends Service{
 				return;
 			}
 			
-//			String locOrig = Status.currentLocationString;
-			
+
 			Log.e(TAG,"Geopoint Update Handler - updating location GeoPoint from "+location.getProvider());
 			Log.e(TAG,"Accuracy"+location.getAccuracy());
 			
@@ -684,20 +653,11 @@ public class BackgroundService extends Service{
 						Status.currentLocationString = lpe.location;
 						Log.e("TECHVENTUS","CHANGING LOCATION to "+lpe.location);
 						LocationChangeTask().execute();
-//						triggerLocationChange();
 						break;
 					}				
-//					setLocation(status.locationGeoPoint.getLatitudeE6(),status.locationGeoPoint.getLongitudeE6(),loc);
-
 				}
 			
 			}
-//			for(String loc:Settings.locationMap.keySet()){
-//					if(loc.equals("Elsewhere"))
-//						continue;
-//					if(Settings.distInMetres(Settings.locationMap.get(loc),Status.locationGeoPoint) < Settings.locationRadiusMap.get(loc) + location.getAccuracy()){
-
-//			}
 			if(!action && !Status.currentLocationString.equals("Elsewhere")){
 				Log.e("TECHVENTUS","CHANGING LOCATION to ELSEWHERE from "+Status.currentLocationString);
 				Status.currentLocationString = "Elsewhere";
@@ -706,12 +666,6 @@ public class BackgroundService extends Service{
 				Log.e("TECHVENTUS","LOCATION GEOPOINT SET "+Status.locationGeoPoint.getLatitudeE6());
 			}
 			
-//			 if(!locOrig.equals(Status.currentLocationString)){
-//				 Log.e("TECHVENTUS","Enforcing Voice Preferences "+Status.currentLocationString);
-////				 enforceVoicePreferences();
-//			 }
-			//mapController.setCenter(point);
-//			setContentView(mapView);
 		}
 
 		/* (non-Javadoc)
@@ -719,8 +673,7 @@ public class BackgroundService extends Service{
 		 */
 		@Override
 		public void onProviderDisabled(String provider) {
-			// Raise Notification Maybe???
-			
+
 		}
 
 		/* (non-Javadoc)
@@ -775,30 +728,25 @@ public class BackgroundService extends Service{
 		    public void onReceive(Context context, Intent intent) {
 		        Log.w("Network Listener", "Network Type Changed");
 		       Bundle extras =  intent.getExtras();
-//		      boolean hasKey =  extras.containsKey(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY);
 		       boolean noConnectivity = extras.getBoolean(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY );
 
-		       if(!Status.isNetworkConnected && !noConnectivity){
-		    	   if(Settings.RESTART_SERVICE_FLAG || Settings.RECONNECT_TO_VOICE_FLAG || Settings.PHONE_UPDATE_FLAG)
+		       if(!noConnectivity){
+		    	   if(mSettings.getRestartServiceFlag() || mSettings.getReconnectToVoiceFlag() || mSettings.getPhoneUpdateFlag())
 			    	   if(isNetworkConnected()){
-			    		   if(Settings.RESTART_SERVICE_FLAG){
+			    		   if( mSettings.getRestartServiceFlag()){
 			    			   try {
-								BackgroundService.this.mBinder.restart();
-							} catch (RemoteException e) {
+								    BackgroundService.this.mBinder.restart();
+							    } catch (RemoteException e) {
 								
 								e.printStackTrace();
 							}
-			    		   }else if( Settings.RECONNECT_TO_VOICE_FLAG ){
+			    		   }else if(mSettings.getReconnectToVoiceFlag() ){
 			    			   reconnectToVoiceTask().execute();
-			    		   }else if(Settings.PHONE_UPDATE_FLAG){
+			    		   }else if( mSettings.getPhoneUpdateFlag()){
 			    			   LocationChangeTask().execute();
 			    		   }
 			    	   }
 		       }
-//		       Toast.makeText(getApplicationContext(), "Network Change. HasKey "+hasKey, Toast.LENGTH_LONG).show() ;
-//		       Toast.makeText(getApplicationContext(), "Network Change. noConnectivity "+noConnectivity, Toast.LENGTH_LONG).show() ;
-//				
-//		      Toast.makeText(getApplicationContext(), "Network Change.  Is Connected "+isNetworkConnected(), Toast.LENGTH_LONG).show() ;
 		    }
 		};
 
@@ -853,7 +801,7 @@ public class BackgroundService extends Service{
 	 
 	
 	
-	
+
 	 /**
  	 * Checks if is network connected.
  	 *
@@ -862,13 +810,13 @@ public class BackgroundService extends Service{
  	private boolean isNetworkConnected(){
 			ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
 			NetworkInfo ni = cm.getActiveNetworkInfo();
-		
+
 			if (ni!=null && ni.isConnected()){
 				return true;
 			}else{
 				return false;
 			}
-		}
+	}
 	 
 }
 

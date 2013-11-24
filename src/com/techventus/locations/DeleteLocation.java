@@ -23,10 +23,6 @@ public class DeleteLocation extends ListActivity{
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 
-		
-		
-		
-		
 		this.setContentView(R.layout.deletelocation);
 
 	        

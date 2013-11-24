@@ -1,25 +1,38 @@
 package com.techventus.locations;
 
-import android.app.Dialog;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentSender;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationStatusCodes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created with IntelliJ IDEA.
+ *
+ *
+ *
+ *   1. Ensure Background Service is Enabled - Stop Self Otherwise.
+ *   2. Load Shared Preferences Geofences, PhoneEnable.
+ *   3. On a Frequency, update Google Settings
+ *   4. On a Frequency, enforce Phone Preferences
+ *   5. On a Location Change, enforce Phone Preferences
+ *   6. Create Task FLAGS - If no Connectivity, Raise Task Flag
+ *   7. Upon Reconnection Execute Flagged Tasks
+ *
+ *
+ *
  * User: Joseph
  * Date: 14.11.13
  * Time: 20:14
@@ -28,7 +41,17 @@ import java.util.List;
 public class BackgroundService2  extends Service implements
         GooglePlayServicesClient.ConnectionCallbacks,
         GooglePlayServicesClient.OnConnectionFailedListener,
+        LocationClient.OnRemoveGeofencesResultListener,
         LocationClient.OnAddGeofencesResultListener {
+
+
+
+    public static final String TAG =   BackgroundService2.class.getSimpleName();
+
+    private final static int
+            CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+
+
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -36,10 +59,12 @@ public class BackgroundService2  extends Service implements
 
 
     /** The Binder */
-    private final GVLServiceInterface.Stub mBinder = new GVLServiceInterface.Stub() {
+    private final GVLServiceInterface.Stub mBinder = new GVLServiceInterface.Stub()
+    {
 
         @Override
-        public int[] getCurrentCoordinatesE6() throws RemoteException {
+        public int[] getCurrentCoordinatesE6() throws RemoteException
+        {
 
             int[] ret = {Status.locationGeoPoint.getLatitudeE6(),Status.locationGeoPoint.getLongitudeE6()};
 
@@ -47,62 +72,27 @@ public class BackgroundService2  extends Service implements
         }
 
         @Override
-        public void reset() throws RemoteException {
+        public void reset() throws RemoteException
+        {
 
-            synchronized(BackgroundService.this){
-                if(geoHandle!=null)
-                    try{locationManager.removeUpdates(geoHandle);locationManager = null;}catch(Exception e){e.printStackTrace();
-                        Log.e(TAG + " Reset", "LocationManager Exception");}
-                try{geoHandle = new GeoUpdateHandler();}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","geohandle Exception");}
-                try{status.reset();}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","status Exception");}
-
-
-                try{VoiceSingleton.reset()/*voiceFact=null*/;}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","voice Exception");}
-                try{startupStarted = false;startupComplete = false;}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","Startup Flag Exception");}
-                SQLiteDatabase db = null;
-                try{
-                    db= openOrCreateDatabase("db",0,null);
-                    SQLHelper.exec(db,SQLHelper.dropLocationPhoneEnable );
-                    if(SQLHelper.isTableExists("COMMAND",db) ||SQLHelper.isTableExists("PHONE",db) ){
-                        SQLHelper.exec(db,SQLHelper.dropPhone );
-                        SQLHelper.exec(db,SQLHelper.dropGoogle );
-                        SQLHelper.exec(db,SQLHelper.dropLocations );
-                        SQLHelper.exec(db,SQLHelper.dropLocation );
-                        SQLHelper.exec(db, SQLHelper.dropCommand);
-                        SQLHelper.exec(db, SQLHelper.dropStatus);
-                        SQLHelper.exec(db, SQLHelper.dropServiceStatus);
-                        SQLHelper.exec(db, SQLHelper.dropSettings);
-                    }
-
-
-
-                }catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","LocationManager Exception");}
-                finally{
-                    if(db!=null)
-                        db.close();
-                }
-
-            }//synch
-            getStartupTask().execute();
         }
 
         @Override
-        public String getCurrentLocationString() throws RemoteException {
-            return Status.currentLocationString;
+        public String getCurrentLocationString() throws RemoteException
+        {
+               return Status.currentLocationString;
         }
 
         @Override
-        public void restart() throws RemoteException {
-            BackgroundService2.this.startupStarted = false;
-            //Settings.PHONE_UPDATE_FLAG=true;
-            BackgroundService.this.getStartupTask().execute();
+        public void restart() throws RemoteException
+        {
+
         }
 
         @Override
-        public void update() throws RemoteException {
-            BackgroundService2.this.startupStarted = false;
-            //Settings.PHONE_UPDATE_FLAG=true;
-            getStartupTask().execute();
+        public void update() throws RemoteException
+        {
+
         }
 
 
@@ -122,13 +112,68 @@ public class BackgroundService2  extends Service implements
 
     @Override
     public void onCreate() {
-
+          super.onCreate();
         // Start with the request flag set to false
         mInProgress = false;
 
+        // Instantiate a new geofence storage area
+        mGeofenceStorage = new SimpleGeofenceStore(this);
+
+
+        // Instantiate the current List of geofences
+        mCurrentGeofences = new ArrayList<Geofence>();
+        mGeofencesToRemove = new ArrayList<String>();
+
+
+        Geofence.Builder builder = new Geofence.Builder();
+        builder.setCircularRegion(12.34456,12.34567,200);
+        builder.setRequestId("a");
+        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
+
+        Geofence a =  builder.build();
+
+        builder = new Geofence.Builder();
+        builder.setCircularRegion(12.34456,12.34567,200);
+        builder.setRequestId("b");
+        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
+
+        Geofence b =  builder.build();
+
+        mCurrentGeofences.add(a);
+        mCurrentGeofences.add(b);
+
+
+        Log.v(TAG,"ADD THE GEOFENCES");
+        addGeofences();
+
     }
 
+    SimpleGeofenceStore  mGeofenceStorage;
 
+    List<Geofence>  mCurrentGeofences;
+
+    private boolean servicesConnected() {
+        // Check that Google Play services is available
+        int resultCode =
+                GooglePlayServicesUtil.
+                        isGooglePlayServicesAvailable(this);
+        // If Google Play services is available
+        if (ConnectionResult.SUCCESS == resultCode) {
+            // In debug mode, log the status
+            Log.d("Geofence Detection",
+                    "Google Play services is available.");
+
+            Toast.makeText(this," servicesConnected ",Toast.LENGTH_LONG);
+            // Continue
+            return true;
+            // Google Play services was not available for some reason
+        } else {
+            return false;
+        }
+
+    }
 
 
 
@@ -144,7 +189,8 @@ public class BackgroundService2  extends Service implements
          * If Google Play services isn't present, the proper request
          * can be restarted.
          */
-        if (!servicesConnected()) {
+        if (!servicesConnected())
+        {
             return;
         }
         /*
@@ -172,7 +218,45 @@ public class BackgroundService2  extends Service implements
 
 
 
-
+    /**
+     * Start a request to remove geofences by calling
+     * LocationClient.connect()
+     */
+    public void removeGeofences(PendingIntent requestIntent) {
+        // Record the type of removal request
+        mRequestType = REQUEST_TYPE.REMOVE_INTENT;
+        /*
+         * Test for Google Play services after setting the request type.
+         * If Google Play services isn't present, the request can be
+         * restarted.
+         */
+        if (!servicesConnected()) {
+            return;
+        }
+        // Store the PendingIntent
+        mGeofenceRequestIntent = requestIntent;
+        /*
+         * Create a new location client object. Since the current
+         * activity class implements ConnectionCallbacks and
+         * OnConnectionFailedListener, pass the current activity object
+         * as the listener for both parameters
+         */
+        mLocationClient = new LocationClient(this, this, this);
+        // If a request is not already underway
+        if (!mInProgress) {
+            // Indicate that a request is underway
+            mInProgress = true;
+            // Request a connection from the client to Location Services
+            mLocationClient.connect();
+        } else {
+            /*
+             * A request is already underway. You can handle
+             * this situation by disconnecting the client,
+             * re-setting the flag, and then re-trying the
+             * request.
+             */
+        }
+    }
 
 
 
@@ -181,25 +265,46 @@ public class BackgroundService2  extends Service implements
     // Store the list of geofence Ids to remove
     List<String> mGeofencesToRemove;
 
+    /*
+     * Create a PendingIntent that triggers an IntentService in your
+     * app when a geofence transition occurs.
+     */
+        private PendingIntent getTransitionPendingIntent() {
+            // Create an explicit Intent
+            Intent intent = new Intent(this,
+                    ReceiveTransitionsIntentService.class);
+            /*
+             * Return the PendingIntent
+             */
+            return PendingIntent.getService(
+                    this,
+                    0,
+                    intent,
+                    PendingIntent.FLAG_UPDATE_CURRENT);
+        }
 
-    private void onConnected(Bundle dataBundle) {
+
+    PendingIntent mTransitionPendingIntent;
+
+
+    public void onConnected(Bundle dataBundle) {
         switch (mRequestType) {
 
-            case REQUEST_TYPE.ADD :
+            case ADD :
                 // Get the PendingIntent for the request
                 mTransitionPendingIntent =
                         getTransitionPendingIntent();
                 // Send a request to add the current geofences
                 mLocationClient.addGeofences(
-                        mCurrentGeofences, pendingIntent, this);
+                        mCurrentGeofences, mTransitionPendingIntent, this);
             // If removeGeofencesById was called
-            case REQUEST_TYPE.REMOVE_LIST :
+            case REMOVE_LIST :
                 mLocationClient.removeGeofences(
                         mGeofencesToRemove, this);
                 break;
 
 
-            case REQUEST_TYPE.REMOVE_INTENT :
+            case REMOVE_INTENT :
                 mLocationClient.removeGeofences(
                         mGeofenceRequestIntent, this);
                 break;
@@ -237,8 +342,10 @@ public class BackgroundService2  extends Service implements
         mLocationClient.disconnect();
     }
 
-
-
+    @Override
+    public void onRemoveGeofencesByPendingIntentResult(int i, PendingIntent pendingIntent) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
 
     /**
@@ -249,7 +356,7 @@ public class BackgroundService2  extends Service implements
     public void removeGeofences(List<String> geofenceIds) {
         // If Google Play services is unavailable, exit
         // Record the type of removal request
-        mRequestType = REMOVE_LIST;
+        mRequestType = REQUEST_TYPE.REMOVE_LIST;
         /*
          * Test for Google Play services after setting the request type.
          * If Google Play services isn't present, the request can be
@@ -288,32 +395,32 @@ public class BackgroundService2  extends Service implements
 
 
     /*
- * Provide the implementation of
- * OnAddGeofencesResultListener.onAddGeofencesResult.
- * Handle the result of adding the geofences
- *
- */
-    @Override
-    public void onAddGeofencesResult( int statusCode, String[] geofenceRequestIds) {
-        // If adding the geofences was successful
-        if (LocationStatusCodes.SUCCESS == statusCode) {
-            /*
-             * Handle successful addition of geofences here.
-             * You can send out a broadcast intent or update the UI.
-             * geofences into the Intent's extended data.
-             */
-        } else {
-            // If adding the geofences failed
-            /*
-             * Report errors here.
-             * You can log the error using Log.e() or update
-             * the UI.
-             */
+     * Provide the implementation of
+     * OnAddGeofencesResultListener.onAddGeofencesResult.
+     * Handle the result of adding the geofences
+     *
+     */
+        @Override
+        public void onAddGeofencesResult( int statusCode, String[] geofenceRequestIds) {
+            // If adding the geofences was successful
+            if (LocationStatusCodes.SUCCESS == statusCode) {
+                /*
+                 * Handle successful addition of geofences here.
+                 * You can send out a broadcast intent or update the UI.
+                 * geofences into the Intent's extended data.
+                 */
+            } else {
+                // If adding the geofences failed
+                /*
+                 * Report errors here.
+                 * You can log the error using Log.e() or update
+                 * the UI.
+                 */
+            }
+            // Turn off the in progress flag and disconnect the client
+            mInProgress = false;
+            mLocationClient.disconnect();
         }
-        // Turn off the in progress flag and disconnect the client
-        mInProgress = false;
-        mLocationClient.disconnect();
-    }
 
 
 
@@ -327,35 +434,21 @@ public class BackgroundService2  extends Service implements
          * activity to resolve it.
          */
         if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(
-                        this,
-                        CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            } catch (IntentSender.SendIntentException e) {
-                // Log the error
-                e.printStackTrace();
-            }
+
+                Toast.makeText(this,"CONNECTION_FAILURE_RESOLUTION_REQUEST",Toast.LENGTH_LONG).show();
+
+
             // If no resolution is available, display an error dialog
         } else {
             // Get the error code
             int errorCode = connectionResult.getErrorCode();
             // Get the error dialog from Google Play services
-            Dialog errorDialog = GooglePlayServicesUtil.getErrorDialog(
-                    errorCode,
-                    this,
-                    CONNECTION_FAILURE_RESOLUTION_REQUEST);
-            // If Google Play services can provide an error dialog
-            if (errorDialog != null) {
-                // Create a new DialogFragment for the error dialog
-                ErrorDialogFragment errorFragment =
-                        new ErrorDialogFragment();
-                // Set the dialog in the DialogFragment
-                errorFragment.setDialog(errorDialog);
-                // Show the error dialog in the DialogFragment
-                errorFragment.show(
-                        getSupportFragmentManager(),
-                        "Geofence Detection");
-            }
+
+            Toast.makeText(this,"CONNECTION_FAILURE_RESOLUTION_REQUEST error code:"+errorCode,Toast.LENGTH_LONG).show();
+
+
+
+
         }
     }
 

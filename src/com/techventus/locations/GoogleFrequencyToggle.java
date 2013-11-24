@@ -35,12 +35,16 @@ public class GoogleFrequencyToggle extends Activity{
 	final public static int thirtymin = 30;
 	final public static int hourly = 60;
 	final public static int daily = 1440;
-	final public static int off = -1;
 	final public static int fortnightly = 20160;
+
+	Settings mSettings;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		Log.d(TAG,"search dialog is created!!!");
+
+		mSettings = Settings.getInstance();
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.google_check_frequency);
 		
@@ -124,9 +128,8 @@ public class GoogleFrequencyToggle extends Activity{
 			    SharedPreferences.Editor editor = settings.edit();
 			    editor.putInt(TOGGLE_KEY, m_iCheckedTime);
 			    editor.commit();
-			    Settings.RESTART_SERVICE_FLAG = true;
-//				settings.getInt(TOGGLE_KEY, hourly);
-		
+			    mSettings.setRestartServiceFlag(true);
+
 				finish();
 			}});
 		

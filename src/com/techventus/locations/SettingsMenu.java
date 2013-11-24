@@ -23,7 +23,8 @@ import android.widget.ToggleButton;
 public class SettingsMenu extends ListActivity{
 	
 
-	String TAG = "TECHVENTUS - SETTINGSMENU";
+	private static final String TAG = "TECHVENTUS - SETTINGSMENU";
+
 	ToggleButton serviceEnableToggle ;
 	ToggleButton startupEnableToggle ;
 	SharedPreferences preferences;
@@ -32,11 +33,13 @@ public class SettingsMenu extends ListActivity{
 	boolean isServiceEnabled;
 	boolean isStartupEnabled;
 
-	
+	Settings mSettings;
 
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
+
+		mSettings = Settings.getInstance();
 		setContentView(R.layout.settingsmenu);
 		
 		preferences   = SettingsMenu.this.getSharedPreferences(Settings.PREFERENCENAME, 0);
@@ -148,7 +151,8 @@ public class SettingsMenu extends ListActivity{
 	protected void onActivityResult(int requestCode, int resultCode,
             Intent data) {
 		if(resultCode==999){
-			Settings.RESTART_SERVICE_FLAG = true;
+			mSettings.setRestartServiceFlag(true);
+
 		}
     }
 			@Override
@@ -184,7 +188,7 @@ public class SettingsMenu extends ListActivity{
 				
 				
 				if(serviceEnableToggle.isChecked()){
-					Settings.RESTART_SERVICE_FLAG = true;
+					mSettings.setRestartServiceFlag(true);
 					Intent serviceIntent = new Intent(this,BackgroundService.class);
 					startService(serviceIntent);
 				}else{

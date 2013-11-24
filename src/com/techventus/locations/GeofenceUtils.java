@@ -4,7 +4,8 @@ package com.techventus.locations;
 /**
  * This class defines constants used by location sample apps.
  */
-public final class GeofenceUtils {
+public final class GeofenceUtils
+{
 
     // Used to track what type of geofence removal request was made.
     public enum REMOVE_TYPE {INTENT, LIST}

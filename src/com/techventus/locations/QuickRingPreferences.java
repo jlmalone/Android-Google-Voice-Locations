@@ -72,14 +72,7 @@ public class QuickRingPreferences extends Activity{
 	    pending = (ProgressBar)findViewById(R.id.progressBar);
 	    
 	    outerLayout = (LinearLayout)findViewById(R.id.phoneenablelayout);
-	    
-
-	    
 	}
-	
-	
-	
-	
 
     /**
      * Minispacer.
@@ -154,20 +147,6 @@ public class QuickRingPreferences extends Activity{
 		return ret;
 		
 	}
-	
-	
-//	AsyncTask<Void,Void,Boolean> updateSettingsTask(){
-//		AsyncTask<Void,Void,Boolean> ret = new AsyncTask<Void,Void,Boolean>(){
-//
-//			@Override
-//			protected Boolean doInBackground(Void... params) {
-//				
-//				return null;
-//			}
-//			
-//		};
-//		return ret;
-//	}
 	
 	
 	/**
@@ -391,18 +370,7 @@ public class QuickRingPreferences extends Activity{
 				AllSettings settings = voice.getSettings(update);
 				phones = settings.getPhones();
 				if(phones!=null && phones.length>0){
-//					setPhoneStrings(phones);
-					
-					//REMOVED phoneStrings Unimportant in this Activity
-					
-//					phoneStrings = new String[phones.length];
-//					int i=0;
-//					for(Phone phone:phones){
-//						phoneStrings[i]=phone.getName();
-//						System.out.println(phoneStrings[i]);
-//						i++;
-//						
-//					}
+
 
 					ret = true;
 				}else{

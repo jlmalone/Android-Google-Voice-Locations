@@ -24,11 +24,7 @@
                   android:label="@string/map_name"
                   android:theme="@android:style/Theme.Holo.Light"/>
 
-        <activity android:name=".TableMaster"
-                  android:label="@string/tablemasterstring"
-                  android:theme="@android:style/Theme.Holo.Light"/>
-
-        <activity android:name=".RowTest"
+		<activity android:name=".RowTest"
                   android:label="@string/rowtable"
                   android:theme="@android:style/Theme.Holo.Light"/>
 
@@ -82,6 +78,7 @@
                   android:theme="@android:style/Theme.Holo.Light"/>
 
  		<service android:enabled="true" android:name=".BackgroundService" />
+        <service android:enabled="true" android:name=".BackgroundService2" />
 
         <service
                 android:name="com.techventus.locations.ReceiveTransitionsIntentService"

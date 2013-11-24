@@ -22,10 +22,6 @@ public class HelloItemizedOverlay extends ItemizedOverlay {
 	private LocationMap origin;
 	private GeoPoint geopoint;
 	
-//	public HelloItemizedOverlay(Drawable defaultMarker){
-//		super(boundCenterBottom(defaultMarker));
-//	}
-	
 	private Paint paint1, paint2;
 	private float radius = 1000;
 	

@@ -7,13 +7,9 @@ import com.techventus.server.voice.Voice;
 import com.techventus.server.voice.datatypes.AllSettings;
 import com.techventus.server.voice.datatypes.Phone;
 
-//import com.google.android.maps.GeoPoint;
-
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-// TODO: Auto-generated Javadoc
-//import android.widget.Toast;
 
 /**
  * The Class SQLHelper.
@@ -25,43 +21,23 @@ public class SQLHelper {
 	static String dropLocations = "DROP TABLE LOCATIONS;";
 	static String dropGoogle = "DROP TABLE GOOGLE;";
 	/** The drop phone. */
-static String dropPhone = "DROP TABLE PHONE;";
+    static String dropPhone = "DROP TABLE PHONE;";
 	
 	/** The drop location phone enable. */
 	static String dropLocationPhoneEnable = "DROP TABLE LOCATIONPHONEENABLE;";
 	
-	/** The drop command. */
-	static String dropCommand = "DROP TABLE COMMAND;";
 	static String dropStatus = "DROP TABLE STATUS;";
 	static String dropServiceStatus = "DROP TABLE SERVICESTATUS;";
 	static String dropSettings = "DROP TABLE SETTINGS;";
 	
-	//TODO - ENSURE ONLY CALLED ON APP RESET
-	/** The clear location phone enable. */
-static String clearLocationPhoneEnable = "DELETE FROM LOCATIONPHONEENABLE;";
-	
+
 	//TODO - CONSIDER DELETING THIS TABLE AS DISTINCT QUERY FROM CREATE LOCATION PHONE ENABLE OUGHT TO BE SUFFICIENT
-	/** The create locations. */
-//	static String createLocations = "CREATE TABLE IF NOT EXISTS LOCATIONS (locationName VARCHAR PRIMARY KEY, locationLatitude FLOAT, locationLongitude FLOAT, locationRadius INTEGER, enabled BOOLEAN);";
 
 	//TODO - When Ts+Cs are Approved, Create this table.
 	/** The create location phone enable. */
 	static String createLocationPhoneEnable =  "CREATE TABLE IF NOT EXISTS LOCATIONPHONEENABLE  (locationName VARCHAR NOT NULL, phoneName VARCHAR NOT NULL, phoneEnable INTEGER NOT NULL, locationLatitudeE6 INTEGER NOT NULL, locationLongitudeE6 INTEGER NOT NULL, radius INTEGER NOT NULL, PRIMARY KEY (locationName,phoneName));";
 	
-	//static String createPhone = "CREATE TABLE IF NOT EXISTS PHONE (phoneName VARCHAR PRIMARY KEY);";
-//	static String createGoogle = "CREATE TABLE IF NOT EXISTS GOOGLE (loginName VARCHAR PRIMARY KEY, password VARCHAR);";
-    //static String createCommand = "CREATE TABLE IF NOT EXISTS COMMAND (command VARCHAR, id INTEGER PRIMARY KEY AUTOINCREMENT);";
-//    static String createStatus = "CREATE TABLE IF NOT EXISTS STATUS ( time DATE,key VARCHAR PRIMARY KEY, status VARCHAR);";
-  //  static String createSettings = "CREATE TABLE IF NOT EXISTS SETTINGS (key VARCHAR, value VARCHAR);";
-    
-    /** The insert elsewhere location. */
-//	static String insertElsewhereLocation = "INSERT INTO LOCATIONS (locationName,locationLatitude,locationLongitude,locationRadius, enabled) VALUES ('Elsewhere',0,0, 1000,'true');";
-   // static String insertTestLocations2 = "INSERT INTO LOCATIONS (locationName,locationLatitude,locationLongitude,locationRadius, enabled) VALUES ('testlocation2',20000000,20000000, 200,'true');";
-  // static String insertTestLocations3 = "INSERT INTO LOCATIONS (locationName,locationLatitude,locationLongitude,locationRadius, enabled) VALUES  ('testlocation3',10000000,10000000, 100,'false');";
-   // static String insertTestLocations4 = "INSERT INTO LOCATIONS (locationName,locationLatitude,locationLongitude,locationRadius, enabled) VALUES  ('testlocation4',30000000,10000000, 400,'true');";
-    
-  //  static String insertGooleCredentialsTest = "INSERT INTO GOOGLE (loginName,password) VALUES ('email','pass');";
-    
+
     //TODO CONSIDER MOVING ALL THIS TO UNIT TEST CASES
     /*
     *//** The phone insert test1. *//*
@@ -149,30 +125,14 @@ static String clearLocationPhoneEnable = "DELETE FROM LOCATIONPHONEENABLE;";
     //static String updateNoGoogleConnectionStatement = "UPDATE STATUS SET status = 'No Connection' WHERE key = 'google';";
 	/** The select stored google credentials statement. */
 	static String selectStoredGoogleCredentialsStatement = "SELECT loginName,password FROM GOOGLE;";
-	//static String deleteGoogleConnectivityStatement = "DELETE FROM STATUS WHERE key = 'google';";
+
 	
 	
-	
-	/** The select distinct locations. */
-	static String selectDistinctLocations = "SELECT DISTINCT locationName FROM LOCATIONPHONEENABLE;";
-	
+
 	/** The select locations statement. */
 	static String selectLocationsStatement = "SELECT locationName,locationLatitude,locationLongitude,locationRadius, enabled FROM LOCATIONS;";
 	
-	/** The select elsewhere location. */
-	static String selectElsewhereLocation = "SELECT * from LOCATIONS WHERE locationName = 'Elsewhere';";
-	
-	/** The select elsewhere location phone enable. */
-	static String selectElsewhereLocationPhoneEnable = "SELECT * FROM LOCATIONPHONEENABLE WHERE locationName ='Elsewhere';";
-	//static String insertElsewhereLocationPhoneEnableBase = "INSERT INTO LOCATIONS (locationName,locationLatitude,locationLongitude,locationRadius, enabled) VALUES ;";
-	//static String insertElsewhereLocation = "INSERT INTO LOCATIONS (locationName,locationLatitude,locationLongitude,locationRadius, enabled) VALUES ('Elsewhere',0,0, 1000,'true');";
-	
-	
-	
-	
-//	static String initStatus = "INSERT INTO STATUS (key,status) VALUES ('google','No Credentials'), ('location','Unknown') ;" ;
-	
-	
+
 	
 	
 	public static boolean isTableExists(String tableName, SQLiteDatabase db ) {
@@ -221,65 +181,11 @@ static String clearLocationPhoneEnable = "DELETE FROM LOCATIONPHONEENABLE;";
      * @param db the db
      */
     public static void establishTestDBSettings(SQLiteDatabase db){
-    	/**/
-    	//exec(db,dropLocation );
-    	Log.e("TECHVENTUS","DROPPING TABLES");
-    	//exec(db,dropLocations );
-    	//exec(db,dropGoogle );
-    	//exec(db,dropPhone );
-    	//exec(db,dropLocationPhoneEnable );
-    	//exec(db,dropCommand );
-    	//exec(db,dropStatus );
-    	//exec(db,dropServiceStatus );
-    	//exec(db,dropSettings );
-    	Log.e("TECHVENTUS","CREATING TABLES");
-    	
-//    	exec(db,createLocations );
-    	exec(db,createLocationPhoneEnable );
-//    	exec(db,createPhone );
- //   	exec(db,createGoogle );
-//    	exec(db,createCommand );
- //   	exec(db,createStatus );
-    	
-    //	exec(db,createSettings );
 
-    	//exec(db,  insertTestLocations1 );
-    	//exec(db,  insertTestLocations2 );
-    	//exec(db,  insertTestLocations3 );
-    	//exec(db,  insertTestLocations4 );
-    	
-    	//exec(db,  insertGooleCredentialsTest );
-    
-    	//exec(db,  phoneInsertTest1 );
-    	//exec(db,  phoneInsertTest2 );
-    	//exec(db,  phoneInsertTest3 );
-    	//exec(db,  phoneInsertTest4 );
-    	//exec(db,  phoneInsertTest5 );
-    
-    	//exec(db,  locationPhoneEnableInsertTest1 );
-    	//exec(db,  locationPhoneEnableInsertTest2 );
-    	//exec(db,  locationPhoneEnableInsertTest3 );
-    	//exec(db,  locationPhoneEnableInsertTest4 );
-    	//exec(db,  locationPhoneEnableInsertTest5 );
-/*
-    	exec(db,  locationPhoneEnableInsertTest6 );
-    	exec(db,  locationPhoneEnableInsertTest7 );
-    	exec(db,  locationPhoneEnableInsertTest8 );
-    	exec(db,  locationPhoneEnableInsertTest9 );
-    	exec(db,  locationPhoneEnableInsertTest10 );
-    
-    	exec(db,  locationPhoneEnableInsertTest11 );
-    	exec(db,  locationPhoneEnableInsertTest12 );
-    	exec(db,  locationPhoneEnableInsertTest13 );
-    	exec(db,  locationPhoneEnableInsertTest14 );
-    	exec(db,  locationPhoneEnableInsertTest15 );
-   
-    	exec(db,  locationPhoneEnableInsertTest16 );
-    	exec(db,  locationPhoneEnableInsertTest17 );
-    	exec(db,  locationPhoneEnableInsertTest18 );
-    	exec(db,  locationPhoneEnableInsertTest19 );
-    	exec(db,  locationPhoneEnableInsertTest20 );
-*/
+    	Log.e("TECHVENTUS","CREATING TABLES");
+
+    	exec(db,createLocationPhoneEnable );
+
     }
     
     /**
@@ -345,97 +251,7 @@ static String clearLocationPhoneEnable = "DELETE FROM LOCATIONPHONEENABLE;";
     		e.printStackTrace();
     	}
     }
-    
-//    /**
-//     * List phone and location phone enable.
-//     *
-//     * @param sql the sql
-//     */
-//    public static void listPhoneAndLocationPhoneEnable(SQLiteDatabase sql){
-//    	Log.e("TECHVENTUSPHONE","BEGINGING LIST PHONE AND LOCATIONPHONEENABLE");
-//    	try{
-//    		try{
-//    			Cursor c = sql.rawQuery("SELECT * FROM PHONE;", null);
-//    			if(c!=null){
-//    				Log.e("TECHVENTUSPHONE","Cursor NOT NULL SELECT * FROM PHONE block...Printing output");
-//    				while (c.moveToNext()){
-//    					Log.e("TECHVENTUSPHONE","Phone : "+c.getString(0));
-//    				}
-//    				Log.e("TECHVENTUSPHONE","DONE PRINTING PHONE block");
-//    				c.close();
-//    			}else{
-//    				Log.e("TECHVENTUSPHONE","Null cursor in SELECT * FROM PHONE block");
-//    			}
-//        	}catch(Exception u){
-//        		Log.e("TECHVENTUSPHONE","Exception with SELECT * FROM PHONE block");
-//        		u.printStackTrace();
-//        	}
-//    		try{
-//    			Cursor c = sql.rawQuery("SELECT * FROM LOCATIONS;", null);
-//    			if(c!=null){
-//    				Log.e("TECHVENTUSPHONE","Cursor NOT NULL SELECT * FROM LOCATIONS block...Printing output");
-//    				while (c.moveToNext()){
-//    					Log.e("TECHVENTUSPHONE","locationName: "+c.getString(0));
-//    				}
-//    				Log.e("TECHVENTUSPHONE","DONE PRINTING LOCATIONS block");
-//    				c.close();
-//    			}else{
-//    				Log.e("TECHVENTUSPHONE","Null cursor in SELECT * FROM LOCATIONS block");
-//    			}
-//    			
-//        	}catch(Exception u){
-//        		Log.e("TECHVENTUSPHONE","Exception with SELECT * FROM LOCATIONS");
-//        		u.printStackTrace();
-//        	}
-//        	
-//    		try{
-//    			Cursor c = sql.rawQuery("SELECT * FROM LOCATIONPHONEENABLE;", null);
-//    			if(c!=null){
-//    				Log.e("TECHVENTUSPHONE","Cursor NOT NULL SELECT * FROM LOCATIONPHONEENABLE block...Printing output");
-//    				while (c.moveToNext()){
-//    					Log.e("TECHVENTUSPHONE","locationName: "+c.getString(0)+" phoneName: "+c.getString(1)+" phoneEnabled: "+c.getInt(2));
-//    				}
-//    				Log.e("TECHVENTUSPHONE","DONE PRINTING LOCATIONPHONEENABLE block");
-//    				c.close();
-//    			}else{
-//    				Log.e("TECHVENTUSPHONE","Null cursor in SELECT * FROM LOCATIONPHONEENABLE block");
-//    			}
-//    			
-//        	}catch(Exception u){
-//        		Log.e("TECHVENTUSPHONE","Exception with SELECT * FROM LOCATIONPHONEENABLE");
-//        		u.printStackTrace();
-//        	}
-//        	
-//        	
-//        	
-//        	
-//        	Log.e("TECHVENTUSPHONE","FINISHED LIST PHONE AND LOCATIONPHONEENABLE");
-//        	
-//    	}catch(Exception u){
-//    		Log.e("TECHVENTUSPHONE","OUTER ERROR");
-//    		u.printStackTrace();
-//    	}
-//    }
-    
-//    /**
-//     * Creates the elsewhere.
-//     *
-//     * @param sql the sql
-//     * @param phoneList the phone list
-//     */
-//    public static void createElsewhere(SQLiteDatabase sql, List<String> phoneList){
-//    	try{
-////			 Log.e("TECHVENTUS", "INSERT ELSEWHERE");
-//			 //WE CAN SIMPLY INSERT BECAUSE PRIMARY KEY WILL PREVENT DUPLICATES
-//			 sql.execSQL(insertElsewhereLocation); 
-//    	}catch(Exception e){
-//    		Log.e("TECHVENTUS", "Exception in ELSEWHERE INSERT");
-//    		
-//    		e.printStackTrace();
-//    	}
-//    }
-  	
-    
+
     
     /**
      * Gets the locations.
@@ -465,55 +281,6 @@ static String clearLocationPhoneEnable = "DELETE FROM LOCATIONPHONEENABLE;";
 }
     
     
-    
 
-//
-//public static void createElsewhere(SQLiteDatabase sql, List<String> phoneList){
-//	//boolean cont =false;
-//	try{
-//		
-//		
-//		
-//		
-//		/*
-//		Cursor c =sql.rawQuery(selectElsewhereLocation, null);
-//		 if(c!=null){
-//			 c.moveToNext();
-//			 if( !c.getString(0).equals("Elsewhere")){
-//				 Log.e("TECHVENTUS","Location Deleted");
-//				 sql.execSQL("DELETE FROM LOCATIONS ;");
-//				 sql.execSQL(insertElsewhereLocation);
-//				 cont = true;
-//			 }else{
-//				 cont =true;
-//			 }
-//			 String s = c.getString(0);
-//		 }else{
-//		 */
-//			 Log.e("TECHVENTUS", "PROPER INSERT ELSEWHERE");
-//			 sql.execSQL(insertElsewhereLocation); 
-//			
-//		//	 cont = true;
-//		// }
-//	}catch(Exception e){
-//		//try{
-//		e.printStackTrace();
-//		// sql.execSQL(insertElsewhereLocation);
-//		// cont = true;
-//		//}catch(Exception o){
-//		//	o.printStackTrace();
-//			//sql.execSQL(dropLocations);
-//			//sql.execSQL(createLocations);
-//			//sql.execSQL(insertElsewhereLocation); 
-//		}
-//	}
-//
-//  
-    
-    
-    
-    
-    
-    
     
 

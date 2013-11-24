@@ -2,6 +2,8 @@ package com.techventus.locations;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import com.google.android.gms.location.Geofence;
 
 /**
@@ -245,7 +247,20 @@ public class Util {
         }
     }
 
+    /**
+     * Checks if is network connected.
+     *
+     * @return true, if is network connected
+     */
+    private boolean isNetworkConnected(Context context)
+    {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getActiveNetworkInfo();
 
-
-
+        if (ni!=null && ni.isConnected()){
+            return true;
+        }else{
+            return false;
+        }
+    }
 }

@@ -1,7 +1,5 @@
 package com.techventus.locations;
 
-//import java.util.HashMap;
-//import java.util.Map;
 import com.google.android.maps.GeoPoint;
 
 /**
@@ -9,7 +7,6 @@ import com.google.android.maps.GeoPoint;
  */
 public class Settings
 {
-
 
 	/** The Constant PREFERENCENAME. */
 	final protected static String PREFERENCENAME = "TECHVENTUS";
@@ -29,15 +26,70 @@ public class Settings
 	final protected static String LATITUDE_EXTRA = "LATITUDE_EXTRA";
 	final protected static String LONGITUDE_EXTRA = "LONGITUDE_EXTRA";
 	public static final String LOCATION_PROVIDER_SETTING = "LOCATION_PROVIDER_SETTING";
-
-	public static  boolean RESTART_SERVICE_FLAG = false;
-	public static  boolean RECONNECT_TO_VOICE_FLAG = false;
-	public static  boolean PHONE_UPDATE_FLAG = false;
-	public static  boolean LOCATION_CHANGED = false;
+	public static final String GOOGLE_SYNC_FREQUENCY = "GOOGLE_SYNC_FREQUENCY";
 
 	final private static String basis = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	public static final String GOOGLE_SYNC_FREQUENCY = "GOOGLE_SYNC_FREQUENCY";
-	
+
+
+	private  boolean restartServiceFlag = false;
+	private  boolean reconnectToVoiceFlag = false;
+	private  boolean phoneUpdateFlag = false;
+	private  boolean locationChanged = false;
+
+	//SETTINGS
+	private static Settings instance;
+	private Settings(){}
+
+	public static Settings getInstance()
+	{
+		if( instance==null)
+		{
+			 instance = new Settings();
+		}
+		return instance;
+	}
+
+
+	public boolean getRestartServiceFlag()
+	{
+		return restartServiceFlag;
+	}
+
+	public void setRestartServiceFlag(boolean RESTART_SERVICE_FLAG)
+	{
+		this.restartServiceFlag = RESTART_SERVICE_FLAG;
+	}
+
+	public boolean getReconnectToVoiceFlag()
+	{
+		return reconnectToVoiceFlag;
+	}
+
+	public void setReconnectToVoiceFlag(boolean RECONNECT_TO_VOICE_FLAG)
+	{
+		this.reconnectToVoiceFlag = RECONNECT_TO_VOICE_FLAG;
+	}
+
+	public boolean getPhoneUpdateFlag()
+	{
+		return phoneUpdateFlag;
+	}
+
+	public void setPhoneUpdateFlag(boolean PHONE_UPDATE_FLAG)
+	{
+		this.phoneUpdateFlag = PHONE_UPDATE_FLAG;
+	}
+
+	public boolean getLocationChanged()
+	{
+		return locationChanged;
+	}
+
+	public void setLocationChanged(boolean LOCATION_CHANGED)
+	{
+		this.locationChanged = LOCATION_CHANGED;
+	}
+
 	public static String decrypt(String inputString, int shift)
     {
 		return encrypt(inputString, 52 - shift);

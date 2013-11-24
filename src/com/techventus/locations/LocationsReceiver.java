@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 
 /**
@@ -12,26 +13,26 @@ import android.content.SharedPreferences;
  * are enabled.  If so, the Background Service is launched 
  * at Bootup.
  */
-public class LocationsReceiver extends BroadcastReceiver{
-	
-
-	
+public class LocationsReceiver extends BroadcastReceiver
+{
 	/* (non-Javadoc)
 	 * @see android.content.BroadcastReceiver#onReceive(android.content.Context, android.content.Intent)
 	 */
 	@Override
-	public void onReceive(Context context, Intent intent) {
+	public void onReceive(Context context, Intent intent)
+    {
 		
-		
+		Log.v("RECEIVER", "LocationsReceiver. Receive Complete");
 
 		SharedPreferences preferences   = context.getSharedPreferences(Settings.PREFERENCENAME, 0);
         
 		if(preferences.getBoolean(Settings.STARTUP_ENABLED, false))
-			if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
-				Intent serviceIntent = new Intent(context,BackgroundService.class);
+        {
+			if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+            {
+				Intent serviceIntent = new Intent(context,BackgroundService2.class);
 				context.startService(serviceIntent);
 			}
+        }
 	}
 }
-
-

@@ -87,7 +87,6 @@ public class ConfirmDelete extends Activity{
 			if(mIRemoteService!=null){
 				try {
 					mIRemoteService.restart();
-//					mIRemoteService.deleteLocation(locationName);
 				} catch (RemoteException e) {
 					e.printStackTrace();
 				}
