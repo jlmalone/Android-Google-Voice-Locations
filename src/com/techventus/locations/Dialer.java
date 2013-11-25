@@ -1,20 +1,17 @@
 package com.techventus.locations;
 
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import gvjava.org.json.JSONException;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-
 import com.techventus.server.voice.Voice;
 import com.techventus.server.voice.datatypes.AllSettings;
 import com.techventus.server.voice.datatypes.Phone;
-
-
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
@@ -23,7 +20,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.ToneGenerator;
@@ -57,29 +53,25 @@ import android.widget.TextView.BufferType;
  * to use as the built in Dialer.  It ought to save many users a great deal of money.
  */
 public class Dialer extends Activity{
-	
-	
+
 	 /** The length of DTMF tones in milliseconds */
     private static final int TONE_LENGTH_MS = 150;
 
     /** The DTMF tone volume relative to other sounds in the stream */
     private static final int TONE_RELATIVE_VOLUME = 80;
 
-    /** Stream type used to play the DTMF tones off call, and mapped to the volume control keys */
-    private static final int DIAL_TONE_STREAM_TYPE = AudioManager.STREAM_MUSIC;
-	
-    
-    private ToneGenerator mToneGenerator;
-    private Object mToneGeneratorLock = new Object();
-	
 	/** The TAG. */
-	String TAG = "TECHVENTUS - Dialer";
+	private static final String TAG = "TECHVENTUS - Dialer";
 	
 	/** The button star. */
-	Button button00,button01,button02,button03,button04,button05,button06,button07,button08,button09,buttonDel,buttonPound,buttonStar ;
-	
+	private Button button00,button01,button02,button03,button04,button05,button06,button07,button08,button09,buttonDel,buttonPound,buttonStar ;
+
+    private ToneGenerator mToneGenerator;
+
+    private Object mToneGeneratorLock = new Object();
+
 	/** The dial number. */
-	TextView dialNumber;
+	private TextView mDialNumber;
 	
 	/** The phone select. */
 	Spinner phoneSelect;
@@ -101,6 +93,8 @@ public class Dialer extends Activity{
 	
 	/** The voice. */
 	Voice voice;
+
+    AdView mAdView;
 
 	 // determines if we want to playback local DTMF tones.
     private boolean mDTMFToneEnabled;
@@ -210,30 +204,22 @@ public class Dialer extends Activity{
 	 * @return true, if successful
 	 */
 	private boolean setPhones(){
-		boolean ret = false;
+		boolean ret;
 		if(voice!=null){
 			try {
 				AllSettings settings = voice.getSettings(false);
 				phones = settings.getPhones();
 				if(phones!=null && phones.length>0){
-//					setPhoneStrings(phones);
-					
+
 					phoneStrings = new String[phones.length];
 					int i=0;
 					for(Phone phone:phones){
 						phoneStrings[i]=phone.getName();
 						System.out.println(phoneStrings[i]);
 						i++;
-						
 					}
-					//Moving to Async Activity
-//					ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_dropdown_item,phoneStrings);
-//					
-//					phoneSelect.setAdapter(adapter);
 					ret = true;
 				}else{
-//					Toast.makeText(getApplicationContext(), "Phone - Check Connectivity and Make Sure Google Voice Account is in Good Standing", Toast.LENGTH_LONG).show();
-//					launchDefaultDialer();
 					ret = false;
 				}
 			} catch (JSONException e) {
@@ -243,7 +229,6 @@ public class Dialer extends Activity{
 				//LAUNCH DEFAULT DIALER
 				ret = false;
 				e.printStackTrace();
-//				launchDefaultDialer();
 			}catch(Exception h){
 				//UNKNOWN ERROR
 				ret = false;
@@ -313,7 +298,6 @@ public class Dialer extends Activity{
 					}
 		    		return true;
 		    	}else{
-		    		//Launch Other Activity
 		    		return false;
 		    	}
 			}
@@ -345,12 +329,14 @@ public class Dialer extends Activity{
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		
-//		Toast.makeText(getApplicationContext(), "On Create Dialer", Toast.LENGTH_LONG).show();
-		
-		
-		setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ); 
+		setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT );
 		this.setContentView(R.layout.dialpad);
-		
+        mAdView= (AdView)this.findViewById(R.id.ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("TEST_DEVICE_ID")
+                .build();
+        mAdView.loadAd(adRequest);
 		
 		ContactLookup = (ImageView)this.findViewById(R.id.Contacts);
 		
@@ -392,14 +378,8 @@ public class Dialer extends Activity{
 		
 		phoneSelect = (Spinner)this.findViewById(R.id.phoneSelectSpinner);
 		
-		 dialNumber = (TextView)this.findViewById(R.id.Number);
-		// dialNumber.setInputType(InputType.TYPE_CLASS_PHONE);
-		dialNumber.setText("",BufferType.EDITABLE);
-		
-		//adapter = ArrayAdapter.createFromResource(this, R.array.phonearray,android.R.layout.simple_spinner_item);
-		//adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-		//adapter.clear();
-		//phoneSelect.setAdapter(adapter);
+		mDialNumber = (TextView)this.findViewById(R.id.Number);
+		mDialNumber.setText("", BufferType.EDITABLE);
 		
 		phoneSelect.setOnItemSelectedListener(select);
 		
@@ -429,39 +409,9 @@ public class Dialer extends Activity{
 			
 		});
 		
-		
-		//TODO Method removed - hopefully handled bu onResume
-		/*
-        synchronized (mToneGeneratorLock) {
-            if (mToneGenerator == null) {
-                try {
-                    // we want the user to be able to control the volume of the dial tones
-                    // outside of a call, so we use the stream type that is also mapped to the
-                    // volume control keys for this activity
-                    mToneGenerator = new ToneGenerator(DIAL_TONE_STREAM_TYPE, TONE_RELATIVE_VOLUME);
-                    //SOME HAVE REPORTED PROBLEMS SO PLAYING WITH ALTERNATIVES
-                    setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-                   // setVolumeControlStream(DIAL_TONE_STREAM_TYPE);
-                } catch (RuntimeException e) {
-                    Log.w(TAG, "Exception caught while creating local tone generator: " + e);
-                    mToneGenerator = null;
-                }
-            }
-        }
-        */
-		
-		Log.e(TAG, "On Create -  Complete");
-		
-		
-	
 	}
 	
-	
-	@Override
-	public void onConfigurationChanged (Configuration newConfig){
-		Toast.makeText(getApplicationContext(), "Do Nothing But Display this toast", Toast.LENGTH_SHORT);
-	}
-	
+
     @Override
     public void onPause() {
     
@@ -518,16 +468,12 @@ public class Dialer extends Activity{
 	            return;
 	        }
 
-	        //AudioManager audioManager = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
-
-	        
 			 synchronized (mToneGeneratorLock) {
 		            if (mToneGenerator == null) {
 		                try {
 		                	
 		                    mToneGenerator = new ToneGenerator(AudioManager.STREAM_DTMF,
 		                            TONE_RELATIVE_VOLUME);
-		                   // AudioManager.St
 		                    setVolumeControlStream(AudioManager.STREAM_DTMF);
 		                } catch (RuntimeException e) {
 		                    Log.w(TAG, "Exception caught while creating local tone generator: " + e);
@@ -553,37 +499,21 @@ public class Dialer extends Activity{
 	        	vol=curvol;
                 mToneGenerator = new ToneGenerator(AudioManager.STREAM_DTMF,
                         TONE_RELATIVE_VOLUME);
-               // AudioManager.St
-             //   setVolumeControlStream(AudioManager.STREAM_DTMF);
-                
+
 	            if (mToneGenerator == null) {
 	                Log.w(TAG, "playTone: mToneGenerator == null, tone: " + tone);
 	                return;
 	            }  
 	        }
-	            
-	          //  setVolumeControlStream(AudioManager.USE_DEFAULT_STREAM_TYPE);
-	            
 	            // Start the new tone (will stop any playing tone)
 	            mToneGenerator.startTone(tone, TONE_LENGTH_MS);
-//	            mToneGenerator.
-	        
 	    	}catch(Exception d){
-	    		//TODO - Consider Removing Stacktrace.
 	    		d.printStackTrace();
 	    	}
 	    }
-
-	
-	
-//	
-//	private void setPhoneStrings(Phone[] phoneAr){
-//
-//	}
-//	
 	
 	/** The long click0. */
-OnLongClickListener longClick0 = new OnLongClickListener(){
+    OnLongClickListener longClick0 = new OnLongClickListener(){
 
 		@Override
 		public boolean onLongClick(View arg0) {
@@ -603,7 +533,6 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 				long arg3) {
 			System.out.println(arg0);
 			System.out.println("Phone index "+arg2);
-			//System.out.println()
 			if(phoneStrings!=null && phoneStrings.length>0){
 				selectedPhone = phoneStrings[arg2];// PHONES[arg2];
 				System.out.println(selectedPhone);
@@ -626,7 +555,7 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 
 		@Override
 		public boolean onLongClick(View v) {
-			dialNumber.setText("",BufferType.EDITABLE);
+			mDialNumber.setText("", BufferType.EDITABLE);
 			return true;
 		}
 		
@@ -670,11 +599,10 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
                         "Initiating Call. Please wait...", true,true);
 
 				try{
-					boolean dialBool =dial(selectedPhone, dialNumber.getText().toString());
+					boolean dialBool =dial(selectedPhone, mDialNumber.getText().toString());
 					if(!dialBool){
 						try{
 							dialog.dismiss();
-//							dialog = null;
 						}catch(Exception e){
 							e.printStackTrace();
 						}
@@ -723,16 +651,14 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 	 * Del text.
 	 */
 	void delText(){
-		CharSequence start = dialNumber.getText();
+		CharSequence start = mDialNumber.getText();
 		String ret = start.toString();
 		int len = ret.length();
 		if(len>0){
 			ret = ret.substring(0, len-1);
 		}
-		//ret.f
-		dialNumber.setText(ret,BufferType.EDITABLE);
-		//dialNumber
-		dialNumber.setInputType(InputType.TYPE_CLASS_PHONE);
+		mDialNumber.setText(ret,BufferType.EDITABLE);
+		mDialNumber.setInputType(InputType.TYPE_CLASS_PHONE);
 	}
 	
 	/**
@@ -741,11 +667,10 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 	 * @param newChar the new char
 	 */
 	void addText(char newChar){
-		CharSequence start = dialNumber.getText();
+		CharSequence start = mDialNumber.getText();
 		String ret = start.toString();
 		ret +=newChar;
-		dialNumber.setText(ret,BufferType.EDITABLE);
-		//dialNumber.setInputType(InputType.TYPE_CLASS_PHONE);
+		mDialNumber.setText(ret, BufferType.EDITABLE);
 	}
 
 
@@ -756,17 +681,13 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 	 * @return the contact info
 	 */
 	protected void getContactInfo(Intent intent)
-	{	 
-//	   String name;
-//	   String emailAddress;
+	{
 	   String phoneNumber = "";
 	   Cursor cursor =  managedQuery(intent.getData(), null, null, null, null);  
 	   while (cursor.moveToNext()) 
 	   {     
 		   
-		 //  Number = (EditText) findViewById(R.id.phonenbr_txt);
 	       String contactId = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts._ID));
-//	       name = cursor.getString(cursor.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME)); 
 
 	       String hasPhone = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER));
 
@@ -790,7 +711,6 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 	        
 	        }
 	        
-	//        final CharSequence[] items = {"Red", "Green", "Blue"};
 	        final String[] numberAr = numberList.toArray(new String[numberList.size()]);
 	        if(numberAr.length>1){
 		        AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -798,33 +718,22 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 		        builder.setItems(numberAr, new DialogInterface.OnClickListener() {
 		            public void onClick(DialogInterface dialog, int item) {
 		            	Log.e(TAG, "SETTING Number NOW "+numberAr[item]);
-		            	 dialNumber.setText(numberAr[item], BufferType.EDITABLE);
-		            	// dialNumber.
-		            	 Log.e(TAG, dialNumber.getText().toString());
+		            	 mDialNumber.setText(numberAr[item], BufferType.EDITABLE);
+		            	// mDialNumber.
+		            	 Log.e(TAG, mDialNumber.getText().toString());
 		              }
 		        });
 		         builder.create().show();
 		        
 		        Toast.makeText(this, "Alert Shown", Toast.LENGTH_SHORT).show();
 	        }else if (numberAr.length==1){
-	        	dialNumber.setText(numberAr[0]);
+	        	mDialNumber.setText(numberAr[0]);
 	        }
-	        
-//	        phoneNumber.t
-//	        phones.close();
 	       }
 
-	       // Find Email Addresses
-//	       Cursor emails = getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI,null,ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = " + contactId,null, null);
-//	       while (emails.moveToNext()) 
-//	       {
-//	        emailAddress = emails.getString(emails.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
-//	       }
-//	       emails.close();
-
-	  }  //while (cursor.moveToNext())        
+	  }
 	   cursor.close();
-	}//getContactInfo
+	}
 
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onActivityResult(int, int, android.content.Intent)
@@ -880,12 +789,8 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 	                }
 	            }
 	        }
-
-		
-
 	}
 
-	
 	
 	/**
 	 * Dial.
@@ -895,20 +800,15 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 	 * @return true, if successful
 	 */
 	public boolean dial(String phoneString, String number) {
-		
 
-
-		
 		if(voice!=null && phones!=null && phones.length>0 && !phoneString.equals("")){
 			try {
-				//Phone[] phoneAr = voice.getSettings(false).getPhones();
 				for(Phone phone:phones){
 				   if(phone.getName().equals(phoneString)){
 					   System.out.println("CALLING "+phone.getPhoneNumber()+" "+number);
 
 					   voice.call(phone.getPhoneNumber(), number, String.valueOf(phone.getType()));
 
-					  // break;
 					   return true;
 				   }
 				}
@@ -929,156 +829,3 @@ OnLongClickListener longClick0 = new OnLongClickListener(){
 	}
 
 }		
-		
-//		
-//		//lookup contact number
-//		startActivityForResult(new Intent(Intent.ACTION_PICK, People.CONTENT_URI), 0);
-//		   
-//		Intent intent = new Intent(Intent.ACTION_SEARCH, People.CONTENT_URI); 
-//		//Contacts.
-//		//Uri lookupUri = Uri.withAppendedPath(Contacts.CONTENT_URI, Contacts.Phones.NUMBER);
-//		//Cursor c = getContentResolver().query(lookupUri, new String[]{Contacts.DISPLAY_NAME}, ...);
-//		try {
-//		//    c.moveToFirst();
-//		//    String displayName = c.getString(0);
-//		} finally {
-//		//    c.close();
-//		}
-//		return selectedPhone;
-
-
-//
-//	private String[] getPhoneArray(String query, SQLiteDatabase sql){
-//		String[] ret = new String[0];
-//		try{
-//			Cursor c = sql.rawQuery(query, null);
-//			try{
-//				List<String> list = new ArrayList<String>();
-//				if(c!=null){
-//					while(c.moveToNext()){
-//						list.add(c.getString(0));
-//						Log.e(TAG,c.getString(0));
-//						
-//					}
-//					if(list.size()>0){
-//						ret = new String[list.size()+1];
-//						ret[0] = "";
-//						for(int i=0;i<list.size();i++){
-//							ret[i+1] = list.get(i);
-//						}
-//					}
-//					//c.close();
-//				}
-//			}catch(Exception o){
-//				o.printStackTrace();
-//			}finally{
-//				c.close();
-//			}
-//		
-//
-//			//c.getString(0);
-//			
-//		}catch(Exception o){
-//			Log.e(TAG,"ERROR Creating Cursor");
-//			o.printStackTrace();
-//		}
-//		return ret;
-//	}
-//	
-//	
-
-
-//	@Override
-//	public void onDestroy(){
-//		try{
-//			unbindService(mConnection);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		super.onDestroy();
-//	}		
-	
-
-//
-//	GVLServiceInterface mIRemoteService;
-//	private ServiceConnection mConnection = new ServiceConnection() {
-//	    // Called when the connection with the service is established
-//	    public void onServiceConnected(ComponentName className, IBinder service) {
-//	        // Following the example above for an AIDL interface,
-//	        // this gets an instance of the IRemoteInterface, which we can use to call on the service
-//	        mIRemoteService = GVLServiceInterface.Stub.asInterface(service);
-//
-//			getPhones();
-//	    }
-//
-//	    // Called when the connection with the service disconnects unexpectedly
-//	    public void onServiceDisconnected(ComponentName className) {
-//	        Log.e(TAG, "Service has unexpectedly disconnected");
-//	        mIRemoteService = null;
-//	    }
-//	};
-//	
-//	
-
-
-
-/*
-void getPhones(){
-	Toast.makeText(Dialer.this, "DEV - Starting...getPhones", Toast.LENGTH_LONG);
-	//phoneSelect.removeAllViewsInLayout();
-	//if(!adapter.isEmpty())
-	//	adapter.clear();
-	
-	
-	
-	try{
-	//SQLiteDatabase sql = openOrCreateDatabase("db",0,null);
-		try{
-			PHONES = LocationPhoneEnablePreference.getLocationPhoneEnablePreference(this).getPhoneArray();
-			
-//			PHONES = mIRemoteService.getPhones();
-			if(PHONES==null || PHONES.length<1){
-				Toast.makeText(Dialer.this, "No Phones Detected. ", Toast.LENGTH_LONG);
-				Log.e(TAG,"NULL PHONE ARRAY");
-				//this.finish();
-			}
-			System.out.println("*********THE PHONES@@@@@@@@@@@@@@");
-			for(String phone:PHONES){
-				System.out.println(phone);
-			}
-			//PHONES = getPhoneArray("SELECT * FROM PHONE;",sql);
-	
-			//sql.close();
-			
-	
-
-			
-			if(PHONES!=null)if(PHONES.length>0){
-				
-				for(int i=0;i<PHONES.length;i++){
-					System.out.println(PHONES[i]);
-					adapter.add((CharSequence)PHONES[i]);
-				}
-			}
-			
-		}catch(Exception e){
-
-			Log.e(TAG,"Error in Dialer");
-			e.printStackTrace();
-			//this.finish();
-			
-		}		
-	}catch(Exception e){
-		e.printStackTrace();
-	}
-	
-}*/
-
-
-//@Override
-//public void onActivityResult (int requestCode, int resultCode, Intent data){
-//	if(requestCode==0 || resultCode==0){
-//	//	String res = data.getStringExtra(name) data.getExtras();
-//	}
-//}
-//
