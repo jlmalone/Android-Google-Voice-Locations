@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scrollbars="none">
+        xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="none">
 
     <com.google.android.gms.ads.AdView
             xmlns:ads="http://schemas.android.com/apk/res-auto"
@@ -31,7 +31,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:text="ToggleButton" android:textOn="Enabled" android:textOff="Disabled"/>
+                android:text="ToggleButton"
+                android:textOn="Enabled"
+                android:textOff="Disabled"/>
 
         <TextView
                 android:id="@+id/serviceEnabledLabel"
@@ -51,7 +53,6 @@
                   android:layout_height="2sp"
                   android:layout_below="@+id/serviceEnableToggle"
                   android:layout_marginTop="5dp"/>
-
     </RelativeLayout>
 
     <RelativeLayout
