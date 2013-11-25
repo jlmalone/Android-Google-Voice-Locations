@@ -74,9 +74,6 @@
         <activity android:name=".Dialer"
                   android:label="@string/dialer"
                   android:theme="@android:style/Theme.Holo.Light"/>
-        <activity android:name=".PowerMode"
-                  android:label="@string/powermode"
-                  android:theme="@android:style/Theme.Holo.Light"/>
 
         <service android:enabled="true" android:name=".BackgroundService"/>
         <service android:enabled="true" android:name=".BackgroundService2"/>
