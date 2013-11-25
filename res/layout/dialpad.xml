@@ -7,17 +7,16 @@
                 android:configChanges="keyboard|keyboardHidden|orientation"
                 android:scrollbars="none">
 
-    <com.google.ads.AdView android:id="@+id/ad"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:layout_alignParentBottom="true"
-                           android:layout_centerInParent="true"
+    <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            ads:adUnitId="a14b77659e5ca68"
+            ads:adSize="BANNER"/>
 
-
-                           ads:adUnitId="a14b77659e5ca68"
-                           ads:adSize="BANNER"
-                           ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
-                           ads:loadAdOnCreate="true"/>
     <Button
             android:id="@+id/CALLButton"
             android:text="CALL"
@@ -31,37 +30,44 @@
             android:id="@+id/NumberLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="top"
+            android:layout_marginTop="10dp"
             android:layout_alignParentTop="true">
 
         <ImageView
                 android:id="@+id/Contacts"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_group"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_contact_picture"
+                android:background="#000000"
                 android:layout_alignParentLeft="true"
-                android:layout_marginTop="8sp"
+
+                android:layout_marginLeft="5dp"
                 android:minHeight="50dp"
                 android:minWidth="50dp"
                 android:scaleType="fitXY"/>
         <Button
                 android:id="@+id/ButtonDel"
                 android:layout_width="wrap_content"
-                android:layout_height="57sp"
-                android:layout_marginTop="8sp"
+                android:layout_height="57dp"
+                android:layout_alignParentTop="true"
                 android:text=" &lt; "
                 android:textStyle="bold"
                 android:layout_alignParentRight="true"/>
         <TextView
                 android:id="@+id/Number"
                 android:layout_height="50dp"
-                android:layout_margin="10dp"
-                android:background="#AAccaa"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#000000"
                 android:gravity="center"
                 android:hint="Dial:"
-                android:textColor="#000000"
+                android:textColor="#FFFFFF"
                 android:textSize="25dp"
                 android:layout_toLeftOf="@+id/ButtonDel"
                 android:layout_toRightOf="@+id/Contacts"
+                android:layout_alignParentTop="true"
+
                 android:layout_width="match_parent"
                 android:bufferType="editable"
                 android:maxLines="1"/>
@@ -201,18 +207,16 @@
 
     </TableLayout>
 
-
-
-
     <ImageButton android:id="@+id/Contacts"
                  android:layout_centerHorizontal="true"
                  android:layout_alignParentLeft="true"
                  android:layout_alignParentTop="true"
                  android:layout_height="57sp"
                  android:layout_marginTop="8sp"
-                 android:background="#00000000"
-                 android:src="@drawable/ic_action_group"
+                 android:background="#000000"
+                 android:src="@drawable/ic_contact_picture"
                  android:layout_width="wrap_content"
+
                  android:visibility="gone"></ImageButton>
 
 </RelativeLayout>
