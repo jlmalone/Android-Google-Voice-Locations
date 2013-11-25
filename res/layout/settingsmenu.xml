@@ -54,7 +54,6 @@
 
     </RelativeLayout>
 
-
     <RelativeLayout
             android:id="@+id/ServiceStartupLayout"
             android:layout_width="match_parent"
@@ -93,7 +92,7 @@
     </RelativeLayout>
 
     <ListView
-            android:id="@+android:id/list"
+            android:id="@android:id/list"
             android:layout_below="@+id/ServiceStartupLayout"
             android:layout_above="@+id/ad"
             android:layout_width="match_parent"
