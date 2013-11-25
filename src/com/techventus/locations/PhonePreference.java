@@ -1,5 +1,7 @@
 package com.techventus.locations;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import gvjava.org.json.JSONException;
 
 import java.io.IOException;
@@ -25,20 +27,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-//import android.preference.Preference;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-//import android.widget.LinearLayout;
 import android.widget.RadioButton;
-//import android.widget.RadioGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
-//import android.widget.ToggleButton;
 
 
 /**
@@ -50,10 +48,7 @@ public class PhonePreference extends Activity{
 	
 	/** The TAG. */
 	String TAG = "TECHVENTUS - PhonePreference";
-	
-//	final Map<String,Integer> prefMap = new HashMap<String,Integer>();
-//	final Map<String,PrefLineView> prefLineMap = new HashMap<String,PrefLineView>();
-	
+
 	/** The location name. */
 	String locationName ;
 	
@@ -80,18 +75,7 @@ public class PhonePreference extends Activity{
 	
 	/** The table. */
 	TableLayout table;
-	
-//	
-//	TextView place = new TextView(this);
-//    
-//    TextView minispace = new TextView(this);
-//	TextView PlaceHeader = new TextView(this);
-//	TextView Enabled = new TextView(this);
-//	TextView Disabled = new TextView(this);
-//
-//	TextView Neutral = new TextView(this);
-//	LinearLayout upper = new LinearLayout(this);
-//	LinearLayout outerLayout;
+
 	/** The preferences. */
 	SharedPreferences preferences;
 	
@@ -114,7 +98,9 @@ public class PhonePreference extends Activity{
 	        mIRemoteService = null;
 	    }
 	};
-	
+
+
+    AdView mAdView;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -123,6 +109,14 @@ public class PhonePreference extends Activity{
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		setContentView(R.layout.phonepreferences);
+
+        mAdView= (AdView)this.findViewById(R.id.ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("TEST_DEVICE_ID")
+                .build();
+        mAdView.loadAd(adRequest);
+
 		preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
 		
 		try{
@@ -193,31 +187,7 @@ public class PhonePreference extends Activity{
 		}
     };
 	
-	
-    /**
-     * Minispacer.
-     *
-     * @return the text view
-     */
-    TextView minispacer(){
-    	TextView ret = new TextView(this);
-    	ret.setText("");
-    	ret.setWidth(5);
-    	return ret;
-    }
-	
-    /**
-     * Spacer.
-     *
-     * @return the text view
-     */
-    TextView spacer(){
-    	TextView ret = new TextView(this);
-    	ret.setText("");
-    	ret.setWidth(20);
-    	return ret;
-    }
-    
+
     
 
 	/* (non-Javadoc)
@@ -471,16 +441,12 @@ public class PhonePreference extends Activity{
 	 * @return true, if successful
 	 */
 	private boolean setPhones(boolean update){
-		boolean ret = false;
+		boolean ret;
 		if(voice!=null){
 			try {
 				AllSettings settings = voice.getSettings(update);
 				phones = settings.getPhones();
 				if(phones!=null && phones.length>0){
-//					setPhoneStrings(phones);
-					
-					//REMOVED phoneStrings Unimportant in this Activity
-
 					ret = true;
 				}else{
 					ret = false;
@@ -489,10 +455,8 @@ public class PhonePreference extends Activity{
 				ret = false;
 				e.printStackTrace();
 			} catch (IOException e) {
-				//LAUNCH DEFAULT DIALER
 				ret = false;
 				e.printStackTrace();
-//				launchDefaultDialer();
 			} catch(Exception e){
 				ret = false;
 				e.printStackTrace();
@@ -568,7 +532,6 @@ public class PhonePreference extends Activity{
 					}
 		    		return true;
 		    	}else{
-		    		//Launch Other Activity
 		    		return false;
 		    	}
 			}
@@ -611,8 +574,6 @@ public class PhonePreference extends Activity{
 			protected void onPostExecute(Boolean result){
 				if(!result){
 					Toast.makeText(getApplicationContext(), "No Voice Connection - CHECK NETWORK CONNECTIVITY - Exiting...", Toast.LENGTH_LONG);
-//		    		Intent intent = new Intent(QuickRingPreferences.this,LoginCredentials.class);
-//		    		startActivity(intent);
 		    		PhonePreference.this.finish();
 				}else{
 					setPhonesVariablesTask(false).execute();
@@ -633,9 +594,7 @@ public class PhonePreference extends Activity{
 	 */
 	String[] prepareInsertArray(){
 		String[] ret = new String[phoneRows.size()];
-		//"CREATE TABLE IF NOT EXISTS LOCATIONPHONEENABLE  (locationName VARCHAR NOT NULL, phoneName VARCHAR NOT NULL, phoneEnable INTEGER NOT NULL, locationLatitudeE6 INTEGER NOT NULL, locationLongitudeE6 INTEGER NOT NULL, radius INTEGER NOT NULL, PRIMARY KEY (locationName,phoneName));";
 		String base = "INSERT OR REPLACE INTO LOCATIONPHONEENABLE (locationName , phoneName , phoneEnable , locationLatitudeE6 , locationLongitudeE6 , radius ) VALUES " ;
-		//boolean isFirst = true;
 		int i=0;
 		for(TableRowPref row:phoneRows){
 			String stat = base;
@@ -653,287 +612,3 @@ public class PhonePreference extends Activity{
 	}
 
 }
-
-
-//
-//private class PreferenceTableRow extends TableRow{
-//
-//	public PreferenceTableRow(Context context) {
-//		super(context);
-//		
-//		TableRow row =  (TableRow)LayoutInflater.from(getBaseContext()).inflate(R.layout.preferenceRow,
-//				null);
-//	}
-//	
-//}
-//
-//
-
-
-
-
-//
-//
-//RadioButton groupButton = new RadioButton(this); 
-//groupButton.setId(index++); 
-////This is a List<RadioButton> I created to hold all of the buttons since I don't have a RadioGroup 
-//groupRadioButtonList.add(groupButton); 
-//groupButton.setOnClickListener(new 
-//RadioButton.OnClickListener() 
-//{ 
-//    public void onClick(View v) 
-//    { 
-//            //Turn on the button now...once clicked, always clicked with RadioButtons 
-//            modifyOkButton.setClickable(true); 
-//            modifyOkButton.setEnabled(true); 
-//            int id = v.getId(); 
-//            for(RadioButton button : groupRadioButtonList) 
-//            { 
-//                    if(id == button.getId()) 
-//                    { 
-//                            button.setChecked(true); 
-//                    } 
-//                    else 
-//                    { 
-//                            //Turn all others off 
-//                            button.setChecked(false); 
-//                    } 
-//            } 
-//    } 
-//}); 
-//
-
-
-
-
-
-
-
-
-
-
-//
-//
-//outerLayout = (LinearLayout)findViewById(R.id.deletelocation);
-//
-//
-//
-//outerLayout.addView(spacer());
-//
-//place.setText(locationName);
-////place.setTextSize(30);
-//place.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 30);
-//place.setGravity(Gravity.CENTER);
-//
-//outerLayout.addView(place);
-//
-//
-//
-//
-//
-//
-//minispace.setText("  ");
-//minispace.setTextSize(6);
-//outerLayout.addView(minispace);
-//
-//upper.setOrientation(0);
-//
-//PlaceHeader.setText("Phone");
-//PlaceHeader.setTextSize(14);
-//upper.addView(PlaceHeader);
-//PlaceHeader.setWidth(90);
-////upper.addView(minispacer());
-//
-//Enabled.setText("Enable");
-//Enabled.setGravity(Gravity.LEFT);
-//Enabled.setTextSize(14);
-//Enabled.setWidth(64);
-//upper.addView(Enabled);
-//upper.addView(minispacer());
-//upper.addView(minispacer());
-//upper.addView(minispacer());
-//
-//upper.addView(minispacer());
-//
-//Disabled.setGravity(Gravity.LEFT);
-//
-//Disabled.setText("Disable");
-//Disabled.setTextSize(14);
-//Disabled.setWidth(68);
-//upper.addView(Disabled);
-////upper.addView(spacer());
-//
-//upper.addView(minispacer());
-//
-//cancelButton = new Button(this);
-//saveButton = new Button(this);
-//
-//LinearLayout lower = new LinearLayout(this);
-//Neutral.setGravity(Gravity.CENTER_HORIZONTAL);
-//Neutral.setText("No Action");
-//Neutral.setTextSize(14);
-//Neutral.setWidth(85);
-//upper.addView(Neutral);
-//
-//
-//
-//
-//outerLayout.addView(upper);
-//outerLayout.addView(spacer());
-//
-//
-////if(receivedBundle.keySet().size()<2){
-////	
-////}else{
-//
-//
-////   }
-//
-//saveButton.setText("SAVE");
-//saveButton.setWidth(150);
-//
-//cancelButton.setText("CANCEL");
-//cancelButton.setWidth(150);
-//
-//cancelButton.setOnClickListener(cancelClick);
-//saveButton.setOnClickListener(saveClick);
-//
-//
-//lower.setOrientation(0);
-//lower.addView(spacer());
-//lower.addView(spacer());
-//lower.addView(saveButton);
-//lower.addView(spacer());
-//lower.addView(spacer());
-//lower.addView(cancelButton);
-//outerLayout.addView(spacer());
-//outerLayout.addView(lower);
-
-
-
-
-
-
-//Voice Object Settings.  
-//Otherwise consider connecting to the Background Service with an update Matrix of values.
-//OnClickListener saveClick = new OnClickListener(){
-//
-//	@Override
-//	public void onClick(View v) {
-//		SQLiteDatabase sql =  openOrCreateDatabase("db",0,null);
-//		
-//		for(String s:prefLineMap.keySet()){
-//		
-//			PrefLineView plv = prefLineMap.get(s);
-//			
-//			try{
-//				// CHANGE TO AN UPSERT COMMAND
-//				sql.execSQL("UPDATE LOCATIONPHONEENABLE SET phoneEnable = "+plv.getPreference()+" WHERE phoneName = '"+plv.phoneName+"' AND locationName = '"+locationName+"';");
-//			
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//		}
-//		sql.close();
-//		PhonePreference.this.finish();
-//	}
-//};
-
-
-
-
-
-
-//private class PrefLineView extends LinearLayout{
-//
-//	protected String phoneName;
-//	
-//	private RadioGroup rg;
-//	private  RadioButton enabledButton;
-//	private RadioButton disabledButton;
-//	private RadioButton neutralButton;
-//	
-//	public PrefLineView(Context context, String phoneName, int pref) {
-//		super(context);
-//		
-//		this.phoneName = phoneName;
-//		
-//    	this.setOrientation(0);
-//    	
-//    	
-//        TextView phone = new TextView(context);
-//        phone.setText(this.phoneName);
-//        phone.setPadding(0, 12, 0, 0);
-//
-//        phone.setWidth(95);
-//        this.addView(phone);
-//
-//        //inner.addView(spacer());
-//        
-//        
-//        
-//        rg = new RadioGroup(context);
-//        rg.setOrientation(0);
-//       enabledButton = new RadioButton(context);
-//       enabledButton.setWidth(55);
-//        rg.addView(enabledButton);
-//        rg.addView(spacer());
-//        disabledButton = new RadioButton(context);
-//        rg.addView(disabledButton);
-//        rg.addView(spacer());
-//        disabledButton.setWidth(55);
-//        neutralButton = new RadioButton(context);
-//        rg.addView(neutralButton);
-//        neutralButton.setWidth(55);
-//        
-//        
-//        if(pref==1){
-//        	enabledButton.setChecked(true);
-//        }else if(pref==0){
-//        	neutralButton.setChecked(true);
-//        }else if(pref==-1){
-//        	disabledButton.setChecked(true);
-//        }
-//        
-//        
-//        
-//      //  rg.setGravity(Gravity.);
-//        
-//        this.addView(rg);
-//	}
-//	
-//	public int getPreference(){
-//		if(enabledButton.isChecked()){
-//			return 1;
-//		}else if(disabledButton.isChecked()){
-//			return -1;
-//		}else if(neutralButton.isChecked()){
-//			return 0;
-//		}else{
-//			return -2;
-//		}
-//	}
-//	
-//	
-//	
-//}
-
-
- //setPhonesVariablesTask
-
-//	for(Phone phone:phones){//String phoneName: phonesreceivedBundle.keySet()){
-//		String phoneName = phone.getName();
-//		if(phoneName.contains("locationName")){
-			
-//		}else{
-//			int pref =  receivedBundle.getInt(phoneName);
-//			
-//			prefMap.put(phoneName, pref);
-//			
-//			PrefLineView prefLineView =new PrefLineView(this,phoneName,pref);
-//			
-//			prefLineMap.put(phoneName, prefLineView);
-//			
-//          outerLayout.addView(prefLineView);
-//		}
-//	}

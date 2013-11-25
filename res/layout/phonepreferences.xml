@@ -5,6 +5,37 @@
                 android:layout_height="match_parent"
                 android:title="Ring Status"
                 android:label="Ring Status">
+
+    <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            ads:adUnitId="a14b77659e5ca68"
+            ads:adSize="BANNER"/>
+
+
+    <LinearLayout
+            android:id="@+id/actionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_above="@id/ad">
+
+        <Button
+                android:id="@+id/save"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:text="Save"/>
+
+        <Button
+                android:id="@+id/cancelButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Cancel" android:layout_marginLeft="40dp"/>
+
+    </LinearLayout>
+
     <TextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -67,33 +98,5 @@
 
     </ScrollView>
 
-    <LinearLayout
-            android:id="@+id/actionLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:layout_above="@+id/ad">
-
-        <Button
-                android:id="@+id/save"
-                android:layout_width="150dp"
-                android:layout_height="wrap_content"
-                android:text="Save"/>
-
-        <Button
-                android:id="@+id/cancelButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Cancel" android:layout_marginLeft="40dp"/>
-
-    </LinearLayout>
-
-    <com.google.ads.AdView android:id="@+id/ad"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:layout_alignParentBottom="true"
-                           android:layout_centerHorizontal="true"
-                           ads:adUnitId="a14b77659e5ca68"
-                           ads:adSize="BANNER"
-                           ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
-                           ads:loadAdOnCreate="true"/>
 
 </RelativeLayout>
