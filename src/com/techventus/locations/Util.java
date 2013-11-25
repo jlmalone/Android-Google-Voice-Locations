@@ -13,14 +13,13 @@ import com.google.android.gms.location.Geofence;
  * Time: 19:06
  * To change this template use File | Settings | File Templates.
  */
-public class Util {
-
-
-
+public class Util
+{
     /**
      * A single Geofence object, defined by its center and radius.
      */
-    public class SimpleGeofence {
+    public class SimpleGeofence
+    {
         // Instance variables
         private final String mId;
         private final double mLatitude;
@@ -37,7 +36,8 @@ public class Util {
          * @param expiration Geofence expiration duration
          * @param transition Type of Geofence transition.
          */
-        public SimpleGeofence(
+        public SimpleGeofence
+        (
                 String geofenceId,
                 double latitude,
                 double longitude,
