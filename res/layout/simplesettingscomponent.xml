@@ -5,11 +5,9 @@
               android:orientation="vertical">
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Title"
-              android:id="@+id/title" android:layout_marginBottom="3px" android:layout_marginLeft="8px"
-              android:textSize="30px" android:layout_marginTop="10px"/>
+              android:id="@+id/title" android:layout_marginBottom="3dp" android:layout_marginLeft="8dp"
+              android:textSize="30dp" android:layout_marginTop="10dp"/>
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Subtitle"
-              android:id="@+id/subtitle" android:layout_marginLeft="8px" android:layout_marginBottom="10px"
-              android:layout_marginTop="3px" android:textSize="14px"/>
-
-
+              android:id="@+id/subtitle" android:layout_marginLeft="8dp" android:layout_marginBottom="10dp"
+              android:layout_marginTop="3dp" android:textSize="14dp"/>
 </LinearLayout>
