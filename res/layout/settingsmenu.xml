@@ -4,14 +4,16 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="none">
-    <com.google.ads.AdView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+
+    <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
             android:id="@+id/ad"
             android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             ads:adUnitId="a14b77659e5ca68"
-            ads:adSize="BANNER"
-            ads:loadAdOnCreate="true"/>
+            ads:adSize="BANNER"/>
 
     <RelativeLayout
             android:id="@+id/ServiceEnabledLayout"
@@ -19,9 +21,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:scrollbars="none"
-            android:layout_marginBottom="5px"
-            android:layout_marginTop="8px"
-            android:layout_marginLeft="5px">
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="5dp">
 
         <ToggleButton
                 android:id="@+id/serviceEnableToggle"
@@ -42,13 +44,13 @@
                 android:hapticFeedbackEnabled="false"/>
         <TextView
                 android:layout_width="match_parent"
-                  android:textSize="1px"
+                  android:textSize="1dp"
                   android:text=""
                   android:id="@+id/spacemarker"
                   android:background="#444444"
                   android:layout_height="2sp"
                   android:layout_below="@+id/serviceEnableToggle"
-                  android:layout_marginTop="5px"/>
+                  android:layout_marginTop="5dp"/>
 
     </RelativeLayout>
 
@@ -59,9 +61,9 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/ServiceEnabledLayout"
             android:scrollbars="none"
-            android:layout_marginBottom="5px"
-            android:layout_marginTop="8px"
-            android:layout_marginLeft="5px">
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="5dp">
 
         <ToggleButton
                 android:id="@+id/serviceStartupToggle"
@@ -81,12 +83,12 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:hapticFeedbackEnabled="false"/>
         <TextView android:layout_width="match_parent"
-                  android:textSize="1px" android:text=""
+                  android:textSize="1dp" android:text=""
                   android:id="@+id/spacemarker"
                   android:background="#444444"
                   android:layout_height="2sp"
                   android:layout_below="@+id/serviceStartupToggle"
-                  android:layout_marginTop="5px"/>
+                  android:layout_marginTop="5dp"/>
 
     </RelativeLayout>
 
