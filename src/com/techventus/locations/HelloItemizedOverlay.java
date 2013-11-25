@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.drawable.Drawable;
-import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -64,12 +63,9 @@ public class HelloItemizedOverlay extends ItemizedOverlay {
 	
 	@Override
 	public boolean onTap(int index){
-	//	Toast.makeText(origin,mOverlays.get(index).getSnippet(),Toast.LENGTH_SHORT).show();
 		return(true);
 		
 	}
-	
-
 	
 	@Override
 	public boolean onTap(GeoPoint p,MapView mapView){
@@ -85,9 +81,6 @@ public class HelloItemizedOverlay extends ItemizedOverlay {
 		geopoint = p;
 		origin.point = geopoint;
 		populate();
-//		Toast.makeText(origin,""+p.getLatitudeE6()+","+p.getLongitudeE6(),Toast.LENGTH_SHORT);
-		
-		//this.addOverlay(new OverlayItem(p, "SnipTitle", "Snip"+hio.size()+1));
 		return true;
 	}
 	
@@ -106,7 +99,4 @@ public class HelloItemizedOverlay extends ItemizedOverlay {
 	    canvas.drawCircle(pt.x, pt.y, projectedRadius, paint1);
 
 	}
-
-	
-	
 }
