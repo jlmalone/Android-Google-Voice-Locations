@@ -1,32 +1,22 @@
 package com.techventus.locations;
 
-//import java.util.Set;
-
-
 import java.util.List;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-//import android.content.ComponentName;
-//import android.content.Context;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
-//import android.content.ServiceConnection;
-import android.content.SharedPreferences.Editor;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
-//import android.os.IBinder;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -35,6 +25,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 
 //TODO REVIEW THIS ACTIVITY. IT IS ANTIQUATED AND NEEDS UPDATING
 /**
@@ -80,11 +72,7 @@ public class LocationDecisionMenu extends Activity{
 	
 	/** The view edit phone button. */
 	Button viewEditPhoneButton;
-	
-	/** The enable disable button. */
-	Button enableDisableButton;
-	
-	
+
 	/** The location name. */
 	String locationName;
 	
@@ -96,13 +84,10 @@ public class LocationDecisionMenu extends Activity{
 	
 	/** The awareness. */
 	boolean awareness;
-	
-	/** The phone prefs status. */
-	int phonePrefsStatus;
-	
+
 	 /** The preferences. */
 	SharedPreferences preferences ;
-	
+    AdView mAdView;
 	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -110,13 +95,19 @@ public class LocationDecisionMenu extends Activity{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
-		 preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
-//  	Intent hello_service = new Intent(this, LocationService.class);
 
+
+		 preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
 
         setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ); 
         setContentView(R.layout.locationdecisionmenu);
+
+        mAdView= (AdView)this.findViewById(R.id.ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("TEST_DEVICE_ID")
+                .build();
+        mAdView.loadAd(adRequest);
         
         locationNameTextView = (TextView)findViewById(R.id.locationdecisionlocation);
         gpscoordsTextView = (TextView)findViewById(R.id.locationdecisiongpscoords);
@@ -125,11 +116,7 @@ public class LocationDecisionMenu extends Activity{
         phonePrefsStatusTextView = (TextView)findViewById(R.id.phoneprefsstatus);
         
         Bundle bundle = getIntent().getExtras();
-//        Set<String> keys =bundle.keySet();
-//        Log.e("TECHVENTUS",String.valueOf(keys.size()));
         locationName = bundle.getString(Settings.LOCATION_NAME_EXTRA);
-        
-        
         
         if(locationName.equals("Elsewhere")){
         	viewEditLocationButton.setVisibility(View.GONE);
@@ -147,20 +134,6 @@ public class LocationDecisionMenu extends Activity{
         	gpscoordsTextView.setText("LAT: -XXX.XXXXX LON: -XXX.XXXXX");
         
         awarenessTextView .setText(String.valueOf(awareness));
-        
-        /*
-        try{
-        	
-        	int lat = bundle.getInt("locationLatitude");
-        	int lon = bundle.getInt("locationLongitude");
-        	System.out.println("lat"+lat);
-        	System.out.println("lon"+lon);
-        	gpscoords = new int[] {lat,lon};
-
-        }catch(Exception e){
-        	e.printStackTrace();
-        }
-        */
         if(locationName!=null)
         	locationNameTextView.setText(locationName);
         
@@ -201,8 +174,6 @@ public class LocationDecisionMenu extends Activity{
 	    	}
 		    case R.id.radius:{
 		    	Toast.makeText(getApplicationContext(), "Editing of Radius Coming In the Next Version.", Toast.LENGTH_LONG).show();
-//				Intent i = new Intent(LocationDecisionMenu.this, LocationsMenu.class);
-//				startActivity(i);
 		        return true;
 		    }
 		    case R.id.delete:{
@@ -279,11 +250,6 @@ public class LocationDecisionMenu extends Activity{
             
         }
 		
-	  //  Intent hello_service = new Intent(this, LocationService.class);
-//	    Intent hello_service = new Intent(this, BackgroundService.class);
-//		   
-//		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
-//		
 		Log.e("TECHVENTUS", "RESUMING Location Decision Menu");
 		
 		if(!phonePrefsStatusTextView.getText().equals("SET")){
@@ -303,12 +269,10 @@ public class LocationDecisionMenu extends Activity{
 			b.putString(Settings.LOCATION_NAME_EXTRA/*"locationName"*/, locationName);
 			b.putBoolean("isNew", false);
 
-//			SQLiteDatabase sql= openOrCreateDatabase("db",0,null);
 			List<LPEPref> prefList = LocationPhoneEnablePreference.loadListFromDB(LocationDecisionMenu.this, " locationName = '"+locationName+"' ");
 			if(prefList!=null && prefList.size()>0){
 				b.putInt(Settings.LATITUDE_EXTRA, prefList.get(0).latitude);
 				b.putInt(Settings.LONGITUDE_EXTRA, prefList.get(0).longitude);
-//				b.putInt("radius", prefList.get(0).radius);
 				b.putInt(Settings.RADIUS_EXTRA, prefList.get(0).radius);
 				if(prefList.get(0).latitude!=-1 && prefList.get(0).longitude!=1){
 					i.putExtras(b);
@@ -321,30 +285,6 @@ public class LocationDecisionMenu extends Activity{
 				Toast.makeText(getApplicationContext(), "ERROR: LOCATION NOT IN DATABASE!!!", Toast.LENGTH_LONG).show();
 				LocationDecisionMenu.this.finish();
 			}
-			/*
-			Cursor c =sql.rawQuery("SELECT locationLatitude,locationLongitude,locationRadius, enabled FROM LOCATIONS where locationName = '"+locationName+"';", null);
-			
-			   if(c!=null){
-				   c.moveToNext();
-				   if(c.isFirst()){
-					   //do{
-						   b.putInt("latitude", c.getInt(0));
-						   b.putInt("longitude", c.getInt(1));
-						   b.putInt("radius", c.getInt(2));
-						 // b.putString(c.getString(0), c.getString(1)) ;
-						   		
-			//			   Log.e("TECHVENTUS","Phone added to bundle "+c.getString(0));
-						   		
-						   //if( c.getString(0).equals("updateLoginCredentials")){}
-						   
-					  // }while(c.moveToNext());
-				   }else{
-					   Log.e("TECHVENTUS","NOT FIRST");
-				   }
-			   }
-			c.close();
-			sql.close();
-			*/
 
 		}
 		
@@ -369,19 +309,13 @@ public class LocationDecisionMenu extends Activity{
 			   if(c!=null){
 				   c.moveToNext();
 				   if(c.isFirst()){
-					  // do{
 						   gpscoords[0] = c.getInt(0);
 						   gpscoords[1] =  c.getInt(1);
 						   radius= c.getInt(2);
 						   awareness= Boolean.valueOf(c.getString(3));
-						 // b.putString(c.getString(0), c.getString(1)) ;
-						   		
-			//			   Log.e("TECHVENTUS","Phone added to bundle "+c.getString(0));
-						   		
-						   //if( c.getString(0).equals("updateLoginCredentials")){}
-
-					   //}while(c.moveToNext());
-				   }else{
+				   }
+                   else
+                   {
 					   Log.e("TECHVENTUS","NOT FIRST");
 				   }
 			   }
@@ -389,9 +323,13 @@ public class LocationDecisionMenu extends Activity{
 			
 			
 		}	
-		}catch(Exception e){
+		}
+        catch(Exception e)
+        {
 			e.printStackTrace();
-		}finally{
+		}
+        finally
+        {
 			if(sql!=null)
 				sql.close();
 		}
@@ -449,28 +387,11 @@ public class LocationDecisionMenu extends Activity{
 			Intent i = new Intent(LocationDecisionMenu.this,PhonePreference.class);
 			Bundle b = new Bundle();
 			b.putString(Settings.LOCATION_NAME_EXTRA, locationName);
-			
-//			SQLiteDatabase sql= openOrCreateDatabase("db",0,null);
-//			
-//			Cursor c =sql.rawQuery("SELECT phoneName, phoneEnable FROM LOCATIONPHONEENABLE where locationName = '"+locationName+"';", null);
-//			
-//			   if(c!=null){
-//				   while(c.moveToNext()){
-//						  b.putInt(c.getString(0), c.getInt(1)) ;
-//					   		
-//						   Log.e("TECHVENTUS","Phone added to bundle "+c.getString(0));
-//				   }
-//				   c.close();
-//			   }
-//			
-//			sql.close();
 			i.putExtras(b);
 			startActivity(i);
-
 		}
 		
 	};
-	
 	
 	@Override
 	public void onPause(){
@@ -481,16 +402,5 @@ public class LocationDecisionMenu extends Activity{
 		}
 		super.onPause();
 	}
-	
-//	@Override
-//	public void onDestroy(){
-//		try{
-//			unbindService(mConnection);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		super.onDestroy();
-//	}		
-//	
 
 }
