@@ -4,79 +4,88 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scrollbars="none">
+
+    <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            ads:adUnitId="a14b77659e5ca68"
+            ads:adSize="BANNER"/>
+
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:width="250dp"
+            android:text="View/Edit Phone Prefs"
+            android:id="@+id/locationdecisionphonebutton"
+            android:layout_marginTop="15dp"
+            android:layout_centerHorizontal="true"
+            android:layout_above="@id/ad"
+            android:layout_marginBottom="40dp"/>
+    <Button android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:width="250dp"
+            android:layout_gravity="center_horizontal"
+            android:text="View/Edit Location"
+            android:id="@+id/locationdecisionlocationbutton"
+            android:layout_above="@id/locationdecisionphonebutton"
+            android:layout_centerHorizontal="true"/>
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:scrollbars="none">
+                android:scrollbars="none"
+            android:layout_above="@id/locationdecisionlocationbutton">
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                       android:orientation="vertical"
                       android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                >
+                      android:layout_height="match_parent">
 
             <TextView android:id="@+id/locationdecisionlocation" android:layout_height="wrap_content"
                       android:text="Location" android:gravity="center_horizontal" android:layout_width="match_parent"
-                      android:paddingTop="20dp" android:paddingBottom="10dp" android:textSize="40sp">
-            </TextView>
+                      android:paddingTop="20dp" android:paddingBottom="10dp" android:textSize="40sp"/>
 
             <TextView android:id="@+id/gpscoordstitle" android:layout_height="wrap_content"
                       android:text="GPS Coordinates:" android:gravity="center_horizontal"
                       android:layout_width="match_parent" android:textSize="30sp"
-                      android:layout_marginTop="20dp"></TextView>
-
+                      android:layout_marginTop="20dp"/>
 
             <TextView android:layout_height="wrap_content" android:id="@+id/locationdecisiongpscoords"
                       android:layout_width="match_parent" android:gravity="center_horizontal" android:paddingTop="10dp"
                       android:text="LAT: -XXX.XXXXX LON: -XXX.XXXXX" android:textColor="#880044"
-                      android:textStyle="bold" android:textSize="18sp"></TextView>
+                      android:textStyle="bold" android:textSize="18sp"/>
 
 
             <TextView android:id="@+id/phonepreferencestitle" android:layout_height="wrap_content"
                       android:text="Phone Preferences:" android:gravity="center_horizontal"
-                      android:layout_width="match_parent" android:paddingTop="10dp" android:textSize="30sp"></TextView>
+                      android:layout_width="match_parent" android:paddingTop="10dp" android:textSize="30sp"/>
 
 
             <TextView android:layout_height="wrap_content" android:id="@+id/phoneprefsstatus"
                       android:layout_width="match_parent" android:gravity="center_horizontal" android:paddingTop="10dp"
                       android:text="Unknown" android:textColor="#880044" android:textStyle="bold"
-                      android:textSize="18sp"></TextView>
+                      android:textSize="18sp"/>
 
 
             <TextView android:id="@+id/locationawarenesstitle" android:layout_height="wrap_content"
                       android:text="Awareness:" android:gravity="center_horizontal" android:layout_width="match_parent"
-                      android:textSize="17sp" android:paddingTop="10dp" android:visibility="invisible"></TextView>
+                      android:textSize="17sp" android:paddingTop="10dp" android:visibility="invisible"/>
 
 
             <TextView android:layout_height="wrap_content" android:id="@+id/locationawarenessstatus"
                       android:layout_width="match_parent" android:gravity="center_horizontal" android:paddingTop="10dp"
                       android:text="Unknown" android:textColor="#880044" android:textStyle="bold"
-                      android:visibility="invisible"></TextView>
-
-
-            <!--<Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:width="250dp" android:text="Enable" android:id="@+id/enabledisablebutton" android:layout_marginTop="15dp"></Button>-->
+                      android:visibility="invisible"/>
         </LinearLayout>
 
     </ScrollView>
 
 
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal" android:width="250dp" android:text="View/Edit Phone Prefs"
-            android:id="@+id/locationdecisionphonebutton" android:layout_marginTop="15dp"
-            android:layout_centerHorizontal="true" android:layout_alignParentBottom="true"
-            android:layout_marginBottom="40dp"></Button>
-    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:width="250dp"
-            android:layout_gravity="center_horizontal" android:text="View/Edit Location"
-            android:id="@+id/locationdecisionlocationbutton" android:layout_above="@+id/locationdecisionphonebutton"
-            android:layout_centerHorizontal="true"></Button>
 
 
-    <com.google.ads.AdView android:id="@+id/ad"
-                           android:layout_width="match_parent"
-                           android:layout_height="wrap_content"
-                           android:layout_alignParentBottom="true"
-                           android:layout_centerHorizontal="true"
-                           ads:adUnitId="a14b77659e5ca68"
-                           ads:adSize="BANNER"
-                           ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"
-                           ads:loadAdOnCreate="true"/>
+
+
+
 </RelativeLayout>
