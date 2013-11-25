@@ -497,14 +497,17 @@ public class BackgroundService extends Service{
 	boolean runLocationCheckCondition(){
 
 			if(preferences.getInt(Settings.LOCATION_FREQUENCY, LocationFrequencyToggle.hourly)!=-1)
+            {
 				return true;
+            }
 		return false;
 	}
 	
 
 	//TODO CHANGE CRItERIA TO SETTINGS VALUES
 	synchronized void setLocationUpdates(){
-		  try{
+		    try
+            {
 			  	
 				locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 				int locationpowercriteria = preferences.getInt(Settings.POWER_SETTING, Criteria.POWER_LOW);
@@ -531,7 +534,7 @@ public class BackgroundService extends Service{
 					locationManager.requestLocationUpdates( provider, preferences.getInt(Settings.LOCATION_FREQUENCY, LocationFrequencyToggle.fivemin)*60000 , 0, geoHandle);
 
 				}
-			}catch(Exception e){
+		    }catch(Exception e){
 			  e.printStackTrace();
 			  Log.e("Techventus","No Location Service Available");
 			  
