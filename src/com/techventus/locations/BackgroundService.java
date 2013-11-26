@@ -77,8 +77,8 @@ public class BackgroundService extends Service{
  	SharedPreferences preferences ;
 	 
 
-	 /** The pref list. */
- 	List<LPEPref> prefList = new ArrayList<LPEPref>();
+//	 /** The pref list. */
+// 	public static List<LPEPref> prefList = new ArrayList<LPEPref>();
 	 
 	/* (non-Javadoc)
 	 * @see android.app.Service#onBind(android.content.Intent)
@@ -128,10 +128,13 @@ public class BackgroundService extends Service{
 						SQLHelper.exec(db, SQLHelper.dropSettings);
 					}
 
-
-			    	
-				 }catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","LocationManager Exception");}
-				 finally{
+				 }
+                 catch(Exception e)
+                 {
+                     e.printStackTrace();Log.e(TAG+" Reset","LocationManager Exception");
+                 }
+				 finally
+                 {
 					 if(db!=null)
 						 db.close();
 				 }
@@ -220,7 +223,8 @@ public class BackgroundService extends Service{
 	 		}catch(Exception adsf){
 	 			adsf.printStackTrace();
 	 		}
-		prefList = ret;
+        mSettings.setPrefsList(ret);
+//		prefList = ret;
 	}
 	
 	
@@ -246,7 +250,7 @@ public class BackgroundService extends Service{
 				if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
                 {
 
-					if(!BackgroundService.this.isNetworkConnected())
+					if(!Util.isNetworkConnected(BackgroundService.this))
                     {
 						startupStarted = false;
 						this.cancel(true);
@@ -351,7 +355,7 @@ public class BackgroundService extends Service{
 		    		   }
 					
 					
-					if(!BackgroundService.this.isNetworkConnected()){
+					if(!Util.isNetworkConnected(BackgroundService.this)){
 						//startupStarted = false;
 						this.cancel(true);
 					}
@@ -394,8 +398,10 @@ public class BackgroundService extends Service{
 	 *
 	 * @return the async task
 	 */
-	AsyncTask<Void,Void,Void> LocationChangeTask(){
-		AsyncTask<Void,Void,Void> ret = new AsyncTask<Void,Void,Void>(){
+	AsyncTask<Void,Void,Void> LocationChangeTask()
+    {
+		AsyncTask<Void,Void,Void> ret = new AsyncTask<Void,Void,Void>()
+        {
 			@Override
 			protected void onPreExecute(){
 				
@@ -416,7 +422,7 @@ public class BackgroundService extends Service{
 		    		   }
 					
 					
-					if(!BackgroundService.this.isNetworkConnected())
+					if(!Util.isNetworkConnected(BackgroundService.this))
 					{
 						mSettings.setPhoneUpdateFlag(true);
 						this.cancel(true);
@@ -442,13 +448,21 @@ public class BackgroundService extends Service{
 			@Override
 			protected void onPostExecute(Void params)
 			{
+//                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                Intent notificationIntent = new Intent(BackgroundService.this, MainMenu.class);
+//                PendingIntent pendingIntent = PendingIntent.getActivity(BackgroundService.this, 0,notificationIntent, 0);
+//                Notification notification = new Notification(R.drawable.ic_menu_compass, "New Message", System.currentTimeMillis());
+//                notification.setLatestEventInfo(BackgroundService.this,!mSettings.getPhoneUpdateFlag()+"Google Voice Locations", "Now: "+com.techventus.locations.Status.currentLocationString, pendingIntent);
+//                notificationManager.notify(9999, notification);
 
-				if(!mSettings.getPhoneUpdateFlag() && ! mSettings.getReconnectToVoiceFlag() && mSettings.getLocationChanged() )
+                //TEMP
+                //removed !mSettings.getPhoneUpdateFlag() &&
+                if( ! mSettings.getReconnectToVoiceFlag() && mSettings.getLocationChanged() )
 				{
 					mSettings.setLocationChanged(false);
-					notifyUserLocationChange(com.techventus.locations.Status.currentLocationString);
-				}
-					
+                     //TEMP
+                   // notifyUserLocationChange(com.techventus.locations.Status.currentLocationString);
+                }
 			}
 		};
 		return ret;
@@ -460,7 +474,7 @@ public class BackgroundService extends Service{
 			@Override
 			public void run() {
 				Log.e(TAG, "PHONE UPDATE TASK");
-				if(isNetworkConnected())
+				if(Util.isNetworkConnected(BackgroundService.this))
 					LocationChangeTask().execute();
 				else{
 					mSettings.setPhoneUpdateFlag(true);
@@ -546,7 +560,7 @@ public class BackgroundService extends Service{
 	 * Reconnect to voice.
 	 */
 	protected void reconnectToVoice() throws IOException{
-		if(!isNetworkConnected()){
+		if(!Util.isNetworkConnected(BackgroundService.this)){
 			mSettings.setReconnectToVoiceFlag(true);
 			return;
 		}
@@ -560,24 +574,19 @@ public class BackgroundService extends Service{
 
 	    		VoiceSingleton.reset();
 	    	}
-
-
 	}
-	
 
-	
-	
 	/**
 	 * Trigger location change.
 	 */
 	synchronized void triggerLocationChange(){
 		
-		if(isNetworkConnected()){
+		if(Util.isNetworkConnected(BackgroundService.this)){
 			try {
 				Voice voice = VoiceSingleton.getVoiceSingleton().getVoice();
 				AllSettings voiceSettings =voice.getSettings(false);
 				Phone[] phoneAr = voiceSettings.getPhones();
-				for(LPEPref lpe:prefList){
+				for(LPEPref lpe:mSettings.getPrefsList()){
 					if(lpe.location.equals(Status.currentLocationString)){
 						for(Phone phone:phoneAr){
 							if(phone.getName().equals(lpe.phoneString)){
@@ -644,7 +653,7 @@ public class BackgroundService extends Service{
 			
 			setLocation(lat,lng,Status.currentLocationString);
 			boolean action = false;
-			for(LPEPref lpe:prefList){
+			for(LPEPref lpe:mSettings.getPrefsList()){
 				if(lpe.location.equals("Elsewhere")){
 					continue;
 				}
@@ -735,7 +744,7 @@ public class BackgroundService extends Service{
 
 		       if(!noConnectivity){
 		    	   if(mSettings.getRestartServiceFlag() || mSettings.getReconnectToVoiceFlag() || mSettings.getPhoneUpdateFlag())
-			    	   if(isNetworkConnected()){
+			    	   if(Util.isNetworkConnected(BackgroundService.this)){
 			    		   if( mSettings.getRestartServiceFlag()){
 			    			   try {
 								    BackgroundService.this.mBinder.restart();
@@ -804,22 +813,22 @@ public class BackgroundService extends Service{
 	 
 	
 	
-
-	 /**
- 	 * Checks if is network connected.
- 	 *
- 	 * @return true, if is network connected
- 	 */
- 	private boolean isNetworkConnected(){
-			ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-			NetworkInfo ni = cm.getActiveNetworkInfo();
-
-			if (ni!=null && ni.isConnected()){
-				return true;
-			}else{
-				return false;
-			}
-	}
+//
+//	 /**
+// 	 * Checks if is network connected.
+// 	 *
+// 	 * @return true, if is network connected
+// 	 */
+// 	private boolean isNetworkConnected(){
+//			ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
+//			NetworkInfo ni = cm.getActiveNetworkInfo();
+//
+//			if (ni!=null && ni.isConnected()){
+//				return true;
+//			}else{
+//				return false;
+//			}
+//	}
 	 
 }
 
