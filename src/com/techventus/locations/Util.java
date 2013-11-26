@@ -227,8 +227,7 @@ public class Util
             editor.remove(getGeofenceFieldKey(id, KEY_LATITUDE));
             editor.remove(getGeofenceFieldKey(id, KEY_LONGITUDE));
             editor.remove(getGeofenceFieldKey(id, KEY_RADIUS));
-            editor.remove(getGeofenceFieldKey(id,
-                    KEY_EXPIRATION_DURATION));
+            editor.remove(getGeofenceFieldKey(id, KEY_EXPIRATION_DURATION));
             editor.remove(getGeofenceFieldKey(id, KEY_TRANSITION_TYPE));
             editor.commit();
         }
@@ -252,7 +251,7 @@ public class Util
      *
      * @return true, if is network connected
      */
-    private boolean isNetworkConnected(Context context)
+    public static boolean isNetworkConnected(Context context)
     {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getActiveNetworkInfo();

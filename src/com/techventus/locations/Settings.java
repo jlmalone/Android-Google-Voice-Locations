@@ -2,6 +2,8 @@ package com.techventus.locations;
 
 import com.google.android.maps.GeoPoint;
 
+import java.util.List;
+
 /**
  * The Class Settings.
  */
@@ -36,7 +38,18 @@ public class Settings
 	private  boolean phoneUpdateFlag = false;
 	private  boolean locationChanged = false;
 
-	//SETTINGS
+
+    private List<LPEPref> prefs;
+
+    public List<LPEPref> getPrefsList() {
+        return prefs;
+    }
+
+    public void setPrefsList(List<LPEPref> prefs) {
+        this.prefs = prefs;
+    }
+
+    //SETTINGS
 	private static Settings instance;
 	private Settings(){}
 
