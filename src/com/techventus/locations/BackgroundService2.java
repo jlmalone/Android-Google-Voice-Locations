@@ -4,17 +4,12 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
+import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -33,10 +28,7 @@ import com.techventus.server.voice.datatypes.AllSettings;
 import com.techventus.server.voice.datatypes.Phone;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -134,7 +126,28 @@ public class BackgroundService2  extends Service implements
     public void onCreate() {
           super.onCreate();
 
+        //TAKEN FROM ORIGINAL
         Toast.makeText(this,"Start BackgroundService2 ",2000).show();
+
+        mSettings = Settings.getInstance();
+
+        //Awareness of Network Change
+        IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(networkStateReceiver, filter);
+
+        preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
+        if(!preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+            this.stopSelf();
+            return;
+        }else
+        if(!startupStarted){
+            startupStarted = true;
+            //Starting OnCreate BackgroundService
+            getStartupTask().execute();
+        }
+
+
+
         // Start with the request flag set to false
         mInProgress = false;
 
@@ -147,52 +160,140 @@ public class BackgroundService2  extends Service implements
         mGeofencesToRemove = new ArrayList<String>();
 
 
-        Geofence.Builder builder = new Geofence.Builder();
-        builder.setCircularRegion(49.28459,-123.136855,20);
-        builder.setRequestId("a");
-        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT);
-
-        Geofence a =  builder.build();
-
-        builder = new Geofence.Builder();
-        builder.setCircularRegion(49.28459,-123.136855,20);
-        builder.setRequestId("b");
-        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
-
-
-        Geofence b =  builder.build();
-
-        builder = new Geofence.Builder();
-        builder.setCircularRegion(49.28459,-123.136855,50);
-        builder.setRequestId("c");
-        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
-
-
-
-        Geofence d =  builder.build();
-
-        builder = new Geofence.Builder();
-        builder.setCircularRegion(49.28459,-123.136855,50);
-        builder.setRequestId("d");
-        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT);
-
-
-
-        Geofence c =  builder.build();
-
-        mCurrentGeofences.add(a);
-        mCurrentGeofences.add(b);
-        mCurrentGeofences.add(c);
-        mCurrentGeofences.add(d);
-
-        Log.v(TAG,"ADD THE GEOFENCES");
-        addGeofences();
+//        Geofence.Builder builder = new Geofence.Builder();
+//        builder.setCircularRegion(49.28459,-123.136855,20);
+//        builder.setRequestId("a");
+//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT);
+//
+//        Geofence a =  builder.build();
+//
+//        builder = new Geofence.Builder();
+//        builder.setCircularRegion(49.28459,-123.136855,20);
+//        builder.setRequestId("b");
+//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
+//
+//
+//        Geofence b =  builder.build();
+//
+//        builder = new Geofence.Builder();
+//        builder.setCircularRegion(49.28459,-123.136855,50);
+//        builder.setRequestId("c");
+//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
+//
+//
+//
+//        Geofence d =  builder.build();
+//
+//        builder = new Geofence.Builder();
+//        builder.setCircularRegion(49.28459,-123.136855,50);
+//        builder.setRequestId("d");
+//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT);
+//
+//
+//
+//        Geofence c =  builder.build();
+//
+//        mCurrentGeofences.add(a);
+//        mCurrentGeofences.add(b);
+//        mCurrentGeofences.add(c);
+//        mCurrentGeofences.add(d);
+//
+//        Log.v(TAG,"ADD THE GEOFENCES");
+//        addGeofences();
 
     }
+
+
+
+
+    //TODO Consider Launching FLAGGED TASKS FROM OTHER METHODS
+    /** The network state receiver.  This allows immediate response to network change events . */
+    BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.w("Network Listener", "Network Type Changed");
+            Bundle extras =  intent.getExtras();
+            boolean noConnectivity = extras.getBoolean(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY );
+
+            if(!noConnectivity){
+                if(mSettings.getRestartServiceFlag() || mSettings.getReconnectToVoiceFlag() || mSettings.getPhoneUpdateFlag())
+                    if(Util.isNetworkConnected(BackgroundService2.this)){
+                        if( mSettings.getRestartServiceFlag()){
+                            try {
+                                BackgroundService2.this.mBinder.restart();
+                            } catch (RemoteException e) {
+
+                                e.printStackTrace();
+                            }
+                        }else if(mSettings.getReconnectToVoiceFlag() ){
+                            reconnectToVoiceTask().execute();
+                        }else if( mSettings.getPhoneUpdateFlag()){
+                            LocationChangeTask().execute();
+                        }
+                    }
+            }
+        }
+    };
+
+
+
+    /**
+     * Reconnect to voice task.
+     *
+     * @return the async task
+     */
+    AsyncTask<Void,Void,Void> reconnectToVoiceTask(){
+        AsyncTask<Void,Void,Void> ret = new AsyncTask<Void,Void,Void>(){
+            @Override
+            protected Void doInBackground(Void... params) {
+                try{
+                    reconnectToVoice();
+                }catch (com.techventus.server.voice.exception.BadAuthenticationException ba){
+                    preferences.edit().remove("username").remove("password").apply();
+
+                }catch(Exception f){
+                    f.printStackTrace();
+                    mSettings.setReconnectToVoiceFlag(true);
+                }
+                return null;
+            }
+            @Override
+            protected void onPreExecute(){
+                super.onPreExecute();
+                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+
+                    if(mSettings.getRestartServiceFlag()){
+                        try {
+                            this.cancel(true);
+                            BackgroundService2.this.mBinder.restart();
+                            return;
+                        } catch (Exception e) {
+
+                            e.printStackTrace();
+                        }
+                    }
+
+
+                    if(!Util.isNetworkConnected(BackgroundService2.this)){
+                        //startupStarted = false;
+                        this.cancel(true);
+                    }
+                }else{
+                    this.cancel(true);
+                    BackgroundService2.this.stopSelf();
+//					cancel();
+                }
+            }
+        };
+        return ret;
+    }
+
+
 
     SimpleGeofenceStore  mGeofenceStorage;
 
@@ -340,6 +441,7 @@ public class BackgroundService2  extends Service implements
                 mTransitionPendingIntent =
                         getTransitionPendingIntent();
                 // Send a request to add the current geofences
+
                 mLocationClient.addGeofences(
                         mCurrentGeofences, mTransitionPendingIntent, this);
                 break;
@@ -552,16 +654,18 @@ public class BackgroundService2  extends Service implements
             }
 
             @Override
-            protected Void doInBackground(Void... arg0) {
+            protected Void doInBackground(Void... arg0)
+            {
                 startupStarted = true;//trt
                 SQLiteDatabase sql = null;
 
-                try{
+                try
+                {
 
                     sql = openOrCreateDatabase("db",0,null);
 
-
-                    if(SQLHelper.isTableExists("COMMAND",sql) ||SQLHelper.isTableExists("PHONE",sql) ){
+                    if(SQLHelper.isTableExists("COMMAND",sql) ||SQLHelper.isTableExists("PHONE",sql) )
+                    {
                         SQLHelper.exec(sql, SQLHelper.dropLocationPhoneEnable);
                         SQLHelper.exec(sql,SQLHelper.dropPhone );
                         SQLHelper.exec(sql,SQLHelper.dropGoogle );
@@ -572,18 +676,21 @@ public class BackgroundService2  extends Service implements
                         SQLHelper.exec(sql, SQLHelper.dropSettings);
                     }
 
-
-
-
                     SQLHelper.createDatabases(sql);
 
                     setLocationList();
 
+
+
+
+
+
+
                     reconnectToVoice();
 
-
-
-                }catch(Exception e){
+                }
+                catch(Exception e)
+                {
 
                     Log.e("TECHVENTUS","Startup First EstablishTestDB exception");
                     e.printStackTrace();
@@ -591,18 +698,85 @@ public class BackgroundService2  extends Service implements
                     if(sql!=null)
                         sql.close();
                 }
-
                 return null;
             }
             @Override
-            protected void onPostExecute(Void result){
-
-
+            protected void onPostExecute(Void result)
+            {
                //TODO TEMP REPLACE THIS SOMEHOW
                // setLocationUpdates();
 
                 setUpdateTimers();
+
+                Set<String> locationNameSet = new HashSet<String>();
+
+                //create the geofences with unique locations
+                for(LPEPref pref: mSettings.getPrefsList())
+                {
+                    if(!locationNameSet.contains(pref.location))
+                    {
+                        locationNameSet.add(pref.location);
+                        //add geopointListener
+                        double lat = (double)pref.latitude/1E6;
+                        double lon = (double)pref.longitude/1E6;
+                        if(pref.location.equalsIgnoreCase("Elsewhere") || pref.radius==0)
+                        {
+                            continue;
+                        }
+
+                        //MESSY CUT AND PASTE
+                        {
+                            Geofence.Builder builder = new Geofence.Builder();
+                            builder.setCircularRegion(lat,lon,pref.radius);
+                            builder.setRequestId(pref.location+"_EXIT");
+                            builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+                            builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT);
+
+                            Geofence a =  builder.build();
+
+                            mCurrentGeofences.add(a);
+                        }
+                        {
+                            Geofence.Builder builder = new Geofence.Builder();
+                            builder.setCircularRegion(lat,lon,pref.radius);
+                            builder.setRequestId(pref.location+"_ENTER");
+                            builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
+                            builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
+                            Geofence a =  builder.build();
+
+                            mCurrentGeofences.add(a);
+
+                        }
+                        addGeofences();
+
+                    }
+
+
+
+                }
+
+
+
+
+
+
+
+
+
+
+
+
                 startupComplete = true;
+
+
+
+
+
+
+
+
+
+
             }
         };
         return startupTask;
@@ -686,7 +860,8 @@ public class BackgroundService2  extends Service implements
         }catch(Exception adsf){
             adsf.printStackTrace();
         }
-        prefList = ret;
+        mSettings.setPrefsList(ret);
+//        prefList = ret;
     }
 
     Settings mSettings;
@@ -732,8 +907,8 @@ public class BackgroundService2  extends Service implements
     SharedPreferences preferences ;
 
 
-    /** The pref list. */
-    List<LPEPref> prefList = new ArrayList<LPEPref>();
+//    /** The pref list. */
+//    List<LPEPref> prefList = new ArrayList<LPEPref>();
 
     //TODO EXPERIMENTAL
     void setUpdateTimers(){
@@ -799,7 +974,7 @@ public class BackgroundService2  extends Service implements
 
             setLocation(lat,lng,Status.currentLocationString);
             boolean action = false;
-            for(LPEPref lpe:prefList){
+            for(LPEPref lpe:mSettings.getPrefsList()){
                 if(lpe.location.equals("Elsewhere")){
                     continue;
                 }
@@ -944,10 +1119,10 @@ public class BackgroundService2  extends Service implements
             protected void onPostExecute(Void params)
             {
 //                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-//                Intent notificationIntent = new Intent(BackgroundService.this, MainMenu.class);
-//                PendingIntent pendingIntent = PendingIntent.getActivity(BackgroundService.this, 0,notificationIntent, 0);
+//                Intent notificationIntent = new Intent(BackgroundService2.this, MainMenu.class);
+//                PendingIntent pendingIntent = PendingIntent.getActivity(BackgroundService2.this, 0,notificationIntent, 0);
 //                Notification notification = new Notification(R.drawable.ic_menu_compass, "New Message", System.currentTimeMillis());
-//                notification.setLatestEventInfo(BackgroundService.this,!mSettings.getPhoneUpdateFlag()+"Google Voice Locations", "Now: "+com.techventus.locations.Status.currentLocationString, pendingIntent);
+//                notification.setLatestEventInfo(BackgroundService2.this,!mSettings.getPhoneUpdateFlag()+"Google Voice Locations", "Now: "+com.techventus.locations.Status.currentLocationString, pendingIntent);
 //                notificationManager.notify(9999, notification);
 
                 //TEMP
@@ -974,7 +1149,7 @@ public class BackgroundService2  extends Service implements
                 Voice voice = VoiceSingleton.getVoiceSingleton().getVoice();
                 AllSettings voiceSettings =voice.getSettings(false);
                 Phone[] phoneAr = voiceSettings.getPhones();
-                for(LPEPref lpe:prefList){
+                for(LPEPref lpe: mSettings.getPrefsList() ){
                     if(lpe.location.equals(Status.currentLocationString)){
                         for(Phone phone:phoneAr){
                             if(phone.getName().equals(lpe.phoneString)){

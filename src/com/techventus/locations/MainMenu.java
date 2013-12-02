@@ -57,16 +57,13 @@ public class MainMenu extends FragmentActivity implements
 	String TAG = "TECHVENTUS - MAINMENU";
 	
 	/** The lat. */
-	int lat = 0;
+	double lat = 0;
 	
 	/** The lon. */
-	int lon = 0;
+	double lon = 0;
 	
 	/** The location string. */
 	String locationString = "Unknown";
-	
-	/** The updated. */
-	String updated = "--:--";
 	
 	Timer timer = new Timer();;
 
@@ -213,7 +210,6 @@ public class MainMenu extends FragmentActivity implements
 		}else{
 			warningPanel.setVisibility(View.GONE);
 		}
-	
 	}
 	
 
@@ -274,9 +270,11 @@ public class MainMenu extends FragmentActivity implements
     private void init(){
         //IF SERVICE_ENABLED, LAUNCH IT ON A PERSISTENT BASIS
     	if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
-    		Intent hello_service = new Intent(this, BackgroundService.class);
-    		startService(hello_service);		
-    	}
+//    		Intent hello_service = new Intent(this, BackgroundService.class);
+//    		startService(hello_service);
+            Intent hello_service2 = new Intent(this, BackgroundService2.class);
+            startService(hello_service2);
+        }
 
  		setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ); 
 
@@ -289,12 +287,9 @@ public class MainMenu extends FragmentActivity implements
  	    locationsButton.setOnClickListener(locationsClick);
  	    dialerButton.setOnClickListener(dialerClick);
  	    locationNameView = (TextView)findViewById(R.id.currentlocationname);
-
     }
 
-
     LocationClient   mLocationClient;
-    Location mCurrentLocation;
     AdView mAdView;
 
     @Override
@@ -309,9 +304,7 @@ public class MainMenu extends FragmentActivity implements
                 .build();
         mAdView.loadAd(adRequest);
 
-
         mLocationClient = new LocationClient(this, this, this);
-
 
 		preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
 		
@@ -320,7 +313,6 @@ public class MainMenu extends FragmentActivity implements
 		init();
 
         startLocationTracking();
-	       
 	}
 	
 	OnClickListener settingsClick = new OnClickListener(){
@@ -342,13 +334,11 @@ public class MainMenu extends FragmentActivity implements
 		}
 		
 	};
-	
 
-	
 	private boolean isMyServiceRunning() {
 	    ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
 	    for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
-	        if ("com.techventus.locations.BackgroundService".equals(service.service.getClassName())) {
+	        if ("com.techventus.locations.BackgroundService2".equals(service.service.getClassName())) {
 	            return true;
 	        }
 	    }
@@ -382,23 +372,37 @@ public class MainMenu extends FragmentActivity implements
 	       boolean hasBeenShown = preferences.getBoolean(eulaKey, false);
 	       if(hasBeenShown){
 	    	   
-	    	   
-	    	   
-	    	Intent hello_service = new Intent(this, BackgroundService.class);
-	   	   	if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
-	   	   		
-	   	   		if(!isMyServiceRunning()){
-		    		
-		    		startService(hello_service);	
-	   	   		}
-	    	}else{
-	    		stopService(hello_service);
-	    	}
-		   	
-		 	   if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
-		 		   Intent hello_service2 = new Intent(this, BackgroundService.class);
-		 		   bindService( hello_service2, mConnection,Context.BIND_AUTO_CREATE);
-		 	   }
+//               {
+//
+//                    Intent hello_service = new Intent(this, BackgroundService.class);
+//                    if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+//
+//                        if(!isMyServiceRunning()){
+//
+//                            startService(hello_service);
+//                        }
+//                    }else{
+//                        stopService(hello_service);
+//                    }
+//                       }
+               {
+                   Intent hello_service2 = new Intent(this, BackgroundService2.class);
+                   if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+
+                       if(!isMyServiceRunning()){
+
+                           startService(hello_service2);
+                       }
+                   }else{
+                       stopService(hello_service2);
+                   }
+
+               }
+
+//		 	   if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+//		 		   Intent hello_service2 = new Intent(this, BackgroundService.class);
+//		 		   bindService( hello_service2, mConnection,Context.BIND_AUTO_CREATE);
+//		 	   }
 
 		    	checkServiceEnabled();
 
@@ -445,9 +449,12 @@ public class MainMenu extends FragmentActivity implements
 		super.onPause();
 		this.mActive = false;
 		if(timer!=null)
+        {
 			timer.cancel();
+        }
 		
-		try{
+		try
+        {
 			unbindService(mConnection);
 		}catch(Exception e){
 			e.printStackTrace();
@@ -472,8 +479,8 @@ public class MainMenu extends FragmentActivity implements
 					int[] coords;
 					try {
 						coords = mIRemoteService.getCurrentCoordinatesE6();
-						lat = coords[0];
-						lon = coords[1];
+//						lat = coords[0];
+//						lon = coords[1];
 					} catch (Exception e1) {
 					
 						e1.printStackTrace();
@@ -499,18 +506,19 @@ public class MainMenu extends FragmentActivity implements
 	/**
 	 * Sets the display.
 	 */
-	private void setDisplay(){
-				
-		if(lat!=0&&lon!=0 && lat!=-1 && lon!=-1){
+	private void setDisplay()
+    {
+		if(lat!=0&&lon!=0 && lat!=-1 && lon!=-1)
+        {
 			DecimalFormat nf = new DecimalFormat("###.00000");
-			gpsTextView.setText("LAT: "+nf.format((double)lat/(1E6)) +" LON: "+nf.format((double)lon/1E6));
+			gpsTextView.setText("LAT: "+nf.format(lat) +" LON: "+nf.format(lon));
 			locationNameView.setText(locationString);
-		}else{	
+		}
+        else
+        {
 			gpsTextView.setText("LAT: -XXX.XXXXX LON: -XXX.XXXXX");
 			locationNameView.setText("Unknown");
-
 		}
-
 	}
 	
 	
@@ -601,41 +609,27 @@ public class MainMenu extends FragmentActivity implements
 
 
 
-//    private GooglePlayServicesClient.ConnectionCallbacks mConnectionCallbacks = new ConnectionCallbacks() {
-//
-//        @Override
-//        public void onDisconnected() {
-//        }
-//
-//        @Override
-//        public void onConnected(Bundle arg0) {
-//
-//        }
-//    };
-
-//    private GooglePlayServicesClient.OnConnectionFailedListener mConnectionFailedListener = new GooglePlayServicesClient.OnConnectionFailedListener() {
-//
-//        @Override
-//        public void onConnectionFailed(ConnectionResult arg0) {
-//            Log.e(TAG, "ConnectionFailed");
-//        }
-//    };
-
     private LocationListener mLocationListener = new LocationListener() {
 
         private long mLastEventTime = 0;
 
         @Override
-        public void onLocationChanged(Location location) {
+        public void onLocationChanged(Location location)
+        {
             double delayBtnEvents = (System.nanoTime()- mLastEventTime )/(1000000000.0);
             mLastEventTime = System.nanoTime();
 
             //Sampling rate is the frequency at which updates are received
 //            String samplingRate = (new DecimalFormat("0.0000").format(1/delayBtnEvents));
 
+            lat=  location.getLatitude();
+            lon = location.getLongitude();
 
+//            gpsTextView.setText("LAT: "+lat +" LON: "+lon);
 
-            Toast.makeText(MainMenu.this, "Location Changed " + location.getLatitude()+" "+location.getAccuracy(), Toast.LENGTH_SHORT).show();
+            setDisplay();
+
+            Toast.makeText(MainMenu.this, "Play Location Changed " + location.getLatitude()+" "+location.getLongitude()+" "+location.getAccuracy(), Toast.LENGTH_SHORT).show();
 
 //            float speed = (float) (location.getSpeed() * 3.6);  // Converting m/s to Km/hr
 //            tv.setText(speed + " kmph" + ", " + samplingRate + " Hz"); //Updating UI
@@ -649,9 +643,10 @@ public class MainMenu extends FragmentActivity implements
                 Toast.LENGTH_SHORT).show();
 
         LocationRequest locationRequest = LocationRequest.create();
-
-        locationRequest.setInterval(40000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(10000).setPriority(LocationRequest.PRIORITY_NO_POWER);
+        locationRequest.setNumUpdates(1);
+//        locationRequest.setInterval(40000).setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+//        locationRequest.setInterval(10000).setPriority(LocationRequest.PRIORITY_NO_POWER);
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setFastestInterval(10000);
         mLocationClient.requestLocationUpdates(locationRequest, mLocationListener);
 
@@ -722,8 +717,22 @@ public class MainMenu extends FragmentActivity implements
     }
 
 
+    @Override
+    public void onStop()
+    {
+        super.onStop();
+        if(mLocationClient!=null)
+            mLocationClient.disconnect();
+    }
 
 
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        if(mLocationClient!=null)
+            mLocationClient.connect();
+    }
 
     @Override
     public void onDestroy() {

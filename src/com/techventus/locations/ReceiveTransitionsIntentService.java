@@ -85,11 +85,19 @@ public class ReceiveTransitionsIntentService extends IntentService
                 notificationManager.notify(9999, notification);
             }
 
-
+            if(transitionType==Geofence.GEOFENCE_TRANSITION_EXIT)
+            {
+                Status.currentLocationString = "Elsewhere";
+                triggerLocationChange();
+                return;
+            }
 
             // Test that a valid transition was reported
-            if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER) || (transitionType == Geofence.GEOFENCE_TRANSITION_EXIT))
+            if ((transitionType == Geofence.GEOFENCE_TRANSITION_ENTER))
             {
+
+
+
                 List <Geofence> triggerList =  LocationClient.getTriggeringGeofences(intent);
 
                 String[] triggerIds = new String[triggerList.size()];
@@ -97,7 +105,15 @@ public class ReceiveTransitionsIntentService extends IntentService
                 for (int i = 0; i < triggerIds.length; i++) {
                     // Store the Id of each geofence
                     triggerIds[i] = triggerList.get(i).getRequestId();
+
+                    Status.currentLocationString = triggerIds[i];
                 }
+
+
+
+
+
+                triggerLocationChange();
                 /*
                  * At this point, you can store the IDs for further use
                  * display them, or display the details associated with
