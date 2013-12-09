@@ -37,7 +37,7 @@ public class ConfirmDelete extends Activity{
 		
 		if(preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
 		    Intent hello_service = new Intent(this, BackgroundService.class);
-			bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
+			bindService( hello_service, mConnection, Context.BIND_AUTO_CREATE);
 		}
 		
 		
@@ -74,18 +74,22 @@ public class ConfirmDelete extends Activity{
 	    }
 	};
 	
-	OnClickListener confirmResetClick = new OnClickListener(){
+	OnClickListener confirmResetClick = new OnClickListener()
+	{
 
 		@Override
-		public void onClick(View v) {
+		public void onClick(View v)
+		{
 			Toast.makeText(ConfirmDelete.this, "Deleting Location "+locationName+"...", Toast.LENGTH_LONG);
 			
 			SQLiteDatabase sql = openOrCreateDatabase("db",0,null);
 			sql.execSQL("DELETE FROM LOCATIONPHONEENABLE WHERE locationName = '"+locationName+"';");
 			sql.close();
 				
-			if(mIRemoteService!=null){
-				try {
+			if(mIRemoteService!=null)
+			{
+				try
+				{
 					mIRemoteService.restart();
 				} catch (RemoteException e) {
 					e.printStackTrace();

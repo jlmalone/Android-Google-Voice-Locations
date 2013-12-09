@@ -14,15 +14,12 @@ public class VoiceSingleton {
 	private static VoiceSingleton singleton;
 	
 	/** The Voice Object. */
-	private Voice voice;
+	private static Voice voice;
 	
 	/**
 	 * Instantiates a new voice singleton.
 	 */
-	private VoiceSingleton(){
-
-//		singleton = new VoiceSingleton();
-	}
+	private VoiceSingleton(){}
 	
 	/**
 	 * Sets the voice.
@@ -31,23 +28,33 @@ public class VoiceSingleton {
 	 * @param password the password
 	 * @throws IOException Signals that an I/O exception has occurred.
 	 */
-	public synchronized void setVoice(String login,String password) throws IOException{
-		
-			singleton.voice = new Voice(login,password);
+	public synchronized void setVoice(String login, String password) throws IOException
+	{
+
+		singleton.voice = new Voice(login, password);
 
 	}
-	
-	public static synchronized void reset(){
-		try{
-		singleton.voice = null;
-		}catch(Exception e){}
-		try{
-		singleton = null;
-		}catch(Exception f){}
-		
+
+	public static synchronized void reset()
+	{
+		try
+		{
+			singleton.voice = null;
+		}
+		catch (Exception e)
+		{
+		}
+		try
+		{
+			singleton = null;
+		}
+		catch (Exception f)
+		{
+		}
+
 	}
-	
-	
+
+
 	/**
 	 * Gets the or create voice singleton.
 	 *
@@ -78,7 +85,7 @@ public class VoiceSingleton {
 	
 	
 	/**
-	 * Gets the voice.
+	 * Gets the Google Voice singleton object.
 	 *
 	 * @return the voice
 	 * @throws Exception the exception
