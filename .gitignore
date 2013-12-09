@@ -46,3 +46,5 @@ gen/com/techventus/locations/Manifest.java
 bin/GVLocations5.apk
 
 bin/GVLocations5.unaligned.apk
+
+.idea/codeStyleSettings.xml
