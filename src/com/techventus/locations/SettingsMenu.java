@@ -140,8 +140,11 @@ public class SettingsMenu extends ListActivity {
 
     protected void onActivityResult(int requestCode, int resultCode,
                                     Intent data) {
-        if (resultCode == 999) {
-            mSettings.setRestartServiceFlag(true);
+        if (resultCode == 999)
+        {
+            //TODO restart service    12/12
+
+//            mSettings.setRestartServiceFlag(true);
         }
     }
 
@@ -150,18 +153,20 @@ public class SettingsMenu extends ListActivity {
         super.onResume();
     }
 
-    OnClickListener click = new OnClickListener() {
+    OnClickListener click = new OnClickListener()
+    {
         @Override
-        public void onClick(View arg0) {
-            switch (arg0.getId()) {
-                case R.id.serviceEnableToggle: {
+        public void onClick(View arg0)
+        {
+            switch (arg0.getId())
+            {
+                case R.id.serviceEnableToggle:
                     serviceToggle();
                     break;
-                }
-                case R.id.serviceStartupToggle: {
+
+                case R.id.serviceStartupToggle:
                     startupToggle();
                     break;
-                }
             }
         }
     };
@@ -173,11 +178,15 @@ public class SettingsMenu extends ListActivity {
         edit.commit();
 
 
-        if (serviceEnableToggle.isChecked()) {
-            mSettings.setRestartServiceFlag(true);
+        if (serviceEnableToggle.isChecked())
+        {
+//            mSettings.setRestartServiceFlag(true);
+            //todo restart service 12/12
             Intent serviceIntent = new Intent(this, BackgroundService2.class);
             startService(serviceIntent);
-        } else {
+        }
+        else
+        {
             //STOP SERVICE EVERY WAY IMAGINABLE
 
             Intent intent = new Intent();

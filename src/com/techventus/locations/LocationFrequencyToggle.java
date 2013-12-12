@@ -131,7 +131,10 @@ public class LocationFrequencyToggle extends Activity{
 			@Override
 			public void onClick(View v)
 			{
-			    mSettings.setRestartServiceFlag(true);
+			    //mSettings.setRestartServiceFlag(true);
+                  //TODO restart service 12/12
+
+
 				Intent intent = new Intent();
 				intent.putExtra("RefreshFrequencyTime", m_iCheckedTime);
 				setResult(RESULT_OK, intent);

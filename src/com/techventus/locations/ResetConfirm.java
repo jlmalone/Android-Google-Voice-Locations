@@ -48,7 +48,6 @@ public class ResetConfirm extends Activity{
 		setContentView(R.layout.resetconfirm);
 		
 		
-	    //Intent hello_service = new Intent(this, LocationService.class);
 		Intent hello_service = new Intent(this, BackgroundService2.class);
 	    
 		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
@@ -79,16 +78,7 @@ public class ResetConfirm extends Activity{
 				Toast.makeText(ResetConfirm.this, "No Connection to Background Service", Toast.LENGTH_SHORT);
 			}
 			
-//			try{
-//				SQLiteDatabase sql = openOrCreateDatabase("db",0,null);
-//				//TODO UPDATE RESET TO BINDER CALL
-//				
-//				sql.execSQL("INSERT INTO COMMAND (command) VALUES ('reset');") ;
-//				sql.close();
-//			}catch(Exception e){
-//				e.printStackTrace();
-//			}
-//			setResult(999);
+
 			ResetConfirm.this.finish();
 		}
 		
@@ -111,7 +101,6 @@ public class ResetConfirm extends Activity{
 	public void onResume(){
 		super.onResume();
 		
-		//Intent hello_service = new Intent(this, LocationService.class);
 	    Intent hello_service = new Intent(this, BackgroundService2.class);
 	    
 		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
@@ -126,15 +115,6 @@ public class ResetConfirm extends Activity{
 		}
 		super.onPause();
 	}
-	
-//	@Override
-//	public void onDestroy(){
-//		try{
-//			unbindService(mConnection);
-//		}catch(Exception e){
-//			e.printStackTrace();
-//		}
-//		super.onDestroy();
-//	}		
+
 	
 }

@@ -41,11 +41,6 @@ public class LoginCredentials extends Activity{
 	@Override
 	public void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
-		
-//	    Intent hello_service = new Intent(this, BackgroundService.class);	  
-//		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
-//		
-//		setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ); 
 		setContentView(R.layout.login); // bind the layout to the activity
 		
 		settings = getSharedPreferences(PREFERENCENAME, 0);
@@ -73,7 +68,6 @@ public class LoginCredentials extends Activity{
 					ed.remove("username");
 					ed.remove("password");
 					ed.commit();
-				//settings.edit().remove("username").remove("password").apply();
 				}catch(Exception e){
 					e.printStackTrace();
 				}
@@ -171,130 +165,3 @@ public class LoginCredentials extends Activity{
 }
 
 
-
-
-//
-//@Override
-//public void onDestroy(){
-//	try{
-//		unbindService(mConnection);
-//	}catch(Exception e){
-//		e.printStackTrace();
-//	}
-//	super.onDestroy();
-//}
-
-
-
-
-//if()
-
-//if(mIRemoteService!=null){
-//	Toast.makeText(LoginCredentials.this, "LoginCredentials - Error with IRemoteService Interface.  Please Report to Developer", Toast.LENGTH_LONG);
-//	
-//	try {
-//		mIRemoteService.updateLoginCredentials(loginTextBox.getText().toString(), loginPassBox.getText().toString());
-//	} catch (RemoteException e) {
-//		Toast.makeText(LoginCredentials.this, "LoginCredentials - Exception Updating Login Credentials.  Remote Exception", Toast.LENGTH_LONG);
-//		Log.e(TAG, "REMOTE EXCEPTION DISPATCHING updateLoginCredentials Interface method");
-//		e.printStackTrace();
-//	}
-//}else{
-//	Toast.makeText(LoginCredentials.this, "LoginCredentials - Error with IRemoteService Interface.  Please Report to Developer", Toast.LENGTH_LONG);
-//}
-
-
-
-
-//@Override 
-//public void onResume(){
-//	super.onResume();
-//	
-//    //Intent hello_service = new Intent(this, LocationService.class);
-//    Intent hello_service = new Intent(this, BackgroundService.class);
-////	  
-//	bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
-//}
-//
-
-//@Override
-//public void onPause(){
-//	try{
-//		unbindService(mConnection);
-//	}catch(Exception e){
-//		e.printStackTrace();
-//	}
-//	super.onPause();
-//}
-
-
-
-
-
-
-
-
-//
-//
-//Log.e("TECHVENTUS","SAVING CREDENTIALS TO DATABASE");
-//SQLiteDatabase sql = openOrCreateDatabase("db",0,null);
-//try{
-//	sql.execSQL("DELETE FROM GOOGLE;");
-//	Log.e("TECHVENTUS","INSERTING CREDENTIALS");
-//	if((loginTextBox.getText()).toString().contains("@")){
-//		sql.execSQL("INSERT INTO GOOGLE (loginName, password) VALUES ('"+loginTextBox.getText()+"','"+loginPassBox.getText().toString()+"');");
-//		sql.execSQL("INSERT INTO COMMAND (command) VALUES ('updateLoginCredentials');");
-//		
-//	} else{
-//		sql.execSQL("INSERT INTO GOOGLE (loginName, password) VALUES ('"+loginTextBox.getText().toString().replace("@gmail.com","").replace("@googlemail.com", "")+"@gmail.com','"+loginPassBox.getText().toString()+"');");
-//		sql.execSQL("INSERT INTO COMMAND (command) VALUES ('updateLoginCredentials');");
-//	}
-//	System.out.println("login credentials inserted + "+loginTextBox.getText().toString());
-//}catch(Exception u){
-//	u.printStackTrace();
-//}
-//
-//
-
-/*
-
-if(c.isAfterLast()){
-
-}else{
-	Log.e("TECHVENTUS","NOT AFTer LASt");
-	sql.execSQL("UPDATE GOOGLE SET loginName = '"+loginText+"@gmail.com' and password = '"+loginPass+"'");
-	System.out.println("login credentials updated");
-}
-//LoginCredentials.this.finish();
-*/
-//sql.close();
-
-
-//GVLServiceInterface mIRemoteService;
-//private ServiceConnection mConnection = new ServiceConnection() {
-//    // Called when the connection with the service is established
-//    public void onServiceConnected(ComponentName className, IBinder service) {
-//        mIRemoteService = GVLServiceInterface.Stub.asInterface(service);
-//    }
-//
-//    // Called when the connection with the service disconnects unexpectedly
-//    public void onServiceDisconnected(ComponentName className) {
-//        Log.e(TAG, "Service has unexpectedly disconnected");
-//        mIRemoteService = null;
-//    }
-//};
-
-
-
-
-//try {
-//	Toast.makeText(getApplicationContext(), "RESTARTING SERVICE", Toast.LENGTH_LONG).show();
-//	if(mIRemoteService!=null)
-//		mIRemoteService.restart();
-//	else
-//		Toast.makeText(getApplicationContext(), "Not Connected to Background Service", Toast.LENGTH_LONG).show();
-//	
-//} catch (RemoteException e) {
-//	e.printStackTrace();
-//}
-//TODO CONSIDER ADDING SET ACTIVITY RESULT

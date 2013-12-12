@@ -33,7 +33,7 @@ public class Settings
 	final private static String basis = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 
-	private  boolean restartServiceFlag = false;
+//	private  boolean restartServiceFlag = false;
 	private  boolean reconnectToVoiceFlag = false;
 	private  boolean phoneUpdateFlag = false;
 	private  boolean locationChanged = false;
@@ -63,15 +63,15 @@ public class Settings
 	}
 
 
-	public boolean getRestartServiceFlag()
-	{
-		return restartServiceFlag;
-	}
+//	public boolean getRestartServiceFlag()
+//	{
+//		return restartServiceFlag;
+//	}
 
-	public void setRestartServiceFlag(boolean RESTART_SERVICE_FLAG)
-	{
-		this.restartServiceFlag = RESTART_SERVICE_FLAG;
-	}
+//	public void setRestartServiceFlag(boolean RESTART_SERVICE_FLAG)
+//	{
+//		this.restartServiceFlag = RESTART_SERVICE_FLAG;
+//	}
 
 	public boolean getReconnectToVoiceFlag()
 	{

@@ -63,6 +63,10 @@ public class BackgroundService2  extends Service implements
     private final static int
             CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
+    AsyncTask<Void,Void,Void> mStartupTask;
+    AsyncTask<Void,Void,Void> mReconnectToVoiceTask;
+    AsyncTask<Void,Void,Void> mLocationChangeTask;
+
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -77,7 +81,6 @@ public class BackgroundService2  extends Service implements
         @Override
         public int[] getCurrentCoordinatesE6() throws RemoteException
         {
-
             int[] ret = {Status.locationGeoPoint.getLatitudeE6(),Status.locationGeoPoint.getLongitudeE6()};
 
             return ret;	//return null;
@@ -86,7 +89,53 @@ public class BackgroundService2  extends Service implements
         @Override
         public void reset() throws RemoteException
         {
+             //TODO REMOVE ALL GEOFENCES
+            if(mStartupTask!=null)
+            {
+                mStartupTask.cancel(true);
+            }
+            status.reset();
+            try{VoiceSingleton.reset()/*voiceFact=null*/;}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","voice Exception");}
 
+
+            //TODO DO A BUNCH OF SHIT
+            //copied here. Consider it's redundancy
+            status.reset();
+            VoiceSingleton.reset();
+
+            //PULL THIS INTO A SEPARATE METHOD
+
+            SQLiteDatabase db = null;
+            try
+            {
+                db= openOrCreateDatabase("db",0,null);
+                SQLHelper.exec(db,SQLHelper.dropLocationPhoneEnable );
+                if(SQLHelper.isTableExists("COMMAND",db) ||SQLHelper.isTableExists("PHONE",db) )
+                {
+                    SQLHelper.exec(db,SQLHelper.dropPhone );
+                    SQLHelper.exec(db,SQLHelper.dropGoogle );
+                    SQLHelper.exec(db,SQLHelper.dropLocations );
+                    SQLHelper.exec(db,SQLHelper.dropLocation );
+                    SQLHelper.exec(db, SQLHelper.dropStatus);
+                    SQLHelper.exec(db, SQLHelper.dropServiceStatus);
+                    SQLHelper.exec(db, SQLHelper.dropSettings);
+                }
+
+            }
+            catch(Exception e)
+            {
+                e.printStackTrace();Log.e(TAG+" Reset","LocationManager Exception");
+            }
+            finally
+            {
+                if(db!=null)
+                {
+                    db.close();
+                }
+            }
+
+            mStartupTask = getStartupTask();
+            mStartupTask.execute();
         }
 
         @Override
@@ -98,7 +147,12 @@ public class BackgroundService2  extends Service implements
         @Override
         public void restart() throws RemoteException
         {
-
+            if(mStartupTask!=null)
+            {
+                mStartupTask.cancel(true);
+            }
+            mStartupTask = getStartupTask();
+            mStartupTask.execute();
         }
 
         @Override
@@ -112,14 +166,14 @@ public class BackgroundService2  extends Service implements
 
 
     // Holds the location client
-    private LocationClient mLocationClient;
+    private LocationClient mLocationClientPlayServices;
     // Stores the PendingIntent used to request geofence monitoring
-    private PendingIntent mGeofenceRequestIntent;
+    private PendingIntent mGeofenceRequestIntentPlayServices;
     // Defines the allowable request types.
-//    public enum REQUEST_TYPE = {REQUEST_TYPE.ADD}
-    private REQUEST_TYPE mRequestType;
+    // public enum REQUEST_TYPE = {REQUEST_TYPE.ADD}
+    private REQUEST_TYPE mRequestTypePlayServices;
     // Flag that indicates if a request is underway.
-    private boolean mInProgress;
+    private boolean mInProgressPlayServices;
 
     @Override
     public void onCreate() {
@@ -132,29 +186,22 @@ public class BackgroundService2  extends Service implements
 
         //Awareness of Network Change
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(networkStateReceiver, filter);
-
-        registerReceiver(stopServiceReceiver, new IntentFilter(
-                "com.techventus.locations.stopservice"));
-
-        registerReceiver(geofencesChangedReceiver, new IntentFilter("com.techventus.locations.geofenceschanged"));
-
 
         preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
         if(!preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
             this.stopSelf();
             return;
-        }else
-        if(!startupStarted){
-            startupStarted = true;
-            //Starting OnCreate BackgroundService
-            getStartupTask().execute();
+        }else{
+            if(mStartupTask!=null)
+            {
+                mStartupTask.cancel(true);
+            }
+            mStartupTask = getStartupTask();
+            mStartupTask.execute();
         }
 
-
-
         // Start with the request flag set to false
-        mInProgress = false;
+        mInProgressPlayServices = false;
 
         // Instantiate a new geofence storage area
         mGeofenceStorage = new SimpleGeofenceStore(this);
@@ -163,54 +210,13 @@ public class BackgroundService2  extends Service implements
         // Instantiate the current List of geofences
         mCurrentGeofences = new ArrayList<Geofence>();
 
-//        mGeofencesToRemove = new ArrayList<String>();
 
+        registerReceiver(mNetworkStateReceiver, filter);
 
-//        Geofence.Builder builder = new Geofence.Builder();
-//        builder.setCircularRegion(49.28459,-123.136855,20);
-//        builder.setRequestId("a");
-//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT);
-//
-//        Geofence a =  builder.build();
-//
-//        builder = new Geofence.Builder();
-//        builder.setCircularRegion(49.28459,-123.136855,20);
-//        builder.setRequestId("b");
-//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
-//
-//
-//        Geofence b =  builder.build();
-//
-//        builder = new Geofence.Builder();
-//        builder.setCircularRegion(49.28459,-123.136855,50);
-//        builder.setRequestId("c");
-//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER);
-//
-//
-//
-//        Geofence d =  builder.build();
-//
-//        builder = new Geofence.Builder();
-//        builder.setCircularRegion(49.28459,-123.136855,50);
-//        builder.setRequestId("d");
-//        builder.setExpirationDuration(Geofence.NEVER_EXPIRE) ;
-//        builder.setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT);
-//
-//
-//
-//        Geofence c =  builder.build();
-//
-//        mCurrentGeofences.add(a);
-//        mCurrentGeofences.add(b);
-//        mCurrentGeofences.add(c);
-//        mCurrentGeofences.add(d);
-//
-//        Log.v(TAG,"ADD THE GEOFENCES");
-//        addGeofences();
+        registerReceiver(stopServiceReceiver, new IntentFilter(
+                "com.techventus.locations.stopservice"));
 
+        registerReceiver(mGeofencesChangedReceiver, new IntentFilter("com.techventus.locations.geofenceschanged"));
 
 
 
@@ -220,8 +226,8 @@ public class BackgroundService2  extends Service implements
     public  void onDestroy()
     {
         unregisterReceiver(stopServiceReceiver);
-        unregisterReceiver(networkStateReceiver);
-        unregisterReceiver(geofencesChangedReceiver);
+        unregisterReceiver(mNetworkStateReceiver);
+        unregisterReceiver(mGeofencesChangedReceiver);
         super.onDestroy();
     }
 
@@ -237,7 +243,7 @@ public class BackgroundService2  extends Service implements
          }
      };
 
-    BroadcastReceiver geofencesChangedReceiver = new BroadcastReceiver() {
+    BroadcastReceiver mGeofencesChangedReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.v(TAG, "geofences changed receiver");
@@ -247,7 +253,7 @@ public class BackgroundService2  extends Service implements
 
     //TODO Consider Launching FLAGGED TASKS FROM OTHER METHODS
     /** The network state receiver.  This allows immediate response to network change events . */
-    BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
+    BroadcastReceiver mNetworkStateReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent)
@@ -258,33 +264,38 @@ public class BackgroundService2  extends Service implements
 
             if(!noConnectivity)
             {
-                if(mSettings.getRestartServiceFlag() || mSettings.getReconnectToVoiceFlag() || mSettings.getPhoneUpdateFlag())
+                if( mSettings.getReconnectToVoiceFlag() || mSettings.getPhoneUpdateFlag())
                 {
                     if(Util.isNetworkConnected(BackgroundService2.this))
                     {
-                        if( mSettings.getRestartServiceFlag())
+                        if(mSettings.getReconnectToVoiceFlag())
                         {
-                            try
+                            if(mReconnectToVoiceTask!=null)
                             {
-                                BackgroundService2.this.mBinder.restart();
-                            } catch (RemoteException e) {
-
-                                e.printStackTrace();
+                                mReconnectToVoiceTask.cancel(true);
                             }
-                        }
-                        else if(mSettings.getReconnectToVoiceFlag())
-                        {
-                            reconnectToVoiceTask().execute();
+                            mReconnectToVoiceTask = reconnectToVoiceTask();
+                            mReconnectToVoiceTask.execute();
                         }
                         else if( mSettings.getPhoneUpdateFlag())
                         {
-                            LocationChangeTask().execute();
+                            if(mLocationChangeTask!=null)
+                            {
+                                mLocationChangeTask.cancel(true);
+                            }
+                            mLocationChangeTask = LocationChangeTask();
+                            mLocationChangeTask.execute();
+
                         }
                     }
                 }
             }
         }
     };
+
+
+
+
 
 
 
@@ -318,20 +329,6 @@ public class BackgroundService2  extends Service implements
                 if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
                 {
 
-                    if(mSettings.getRestartServiceFlag())
-                    {
-                        try
-                        {
-                            this.cancel(true);
-                            BackgroundService2.this.mBinder.restart();
-                            return;
-                        } catch (Exception e)
-                        {
-
-                            e.printStackTrace();
-                        }
-                    }
-
                     if(!Util.isNetworkConnected(BackgroundService2.this))
                     {
                         //startupStarted = false;
@@ -351,7 +348,7 @@ public class BackgroundService2  extends Service implements
 
     SimpleGeofenceStore mGeofenceStorage;
 
-    List<Geofence>  mCurrentGeofences;
+    List<Geofence>  mCurrentGeofences = new ArrayList<Geofence>();
 
     private boolean servicesConnected() {
         // Check that Google Play services is available
@@ -380,7 +377,7 @@ public class BackgroundService2  extends Service implements
      */
     public void addGeofences() {
         // Start a request to add geofences
-        mRequestType = REQUEST_TYPE.ADD;
+        mRequestTypePlayServices = REQUEST_TYPE.ADD;
         /*
          * Test for Google Play services after setting the request type.
          * If Google Play services isn't present, the proper request
@@ -396,13 +393,13 @@ public class BackgroundService2  extends Service implements
          * OnConnectionFailedListener, pass the current activity object
          * as the listener for both parameters
          */
-        mLocationClient = new LocationClient(this, this, this);
+        mLocationClientPlayServices = new LocationClient(this, this, this);
         // If a request is not already underway
-        if (!mInProgress) {
+        if (!mInProgressPlayServices) {
             // Indicate that a request is underway
-            mInProgress = true;
+            mInProgressPlayServices = true;
             // Request a connection from the client to Location Services
-            mLocationClient.connect();
+            mLocationClientPlayServices.connect();
         } else {
             /*
              * A request is already underway. You can handle
@@ -421,7 +418,7 @@ public class BackgroundService2  extends Service implements
      */
     public void removeGeofences(PendingIntent requestIntent) {
         // Record the type of removal request
-        mRequestType = REQUEST_TYPE.REMOVE_INTENT;
+        mRequestTypePlayServices = REQUEST_TYPE.REMOVE_INTENT;
         /*
          * Test for Google Play services after setting the request type.
          * If Google Play services isn't present, the request can be
@@ -431,20 +428,20 @@ public class BackgroundService2  extends Service implements
             return;
         }
         // Store the PendingIntent
-        mGeofenceRequestIntent = requestIntent;
+        mGeofenceRequestIntentPlayServices = requestIntent;
         /*
          * Create a new location client object. Since the current
          * activity class implements ConnectionCallbacks and
          * OnConnectionFailedListener, pass the current activity object
          * as the listener for both parameters
          */
-        mLocationClient = new LocationClient(this, this, this);
+        mLocationClientPlayServices = new LocationClient(this, this, this);
         // If a request is not already underway
-        if (!mInProgress) {
+        if (!mInProgressPlayServices) {
             // Indicate that a request is underway
-            mInProgress = true;
+            mInProgressPlayServices = true;
             // Request a connection from the client to Location Services
-            mLocationClient.connect();
+            mLocationClientPlayServices.connect();
         } else {
             /*
              * A request is already underway. You can handle
@@ -486,7 +483,7 @@ public class BackgroundService2  extends Service implements
 
 
     public void onConnected(Bundle dataBundle) {
-        switch (mRequestType) {
+        switch (mRequestTypePlayServices) {
 
             case ADD :
                 // Get the PendingIntent for the request
@@ -494,17 +491,17 @@ public class BackgroundService2  extends Service implements
                         getTransitionPendingIntent();
                 // Send a request to add the current geofences
 
-                mLocationClient.addGeofences(
+                mLocationClientPlayServices.addGeofences(
                         mCurrentGeofences, mTransitionPendingIntent, this);
                 break;
             // If removeGeofencesById was called
             case REMOVE_LIST :
-                mLocationClient.removeGeofences(
+                mLocationClientPlayServices.removeGeofences(
                         getLocationIdList(), this);
                 break;
             case REMOVE_INTENT :
-                mLocationClient.removeGeofences(
-                        mGeofenceRequestIntent, this);
+                mLocationClientPlayServices.removeGeofences(
+                        mGeofenceRequestIntentPlayServices, this);
                 break;
         }
     }
@@ -539,9 +536,9 @@ public class BackgroundService2  extends Service implements
              */
         }
         // Indicate that a request is no longer in progress
-        mInProgress = false;
+        mInProgressPlayServices = false;
         // Disconnect the location client
-        mLocationClient.disconnect();
+        mLocationClientPlayServices.disconnect();
     }
 
     @Override
@@ -558,7 +555,7 @@ public class BackgroundService2  extends Service implements
     public void removeGeofences(List<String> geofenceIds) {
         // If Google Play services is unavailable, exit
         // Record the type of removal request
-        mRequestType = REQUEST_TYPE.REMOVE_LIST;
+        mRequestTypePlayServices = REQUEST_TYPE.REMOVE_LIST;
         /*
          * Test for Google Play services after setting the request type.
          * If Google Play services isn't present, the request can be
@@ -575,13 +572,13 @@ public class BackgroundService2  extends Service implements
          * OnConnectionFailedListener, pass the current activity object
          * as the listener for both parameters
          */
-        mLocationClient = new LocationClient(this, this, this);
+        mLocationClientPlayServices = new LocationClient(this, this, this);
         // If a request is not already underway
-        if (!mInProgress) {
+        if (!mInProgressPlayServices) {
             // Indicate that a request is underway
-            mInProgress = true;
+            mInProgressPlayServices = true;
             // Request a connection from the client to Location Services
-            mLocationClient.connect();
+            mLocationClientPlayServices.connect();
         } else {
             /*
              * A request is already underway. You can handle
@@ -620,8 +617,8 @@ public class BackgroundService2  extends Service implements
                  */
             }
             // Turn off the in progress flag and disconnect the client
-            mInProgress = false;
-            mLocationClient.disconnect();
+            mInProgressPlayServices = false;
+            mLocationClientPlayServices.disconnect();
         }
 
 
@@ -630,7 +627,7 @@ public class BackgroundService2  extends Service implements
     @Override
     public void onConnectionFailed(ConnectionResult connectionResult) {
         // Turn off the request flag
-        mInProgress = false;
+        mInProgressPlayServices = false;
         /*
          * If the error has a resolution, start a Google Play services
          * activity to resolve it.
@@ -663,9 +660,9 @@ public class BackgroundService2  extends Service implements
     @Override
     public void onDisconnected() {
         // Turn off the request flag
-        mInProgress = false;
+        mInProgressPlayServices = false;
         // Destroy the current location client
-        mLocationClient = null;
+        mLocationClientPlayServices = null;
     }
 
 
@@ -685,7 +682,9 @@ public class BackgroundService2  extends Service implements
 
             @Override
             protected void onPreExecute(){
-                mSettings.setRestartServiceFlag(false);
+//                mSettings.setRestartServiceFlag(false);
+
+
 
                 if(timer!=null)
                 {
@@ -698,7 +697,7 @@ public class BackgroundService2  extends Service implements
 
                     if(!Util.isNetworkConnected(BackgroundService2.this))
                     {
-                        startupStarted = false;
+//                        startupStarted = false;
                         this.cancel(true);
                     }
                 }
@@ -712,11 +711,8 @@ public class BackgroundService2  extends Service implements
             @Override
             protected Void doInBackground(Void... arg0)
             {
-                startupStarted = true;//trt
                 SQLiteDatabase sql = null;
 
-                try
-                {
 
                     sql = openOrCreateDatabase("db",0,null);
 
@@ -732,23 +728,24 @@ public class BackgroundService2  extends Service implements
                         SQLHelper.exec(sql, SQLHelper.dropSettings);
                     }
 
+                    //TODO REPLACE THIS WITH RESTORING LPE Preferences from an object
                     SQLHelper.createDatabases(sql);
 
                     setLocationList();
 
 
-                    reconnectToVoice();
 
-                }
-                catch(Exception e)
-                {
 
-                    Log.e("TECHVENTUS","Startup First EstablishTestDB exception");
-                    e.printStackTrace();
-                }finally{
-                    if(sql!=null)
+                if(sql!=null)
                         sql.close();
+
+
+                try {
+                    reconnectToVoice();
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
+
                 return null;
             }
             @Override
@@ -775,7 +772,8 @@ public class BackgroundService2  extends Service implements
                             continue;
                         }
 
-                        //MESSY CUT AND PASTE
+                        //TODO MESSY CUT AND PASTE
+                        //PULL THIS INTO A METHOD
                         {
                             Geofence.Builder builder = new Geofence.Builder();
                             builder.setCircularRegion(lat,lon,pref.radius);
@@ -802,31 +800,9 @@ public class BackgroundService2  extends Service implements
 
                     }
 
-
-
                 }
 
-
-
-
-
-
-
-
-
-
-
-
-                startupComplete = true;
-
-
-
-
-
-
-
-
-
+                //TODO register receivers here
 
             }
         };
@@ -857,51 +833,6 @@ public class BackgroundService2  extends Service implements
        return ret;
 
    }
-
-    /** The startup started. */
-    boolean startupStarted = false;
-
-    /** The startup complete. */
-    boolean startupComplete = false;
-
-//
-//    //TODO CHANGE CRItERIA TO SETTINGS VALUES
-//    synchronized void setLocationUpdates(){
-//        try
-//        {
-//
-//            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//            int locationpowercriteria = preferences.getInt(Settings.POWER_SETTING, Criteria.POWER_LOW);
-//            int locationaccuracycriteria = preferences.getInt(Settings.ACCURACY_SETTING, Criteria.NO_REQUIREMENT);
-//            Criteria criteria= new Criteria();
-//            criteria.setCostAllowed(false);
-//            criteria.setAltitudeRequired(false);
-//            criteria.setBearingRequired(false);
-//            criteria.setPowerRequirement(locationpowercriteria);
-//            criteria.setAccuracy(locationaccuracycriteria);
-//            String provider = "NETWORK";
-//            if(preferences.getString(Settings.LOCATION_PROVIDER_SETTING, "BEST_PROVIDER").equals("BEST_PROVIDER")){
-//                provider = locationManager.getBestProvider(criteria, true);
-//            }else{
-//                provider = preferences.getString(Settings.LOCATION_PROVIDER_SETTING, "BEST_PROVIDER");
-//            }
-//            if(geoHandle!=null){
-//                locationManager.removeUpdates(geoHandle);
-//                Log.e(TAG, "**********GEOHANDLE REMOVED HOPEFULLY**********");
-//            }
-//
-//            if(runLocationCheckCondition()){
-//                geoHandle = new GeoUpdateHandler();
-//                locationManager.requestLocationUpdates( provider, preferences.getInt(Settings.LOCATION_FREQUENCY, LocationFrequencyToggle.fivemin)*60000 , 0, geoHandle);
-//
-//            }
-//        }catch(Exception e){
-//            e.printStackTrace();
-//            Log.e("Techventus","No Location Service Available");
-//
-//        }
-//    }
-
 
     /**
      * Sets the location list.
@@ -945,48 +876,35 @@ public class BackgroundService2  extends Service implements
     /**
      * Reconnect to voice.
      */
-    protected void reconnectToVoice() throws IOException {
-        if(!Util.isNetworkConnected(BackgroundService2.this)){
+    protected void reconnectToVoice() throws IOException
+    {
+        if(!Util.isNetworkConnected(BackgroundService2.this))
+        {
             mSettings.setReconnectToVoiceFlag(true);
             return;
         }
 
         String username = preferences.getString("username", "");
         String password = preferences.getString("password", "");
-        if(!username.equals("")&&!password.equals("")){
+        if(!username.equals("")&&!password.equals(""))
+        {
             VoiceSingleton.getOrCreateVoiceSingleton(username,Settings.decrypt(password, 10));
             mSettings.setReconnectToVoiceFlag(false);
-        }else{
+        }
+        else
+        {
 
             VoiceSingleton.reset();
         }
     }
 
-//    /**
-//     * Checks if is network connected.
-//     *
-//     * @return true, if is network connected
-//     */
-//    private boolean isNetworkConnected(){
-//        ConnectivityManager cm = (ConnectivityManager) getSystemService(CONNECTIVITY_SERVICE);
-//        NetworkInfo ni = cm.getActiveNetworkInfo();
-//
-//        if (ni!=null && ni.isConnected()){
-//            return true;
-//        }else{
-//            return false;
-//        }
-//    }
-
 
     /** The preferences. */
     SharedPreferences preferences ;
 
-
-//    /** The pref list. */
-//    List<LPEPref> prefList = new ArrayList<LPEPref>();
-
     //TODO EXPERIMENTAL
+    //TODO This should be refactored into an OS Level Wake Up and should maybe be converted to
+    //a handler
     void setUpdateTimers(){
 
         try{
@@ -995,7 +913,7 @@ public class BackgroundService2  extends Service implements
                 timer.cancel();
             timer = new Timer();
             if(phoneUpdateFreq>30000)
-                timer.schedule(phoneUpdateTask(),20000, phoneUpdateFreq);
+                timer.schedule(phoneUpdateTimerTask(),20000, phoneUpdateFreq);
             else
                 Log.e(TAG,"Error In Set Update Timers");
         }catch(Exception e){
@@ -1005,9 +923,11 @@ public class BackgroundService2  extends Service implements
     }
 
 
-    //TODO EXPERIMENTAL
-    TimerTask phoneUpdateTask(){
-        TimerTask phoneUpdateTask = new TimerTask(){
+
+
+    //TODO REPLACE WITH RUNNABLE for a Handler
+    TimerTask phoneUpdateTimerTask(){
+        TimerTask phoneUpdateTimerTask = new TimerTask(){
             @Override
             public void run() {
                 Log.e(TAG, "PHONE UPDATE TASK");
@@ -1018,7 +938,7 @@ public class BackgroundService2  extends Service implements
                 }
             }
         };
-        return phoneUpdateTask;
+        return phoneUpdateTimerTask;
     }
 
 
@@ -1153,19 +1073,8 @@ public class BackgroundService2  extends Service implements
 
                 super.onPreExecute();
 
-                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
-
-                    if(mSettings.getRestartServiceFlag())
-                    {
-                        try
-                        {
-                            this.cancel(true);
-                            BackgroundService2.this.mBinder.restart();
-                            return;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+                {
 
 
                     if(!Util.isNetworkConnected(BackgroundService2.this))

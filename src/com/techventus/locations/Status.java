@@ -9,10 +9,14 @@ public class Status {
 	
 	static public String  currentLocationString = "Elsewhere";
 
+    private static boolean doesNetworkConnectivityExist ;
+
 	public void reset()
 	{
 		locationGeoPoint = new GeoPoint(0,0);
 		
 		currentLocationString = "Elsewhere";
+
+        doesNetworkConnectivityExist = false;
 	}
 }

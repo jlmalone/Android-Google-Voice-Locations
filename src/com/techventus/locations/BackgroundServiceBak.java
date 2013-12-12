@@ -137,7 +137,7 @@ public class BackgroundServiceBak extends Service {
                     try{locationManager.removeUpdates(geoHandle);locationManager = null;}catch(Exception e){e.printStackTrace();
                         Log.e(TAG + " Reset", "LocationManager Exception");}
                 try{geoHandle = new GeoUpdateHandler();}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","geohandle Exception");}
-                try{status.reset();}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","status Exception");}
+                status.reset();
 
 
                 try{VoiceSingleton.reset()/*voiceFact=null*/;}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","voice Exception");}
@@ -268,7 +268,7 @@ public class BackgroundServiceBak extends Service {
 
             @Override
             protected void onPreExecute(){
-                mSettings.setRestartServiceFlag(false);
+//                mSettings.setRestartServiceFlag(false);
 
                 if(timer!=null)
                 {
@@ -297,7 +297,7 @@ public class BackgroundServiceBak extends Service {
                 startupStarted = true;//trt
                 SQLiteDatabase  sql = null;
 
-                try{
+//                try{
 
                     sql = openOrCreateDatabase("db",0,null);
 
@@ -313,28 +313,33 @@ public class BackgroundServiceBak extends Service {
                         SQLHelper.exec(sql, SQLHelper.dropSettings);
                     }
 
-
-
-
                     SQLHelper.createDatabases(sql);
 
                     setLocationList();
-
-                    reconnectToVoice();
-
-
-
-                }catch(Exception e){
-
-                    Log.e("TECHVENTUS","Startup First EstablishTestDB exception");
-                    e.printStackTrace();
-                }finally{
+//                }
+//                catch(SQLException e)
+//                {
+//
+//                    Log.e("TECHVENTUS","Startup First EstablishTestDB exception");
+//                    e.printStackTrace();
+//                }
+//                finally
+//                {
                     if(sql!=null)
                         sql.close();
-                }
+//                }
+            try
+            {
+                reconnectToVoice();
+            }
+            catch(IOException ioex)
+            {
+              //TODO SCHEDULE ANOTHER RECONNECTION. Set the flag.
 
+            }
                 return null;
             }
+
             @Override
             protected void onPostExecute(Void result){
                 setLocationUpdates();
@@ -372,16 +377,16 @@ public class BackgroundServiceBak extends Service {
                 super.onPreExecute();
                 if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
 
-                    if(mSettings.getRestartServiceFlag()){
-                        try {
-                            this.cancel(true);
-                            BackgroundServiceBak.this.mBinder.restart();
-                            return;
-                        } catch (Exception e) {
-
-                            e.printStackTrace();
-                        }
-                    }
+//                    if(mSettings.getRestartServiceFlag()){
+//                        try {
+//                            this.cancel(true);
+//                            BackgroundServiceBak.this.mBinder.restart();
+//                            return;
+//                        } catch (Exception e) {
+//
+//                            e.printStackTrace();
+//                        }
+//                    }
 
 
                     if(!Util.isNetworkConnected(BackgroundServiceBak.this)){
@@ -438,17 +443,17 @@ public class BackgroundServiceBak extends Service {
 
                 if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
 
-                    if(mSettings.getRestartServiceFlag())
-                    {
-                        try
-                        {
-                            this.cancel(true);
-                            BackgroundServiceBak.this.mBinder.restart();
-                            return;
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
+//                    if(mSettings.getRestartServiceFlag())
+//                    {
+//                        try
+//                        {
+//                            this.cancel(true);
+//                            BackgroundServiceBak.this.mBinder.restart();
+//                            return;
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
 
 
                     if(!Util.isNetworkConnected(BackgroundServiceBak.this))
@@ -498,14 +503,20 @@ public class BackgroundServiceBak extends Service {
     }
 
     //TODO EXPERIMENTAL
-    TimerTask phoneUpdateTask(){
-        TimerTask phoneUpdateTask = new TimerTask(){
+    TimerTask phoneUpdateTask()
+    {
+        TimerTask phoneUpdateTask = new TimerTask()
+        {
             @Override
-            public void run() {
+            public void run()
+            {
                 Log.e(TAG, "PHONE UPDATE TASK");
                 if(Util.isNetworkConnected(BackgroundServiceBak.this))
+                {
                     LocationChangeTask().execute();
-                else{
+                }
+                else
+                {
                     mSettings.setPhoneUpdateFlag(true);
                 }
             }
@@ -514,8 +525,8 @@ public class BackgroundServiceBak extends Service {
     }
 
     //TODO EXPERIMENTAL
-    void setUpdateTimers(){
-
+    void setUpdateTimers()
+    {
         try{
             int phoneUpdateFreq = preferences.getInt(Settings.GOOGLE_SYNC_FREQUENCY, 30)*60000;
             if(timer!=null)
@@ -528,7 +539,6 @@ public class BackgroundServiceBak extends Service {
         }catch(Exception e){
             e.printStackTrace();
         }
-
     }
 
     /**
@@ -551,7 +561,6 @@ public class BackgroundServiceBak extends Service {
     synchronized void setLocationUpdates(){
         try
         {
-
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             int locationpowercriteria = preferences.getInt(Settings.POWER_SETTING, Criteria.POWER_LOW);
             int locationaccuracycriteria = preferences.getInt(Settings.ACCURACY_SETTING, Criteria.NO_REQUIREMENT);
@@ -761,6 +770,8 @@ public class BackgroundServiceBak extends Service {
     }
 
 
+    boolean restartserviceflag;
+
     //TODO Consider Launching FLAGGED TASKS FROM OTHER METHODS
     /** The network state receiver.  This allows immediate response to network change events . */
     BroadcastReceiver networkStateReceiver = new BroadcastReceiver() {
@@ -772,9 +783,9 @@ public class BackgroundServiceBak extends Service {
             boolean noConnectivity = extras.getBoolean(android.net.ConnectivityManager.EXTRA_NO_CONNECTIVITY );
 
             if(!noConnectivity){
-                if(mSettings.getRestartServiceFlag() || mSettings.getReconnectToVoiceFlag() || mSettings.getPhoneUpdateFlag())
+                if(restartserviceflag || mSettings.getReconnectToVoiceFlag() || mSettings.getPhoneUpdateFlag())
                     if(Util.isNetworkConnected(BackgroundServiceBak.this)){
-                        if( mSettings.getRestartServiceFlag()){
+                        if( restartserviceflag){
                             try {
                                 BackgroundServiceBak.this.mBinder.restart();
                             } catch (RemoteException e) {

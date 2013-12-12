@@ -128,7 +128,8 @@ public class GoogleFrequencyToggle extends Activity{
 			    SharedPreferences.Editor editor = settings.edit();
 			    editor.putInt(TOGGLE_KEY, m_iCheckedTime);
 			    editor.commit();
-			    mSettings.setRestartServiceFlag(true);
+                //TODO - restart service  12/12/2013
+//			    mSettings.setRestartServiceFlag(true);
 
 				finish();
 			}});
