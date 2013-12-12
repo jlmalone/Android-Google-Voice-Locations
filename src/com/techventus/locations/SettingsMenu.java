@@ -175,12 +175,16 @@ public class SettingsMenu extends ListActivity {
 
         if (serviceEnableToggle.isChecked()) {
             mSettings.setRestartServiceFlag(true);
-            Intent serviceIntent = new Intent(this, BackgroundService.class);
+            Intent serviceIntent = new Intent(this, BackgroundService2.class);
             startService(serviceIntent);
         } else {
             //STOP SERVICE EVERY WAY IMAGINABLE
 
-            Intent serviceIntent = new Intent(this, BackgroundService.class);
+            Intent intent = new Intent();
+            intent.setAction("com.techventus.locations.stopservice");
+            sendBroadcast(intent);
+
+            Intent serviceIntent = new Intent(this, BackgroundService2.class);
             stopService(serviceIntent);
         }
 

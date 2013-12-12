@@ -49,7 +49,7 @@ public class ResetConfirm extends Activity{
 		
 		
 	    //Intent hello_service = new Intent(this, LocationService.class);
-		Intent hello_service = new Intent(this, BackgroundService.class);
+		Intent hello_service = new Intent(this, BackgroundService2.class);
 	    
 		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 		
@@ -112,7 +112,7 @@ public class ResetConfirm extends Activity{
 		super.onResume();
 		
 		//Intent hello_service = new Intent(this, LocationService.class);
-	    Intent hello_service = new Intent(this, BackgroundService.class);
+	    Intent hello_service = new Intent(this, BackgroundService2.class);
 	    
 		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 	}

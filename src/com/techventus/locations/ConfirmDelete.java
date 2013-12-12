@@ -36,7 +36,7 @@ public class ConfirmDelete extends Activity{
 		  preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
 		
 		if(preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
-		    Intent hello_service = new Intent(this, BackgroundService.class);
+		    Intent hello_service = new Intent(this, BackgroundService2.class);
 			bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 		}
 		
@@ -112,7 +112,7 @@ public class ConfirmDelete extends Activity{
 	public void onResume(){
 		super.onResume();
 		if(preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
-		    Intent hello_service = new Intent(this, BackgroundService.class);
+		    Intent hello_service = new Intent(this, BackgroundService2.class);
 			bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 		}
 

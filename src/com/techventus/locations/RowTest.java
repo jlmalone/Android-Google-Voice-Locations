@@ -51,7 +51,7 @@ public class RowTest extends Activity {
         super.onCreate(savedInstanceState);
         setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ); 
         
-	    Intent hello_service = new Intent(this, BackgroundService.class);
+	    Intent hello_service = new Intent(this, BackgroundService2.class);
 	    
 		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 		
@@ -215,7 +215,7 @@ public class RowTest extends Activity {
 	public void onResume(){
 		super.onResume();
 		
-	    Intent hello_service = new Intent(this, BackgroundService.class);
+	    Intent hello_service = new Intent(this, BackgroundService2.class);
 	    
 		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 	}

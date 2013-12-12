@@ -1,5 +1,7 @@
 package com.techventus.locations;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import gvjava.org.json.JSONException;
 
 import java.io.IOException;
@@ -55,6 +57,8 @@ public class QuickRingPreferences extends Activity{
 	
 	/** The preferences. */
 	SharedPreferences preferences;
+
+    AdView mAdView;
 	
 	
 	ProgressBar pending;
@@ -66,6 +70,13 @@ public class QuickRingPreferences extends Activity{
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.quickprefs);
+
+        mAdView= (AdView)this.findViewById(R.id.ad);
+        AdRequest adRequest = new AdRequest.Builder()
+                .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)
+                .addTestDevice("TEST_DEVICE_ID")
+                .build();
+        mAdView.loadAd(adRequest);
 	    
 	    preferences   = getSharedPreferences(Settings.PREFERENCENAME, 0);
 	       

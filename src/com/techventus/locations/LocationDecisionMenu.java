@@ -245,7 +245,7 @@ public class LocationDecisionMenu extends Activity{
 		
 		super.onResume();
         if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
-    	    Intent hello_service = new Intent(this, BackgroundService.class);  
+    	    Intent hello_service = new Intent(this, BackgroundService2.class);
     		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
             
         }

@@ -198,7 +198,7 @@ public class PhonePreference extends Activity{
 		super.onResume();
 		
  	   if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
- 		   Intent hello_service2 = new Intent(this, BackgroundService.class);
+ 		   Intent hello_service2 = new Intent(this, BackgroundService2.class);
  		   bindService( hello_service2, mConnection,Context.BIND_DEBUG_UNBIND);
  	   }
  	   
