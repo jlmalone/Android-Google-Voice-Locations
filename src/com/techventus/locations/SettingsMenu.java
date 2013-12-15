@@ -182,6 +182,7 @@ public class SettingsMenu extends ListActivity {
         {
 //            mSettings.setRestartServiceFlag(true);
             //todo restart service 12/12
+
             Intent serviceIntent = new Intent(this, BackgroundService2.class);
             startService(serviceIntent);
         }
@@ -193,8 +194,8 @@ public class SettingsMenu extends ListActivity {
             intent.setAction("com.techventus.locations.stopservice");
             sendBroadcast(intent);
 
-            Intent serviceIntent = new Intent(this, BackgroundService2.class);
-            stopService(serviceIntent);
+//            Intent serviceIntent = new Intent(this, BackgroundService2.class);
+//            stopService(serviceIntent);
         }
 
     }

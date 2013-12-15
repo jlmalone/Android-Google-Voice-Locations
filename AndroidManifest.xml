@@ -23,19 +23,16 @@
         <activity android:name=".LocationMap"
                   android:label="@string/map_name"
                   android:theme="@android:style/Theme.Holo.Light"/>
-
         <activity android:name=".RowTest"
                   android:label="@string/rowtable"
                   android:theme="@android:style/Theme.Holo.Light"/>
-
         <activity android:name=".NewLocation"
                   android:label="@string/namenewlocation"
                   android:windowSoftInputMode="adjustPan"
                   android:theme="@android:style/Theme.Holo.Light"/>
         <activity android:name=".SettingsMenu"
                   android:label="@string/settingsmenu"
-                  android:theme="@android:style/Theme.Holo.Light">
-        </activity>
+                  android:theme="@android:style/Theme.Holo.Light"/>
         <activity android:name=".FrequencyMenu"
                   android:label="@string/frequencymenu"
                   android:theme="@android:style/Theme.Holo.Light"/>

@@ -68,6 +68,8 @@ public class BackgroundService2  extends Service implements
     AsyncTask<Void,Void,Void> mLocationChangeTask;
 
 
+    String mCurrentLocation = "Elsewhere";
+
     @Override
     public IBinder onBind(Intent intent) {
         return mBinder;
@@ -132,6 +134,11 @@ public class BackgroundService2  extends Service implements
                 {
                     db.close();
                 }
+            }
+
+            if(mStartupTask!=null)
+            {
+                mStartupTask.cancel(true);
             }
 
             mStartupTask = getStartupTask();
@@ -218,8 +225,6 @@ public class BackgroundService2  extends Service implements
 
         registerReceiver(mGeofencesChangedReceiver, new IntentFilter("com.techventus.locations.geofenceschanged"));
 
-
-
     }
 
     @Override
@@ -228,6 +233,8 @@ public class BackgroundService2  extends Service implements
         unregisterReceiver(stopServiceReceiver);
         unregisterReceiver(mNetworkStateReceiver);
         unregisterReceiver(mGeofencesChangedReceiver);
+        mLocationClientPlayServices.disconnect();
+        Toast.makeText(this,"DESTROYING SERVICE",Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
@@ -285,18 +292,12 @@ public class BackgroundService2  extends Service implements
                             }
                             mLocationChangeTask = LocationChangeTask();
                             mLocationChangeTask.execute();
-
                         }
                     }
                 }
             }
         }
     };
-
-
-
-
-
 
 
     /**
@@ -452,8 +453,6 @@ public class BackgroundService2  extends Service implements
         }
     }
 
-
-
     // Enum type for controlling the type of removal requested
     public enum REQUEST_TYPE  {ADD, REMOVE_INTENT, REMOVE_LIST} ;
     // Store the list of geofence Ids to remove
@@ -482,27 +481,37 @@ public class BackgroundService2  extends Service implements
     PendingIntent mTransitionPendingIntent;
 
 
-    public void onConnected(Bundle dataBundle) {
-        switch (mRequestTypePlayServices) {
+    public void onConnected(Bundle dataBundle)
+    {
+        Toast.makeText(this,"ON CONNECTED TO PLAY SERVICES", Toast.LENGTH_LONG).show();
+        try {
 
-            case ADD :
-                // Get the PendingIntent for the request
-                mTransitionPendingIntent =
-                        getTransitionPendingIntent();
-                // Send a request to add the current geofences
 
-                mLocationClientPlayServices.addGeofences(
-                        mCurrentGeofences, mTransitionPendingIntent, this);
-                break;
-            // If removeGeofencesById was called
-            case REMOVE_LIST :
-                mLocationClientPlayServices.removeGeofences(
-                        getLocationIdList(), this);
-                break;
-            case REMOVE_INTENT :
-                mLocationClientPlayServices.removeGeofences(
-                        mGeofenceRequestIntentPlayServices, this);
-                break;
+            switch (mRequestTypePlayServices) {
+
+                case ADD :
+                    // Get the PendingIntent for the request
+                    mTransitionPendingIntent =
+                            getTransitionPendingIntent();
+                    // Send a request to add the current geofences
+
+                    mLocationClientPlayServices.addGeofences(mCurrentGeofences, mTransitionPendingIntent, this);
+                    break;
+                // If removeGeofencesById was called
+                case REMOVE_LIST :
+                    mLocationClientPlayServices.removeGeofences(
+                            getLocationIdList(), this);
+                    break;
+                case REMOVE_INTENT :
+                    mLocationClientPlayServices.removeGeofences(
+                            mGeofenceRequestIntentPlayServices, this);
+                    break;
+            }
+
+        }catch(Exception e)
+        {
+            Toast.makeText(this,"Exception "+e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+            mLocationClientPlayServices.connect();
         }
     }
 
@@ -534,11 +543,12 @@ public class BackgroundService2  extends Service implements
              * You can log the error using Log.e() or update
              * the UI.
              */
+            Toast.makeText(this,"PROBLEM REMOVING GEOFENCES"+statusCode,Toast.LENGTH_LONG);
         }
         // Indicate that a request is no longer in progress
         mInProgressPlayServices = false;
-        // Disconnect the location client
-        mLocationClientPlayServices.disconnect();
+//        // Disconnect the location client
+//        mLocationClientPlayServices.disconnect();
     }
 
     @Override
@@ -552,40 +562,50 @@ public class BackgroundService2  extends Service implements
      * calling LocationClient.connect()
      *
      */
-    public void removeGeofences(List<String> geofenceIds) {
-        // If Google Play services is unavailable, exit
-        // Record the type of removal request
-        mRequestTypePlayServices = REQUEST_TYPE.REMOVE_LIST;
-        /*
-         * Test for Google Play services after setting the request type.
-         * If Google Play services isn't present, the request can be
-         * restarted.
-         */
-        if (!servicesConnected()) {
-            return;
-        }
-        // Store the list of geofences to remove
-//        mGeofencesToRemove = geofenceIds;
-        /*
-         * Create a new location client object. Since the current
-         * activity class implements ConnectionCallbacks and
-         * OnConnectionFailedListener, pass the current activity object
-         * as the listener for both parameters
-         */
-        mLocationClientPlayServices = new LocationClient(this, this, this);
-        // If a request is not already underway
-        if (!mInProgressPlayServices) {
-            // Indicate that a request is underway
-            mInProgressPlayServices = true;
-            // Request a connection from the client to Location Services
-            mLocationClientPlayServices.connect();
-        } else {
+    public void removeGeofences(List<String> geofenceIds)
+    {
+
+        try {
+
+
+            // If Google Play services is unavailable, exit
+            // Record the type of removal request
+            mRequestTypePlayServices = REQUEST_TYPE.REMOVE_LIST;
             /*
-             * A request is already underway. You can handle
-             * this situation by disconnecting the client,
-             * re-setting the flag, and then re-trying the
-             * request.
+             * Test for Google Play services after setting the request type.
+             * If Google Play services isn't present, the request can be
+             * restarted.
              */
+            if (!servicesConnected()) {
+                return;
+            }
+            // Store the list of geofences to remove
+    //        mGeofencesToRemove = geofenceIds;
+            /*
+             * Create a new location client object. Since the current
+             * activity class implements ConnectionCallbacks and
+             * OnConnectionFailedListener, pass the current activity object
+             * as the listener for both parameters
+             */
+            mLocationClientPlayServices = new LocationClient(this, this, this);
+            // If a request is not already underway
+            if (!mInProgressPlayServices) {
+                // Indicate that a request is underway
+                mInProgressPlayServices = true;
+                // Request a connection from the client to Location Services
+                mLocationClientPlayServices.connect();
+            } else {
+                /*
+                 * A request is already underway. You can handle
+                 * this situation by disconnecting the client,
+                 * re-setting the flag, and then re-trying the
+                 * request.
+                 */
+            }
+
+        }catch(Exception e)
+        {
+            mLocationClientPlayServices.connect();
         }
     }
 

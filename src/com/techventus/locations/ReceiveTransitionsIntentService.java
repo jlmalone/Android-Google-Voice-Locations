@@ -67,7 +67,7 @@ public class ReceiveTransitionsIntentService extends IntentService
                     LocationClient.getGeofenceTransition(intent);
             List<Geofence> list = LocationClient.getTriggeringGeofences(intent);
             Log.e("ReceiveTransitionsIntentService",
-                    "Geofence transition error: " +
+                    "Geofence transition success: " +
                             Integer.toString(transitionType));
              String lst = "";
             for(Geofence g:list)
@@ -76,14 +76,7 @@ public class ReceiveTransitionsIntentService extends IntentService
             }
 
 
-            {
-                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-                Intent notificationIntent = new Intent(ReceiveTransitionsIntentService.this, MainMenu.class);
-                PendingIntent pendingIntent = PendingIntent.getActivity(ReceiveTransitionsIntentService.this, 0,notificationIntent, 0);
-                Notification notification = new Notification(R.drawable.ic_menu_compass, "New Message", System.currentTimeMillis());
-                notification.setLatestEventInfo(ReceiveTransitionsIntentService.this,lst+transitionType+"RT GVL", "Now: "+com.techventus.locations.Status.currentLocationString, pendingIntent);
-                notificationManager.notify(9999, notification);
-            }
+
 
             if(transitionType==Geofence.GEOFENCE_TRANSITION_EXIT)
             {
@@ -106,14 +99,14 @@ public class ReceiveTransitionsIntentService extends IntentService
                     // Store the Id of each geofence
                     triggerIds[i] = triggerList.get(i).getRequestId();
 
-                    Status.currentLocationString = triggerIds[i];
+                    Status.currentLocationString = triggerIds[i].replace("_ENTER","");
                 }
 
 
 
 
 
-                triggerLocationChange();
+
                 /*
                  * At this point, you can store the IDs for further use
                  * display them, or display the details associated with
@@ -122,35 +115,82 @@ public class ReceiveTransitionsIntentService extends IntentService
             }
 
 
+            triggerLocationChange();
+
+            {
+                notificationIndex++;
+                NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+                Intent notificationIntent = new Intent(ReceiveTransitionsIntentService.this, MainMenu.class);
+                PendingIntent pendingIntent = PendingIntent.getActivity(ReceiveTransitionsIntentService.this, 0,notificationIntent, 0);
+                Notification notification = new Notification(R.drawable.ic_menu_compass, "New Message", System.currentTimeMillis());
+                notification.flags = Notification.FLAG_AUTO_CANCEL ;
+                notification.setLatestEventInfo(ReceiveTransitionsIntentService.this,lst+transitionType+"RT GVL", "Now: "+com.techventus.locations.Status.currentLocationString, pendingIntent);
+                notificationManager.notify(notificationIndex, notification);
+            }
+
+
         }
 }
+
+    int notificationIndex = 543;
+//    int PHONE_ADD = 345;
+//    int PHONE_REMOVE = 7889;
 
     /**
      * Trigger location change.
      */
     synchronized void triggerLocationChange(){
-
+        Log.v("TECHVENTUS","RECEIVE TRANSITIONS INTENT SERVICE TRIGGER LOCATION CHANGED");
         if(Util.isNetworkConnected(this)){
+            Log.v("TECHVENTUS","NETWORK CONNECTED");
             try {
                 Voice voice = VoiceSingleton.getVoiceSingleton().getVoice();
                 AllSettings voiceSettings =voice.getSettings(false);
                 Phone[] phoneAr = voiceSettings.getPhones();
-                for(LPEPref lpe:mSettings.getPrefsList()){
-                    if(lpe.location.equals(Status.currentLocationString)){
+                for(LPEPref lpe:mSettings.getPrefsList())
+                {
+                    Log.v("TECHVENTUS","lpe phone:"+lpe.phoneString + " location pref: "+lpe.location+", current location"+Status.currentLocationString);
+                    if(lpe.location.equals(Status.currentLocationString))
+                    {
+                        Log.v("TECHVENTUS","location:"+lpe.phoneString);
                         for(Phone phone:phoneAr){
                             if(phone.getName().equals(lpe.phoneString)){
                                 System.out.println(""+phone.getName()+" "+lpe.enablePref);
                                 if(lpe.enablePref==1){
-                                    if(voiceSettings.isPhoneDisabled(phone.getId())){
+                                    if(voiceSettings.isPhoneDisabled(phone.getId()))
+                                    {
+                                        Log.v(TAG,"set phone "+phone.getName()+" Enable");
+                                        notificationIndex++;
+
+//                                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                                        Intent notificationIntent = new Intent(ReceiveTransitionsIntentService.this, MainMenu.class);
+//                                        PendingIntent pendingIntent = PendingIntent.getActivity(ReceiveTransitionsIntentService.this, 0,notificationIntent, 0);
+//                                        Notification notification = new Notification(R.drawable.ic_menu_compass, "PHONE ENABLE", System.currentTimeMillis());
+//                                        notification.flags = Notification.FLAG_AUTO_CANCEL ;
+//                                        notification.setLatestEventInfo(ReceiveTransitionsIntentService.this,"Phone Enable "+phone.getName()+" ", "Now: "+com.techventus.locations.Status.currentLocationString, pendingIntent);
+//                                        notificationManager.notify(PHONE_ADD, notification);
+
                                         voice.phoneEnable(phone.getId());
                                         mSettings.setLocationChanged(true);
                                     }
 
                                 }else if(lpe.enablePref==-1){
                                     if(!voiceSettings.isPhoneDisabled(phone.getId())){
+                                        Log.v(TAG,"set phone "+phone.getName()+" Disable");
                                         Log.e(TAG, "DISABLE "+phone.getId());
                                         mSettings.setLocationChanged(true);
                                         voice.phoneDisable(phone.getId());
+
+//                                        notificationIndex++;
+//
+//                                        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//                                        Intent notificationIntent = new Intent(ReceiveTransitionsIntentService.this, MainMenu.class);
+//                                        PendingIntent pendingIntent = PendingIntent.getActivity(ReceiveTransitionsIntentService.this, 0,notificationIntent, 0);
+//                                        Notification notification = new Notification(R.drawable.ic_menu_compass, "PHONE DISABLE", System.currentTimeMillis());
+//                                        notification.flags = Notification.FLAG_AUTO_CANCEL ;
+//                                        notification.setLatestEventInfo(ReceiveTransitionsIntentService.this,"Phone Disable "+phone.getName()+" ", "Now: "+com.techventus.locations.Status.currentLocationString, pendingIntent);
+//                                        notificationManager.notify(PHONE_REMOVE, notification);
+
                                     }
 
                                 }

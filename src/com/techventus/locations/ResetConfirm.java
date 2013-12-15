@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.ActivityInfo;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -84,11 +83,12 @@ public class ResetConfirm extends Activity{
 		
 	};
 	
-	OnClickListener cancelResetClick = new OnClickListener(){
+	OnClickListener cancelResetClick = new OnClickListener()
+    {
 
 		@Override
-		public void onClick(View arg0) {
-			
+		public void onClick(View arg0)
+        {
 			finish();
 		}
 		
@@ -98,7 +98,8 @@ public class ResetConfirm extends Activity{
 	
 
 	@Override 
-	public void onResume(){
+	public void onResume()
+    {
 		super.onResume();
 		
 	    Intent hello_service = new Intent(this, BackgroundService2.class);
