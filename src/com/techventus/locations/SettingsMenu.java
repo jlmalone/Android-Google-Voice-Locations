@@ -47,20 +47,20 @@ public class SettingsMenu extends ListActivity {
                 .build();
         mAdView.loadAd(adRequest);
 
-        preferences = SettingsMenu.this.getSharedPreferences(Settings.PREFERENCENAME, 0);
+        preferences = SettingsMenu.this.getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 
-        isServiceEnabled = preferences.getBoolean(Settings.SERVICE_ENABLED, false);
-        isStartupEnabled = preferences.getBoolean(Settings.STARTUP_ENABLED, false);
+        isServiceEnabled = preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false);
+        isStartupEnabled = preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, false);
 
         serviceEnableToggle = (ToggleButton) findViewById(R.id.serviceEnableToggle);
         startupEnableToggle = (ToggleButton) findViewById(R.id.serviceStartupToggle);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //SET Toggle to Appropriate Setting.
-        serviceEnableToggle.setChecked(preferences.getBoolean(Settings.SERVICE_ENABLED, false));
+        serviceEnableToggle.setChecked(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false));
         serviceEnableToggle.setOnClickListener(click);
 
-        startupEnableToggle.setChecked(preferences.getBoolean(Settings.STARTUP_ENABLED, false));
+        startupEnableToggle.setChecked(preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, false));
         startupEnableToggle.setOnClickListener(click);
         initListView();
     }
@@ -174,7 +174,7 @@ public class SettingsMenu extends ListActivity {
 
     void serviceToggle() {
         Editor edit = preferences.edit();
-        edit.putBoolean(Settings.SERVICE_ENABLED, serviceEnableToggle.isChecked());
+        edit.putBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, serviceEnableToggle.isChecked());
         edit.commit();
 
 
@@ -202,7 +202,7 @@ public class SettingsMenu extends ListActivity {
 
     void startupToggle() {
         Editor edit = preferences.edit();
-        edit.putBoolean(Settings.STARTUP_ENABLED, startupEnableToggle.isChecked());
+        edit.putBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, startupEnableToggle.isChecked());
         edit.commit();
     }
 

@@ -10,23 +10,32 @@ import java.util.List;
 public class Settings
 {
 
-	/** The Constant PREFERENCENAME. */
-	final protected static String PREFERENCENAME = "TECHVENTUS";
-	final protected static String SERVICE_ENABLED = "SERVICE_ENABLED";
-	final protected static String STARTUP_ENABLED = "STARTUP_ENABLED";
-	final protected static String NOTIFICATION_ACTIVE = "NOTIFICATION_ACTIVE";
-	final protected static String SOUND_ACTIVE = "SOUND_ACTIVE";
-	final protected static String NOTIFICATION_APP_LAUNCH = "NOTIFICATION_APP_LAUNCH";
-	final protected static String POWER_SETTING = "POWER_SETTING";
-	final protected static String LOCATION_FREQUENCY = "LOCATION_FREQUENCY";
+	public static class SharedPrefKey
+	{
+		/** The Constant PREFERENCENAME. */
+		final protected static String PREFERENCES = "TECHVENTUS";
+		final protected static String SERVICE_ENABLED = "SERVICE_ENABLED";
+		final protected static String STARTUP_ENABLED = "STARTUP_ENABLED";
+		final protected static String NOTIFICATION_ACTIVE = "NOTIFICATION_ACTIVE";
+		final protected static String SOUND_ACTIVE = "SOUND_ACTIVE";
+		final protected static String NOTIFICATION_APP_LAUNCH = "NOTIFICATION_APP_LAUNCH";
+		final protected static String POWER_SETTING = "POWER_SETTING";
+		final protected static String LOCATION_FREQUENCY = "LOCATION_FREQUENCY";
+	}
 
-	final protected static  String ACCURACY_SETTING = "ACCURACY_SETTING";
+	public static class BundleKey
+	{
+		final protected static String LOCATION_NAME_EXTRA = "LOCATION_NAME_EXTRA";
+		final protected static String RADIUS_EXTRA = "RADIUS_EXTRA";
+		final protected static String LATITUDE_EXTRA = "LATITUDE_EXTRA";
+		final protected static String LONGITUDE_EXTRA = "LONGITUDE_EXTRA";
+	}
+
+
+
+//	final protected static  String ACCURACY_SETTING = "ACCURACY_SETTING";
 	
-	final protected static String LOCATION_NAME_EXTRA = "LOCATION_NAME_EXTRA";
-	
-	final protected static String RADIUS_EXTRA = "RADIUS_EXTRA";
-	final protected static String LATITUDE_EXTRA = "LATITUDE_EXTRA";
-	final protected static String LONGITUDE_EXTRA = "LONGITUDE_EXTRA";
+
 	public static final String LOCATION_PROVIDER_SETTING = "LOCATION_PROVIDER_SETTING";
 	public static final String GOOGLE_SYNC_FREQUENCY = "GOOGLE_SYNC_FREQUENCY";
 

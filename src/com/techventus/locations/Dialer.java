@@ -277,7 +277,7 @@ public class Dialer extends Activity{
 			e1.printStackTrace();
 			if(voice==null){
 				VoiceSingleton.reset();
-				SharedPreferences preferences = this.getSharedPreferences(Settings.PREFERENCENAME, 0);
+				SharedPreferences preferences = this.getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 				String username = preferences.getString("username", "");
 		    	String password = preferences.getString("password", "");
 		    	if(!username.equals("")&&!password.equals("")){

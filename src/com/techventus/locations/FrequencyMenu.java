@@ -31,7 +31,7 @@ public class FrequencyMenu extends Activity{
 	
 	
 	//REQUEST CODES (may be extraneous)
-	int LOCATION_FREQUENCY = 724;
+
 	int GOOGLE_SYNC = 725;
 
 
@@ -108,12 +108,9 @@ public class FrequencyMenu extends Activity{
 		@Override
 		public void onClick(View view) {
 			int id = view.getId();
-			switch(id) {
-				case R.id.locationfreqbutton:{
-					Intent i = new Intent(FrequencyMenu.this,LocationFrequencyToggle.class);
-					startActivityForResult(i,LOCATION_FREQUENCY);
-					break;
-				}
+			switch(id)
+			{
+
 				case R.id.powerlevelbutton:
 					
 					break;

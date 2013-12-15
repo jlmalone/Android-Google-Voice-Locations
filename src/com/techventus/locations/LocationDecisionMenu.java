@@ -97,7 +97,7 @@ public class LocationDecisionMenu extends Activity{
         super.onCreate(savedInstanceState);
 
 
-		 preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
+		 preferences = getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 
         setRequestedOrientation( ActivityInfo.SCREEN_ORIENTATION_PORTRAIT ); 
         setContentView(R.layout.locationdecisionmenu);
@@ -116,7 +116,7 @@ public class LocationDecisionMenu extends Activity{
         phonePrefsStatusTextView = (TextView)findViewById(R.id.phoneprefsstatus);
         
         Bundle bundle = getIntent().getExtras();
-        locationName = bundle.getString(Settings.LOCATION_NAME_EXTRA);
+        locationName = bundle.getString(Settings.BundleKey.LOCATION_NAME_EXTRA);
         
         if(locationName.equals("Elsewhere")){
         	viewEditLocationButton.setVisibility(View.GONE);
@@ -167,8 +167,8 @@ public class LocationDecisionMenu extends Activity{
 	    	
 	    	case R.id.preferences:{
 	    		Intent i = new Intent(LocationDecisionMenu.this,PhonePreference.class);
-	    		i.putExtra(Settings.LOCATION_NAME_EXTRA, locationName);
-	    		i.putExtra(Settings.RADIUS_EXTRA, radius);
+	    		i.putExtra(Settings.BundleKey.LOCATION_NAME_EXTRA, locationName);
+	    		i.putExtra(Settings.BundleKey.RADIUS_EXTRA, radius);
 	    		startActivity(i);
 	    		return true;
 	    	}
@@ -194,7 +194,7 @@ public class LocationDecisionMenu extends Activity{
        						SQLiteDatabase db= openOrCreateDatabase("db",0,null);
        						db.delete("LOCATIONPHONEENABLE", "locationName = ?", new String[]{locationName});
                     	   db.close();
-       						if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+       						if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
 	       						if(mIRemoteService!=null){
 	       							try {
 										mIRemoteService.restart();
@@ -244,7 +244,7 @@ public class LocationDecisionMenu extends Activity{
 	public void onResume(){
 		
 		super.onResume();
-        if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+        if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false)){
     	    Intent hello_service = new Intent(this, BackgroundService2.class);
     		bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
             
@@ -266,14 +266,14 @@ public class LocationDecisionMenu extends Activity{
 		public void onClick(View arg0) {
 			Intent i = new Intent(LocationDecisionMenu.this,LocationMap.class);
 			Bundle b = new Bundle();
-			b.putString(Settings.LOCATION_NAME_EXTRA/*"locationName"*/, locationName);
+			b.putString(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/, locationName);
 			b.putBoolean("isNew", false);
 
 			List<LPEPref> prefList = LocationPhoneEnablePreference.loadListFromDB(LocationDecisionMenu.this, " locationName = '"+locationName+"' ");
 			if(prefList!=null && prefList.size()>0){
-				b.putInt(Settings.LATITUDE_EXTRA, prefList.get(0).latitude);
-				b.putInt(Settings.LONGITUDE_EXTRA, prefList.get(0).longitude);
-				b.putInt(Settings.RADIUS_EXTRA, prefList.get(0).radius);
+				b.putInt(Settings.BundleKey.LATITUDE_EXTRA, prefList.get(0).latitude);
+				b.putInt(Settings.BundleKey.LONGITUDE_EXTRA, prefList.get(0).longitude);
+				b.putInt(Settings.BundleKey.RADIUS_EXTRA, prefList.get(0).radius);
 				if(prefList.get(0).latitude!=-1 && prefList.get(0).longitude!=1){
 					i.putExtras(b);
 					startActivity(i);
@@ -386,7 +386,7 @@ public class LocationDecisionMenu extends Activity{
 		public void onClick(View arg0) {
 			Intent i = new Intent(LocationDecisionMenu.this,PhonePreference.class);
 			Bundle b = new Bundle();
-			b.putString(Settings.LOCATION_NAME_EXTRA, locationName);
+			b.putString(Settings.BundleKey.LOCATION_NAME_EXTRA, locationName);
 			i.putExtras(b);
 			startActivity(i);
 		}

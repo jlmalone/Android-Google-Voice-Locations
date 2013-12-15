@@ -117,14 +117,14 @@ public class PhonePreference extends Activity{
                 .build();
         mAdView.loadAd(adRequest);
 
-		preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
+		preferences = getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 		
 		try{
 			Bundle receivedBundle = getIntent().getExtras();
-			locationName =receivedBundle.getString(Settings.LOCATION_NAME_EXTRA/*"locationName"*/);
-			radius = receivedBundle.getInt(Settings.RADIUS_EXTRA);
-			latitude = receivedBundle.getInt(Settings.LATITUDE_EXTRA);
-			longitude = receivedBundle.getInt(Settings.LONGITUDE_EXTRA);	
+			locationName =receivedBundle.getString(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/);
+			radius = receivedBundle.getInt(Settings.BundleKey.RADIUS_EXTRA);
+			latitude = receivedBundle.getInt(Settings.BundleKey.LATITUDE_EXTRA);
+			longitude = receivedBundle.getInt(Settings.BundleKey.LONGITUDE_EXTRA);
 		}catch(Exception e){
 			Toast.makeText(getApplicationContext(), "EXCEPTION - DATA NOT IN BUNDLE", Toast.LENGTH_LONG);
 			this.finish();
@@ -197,7 +197,7 @@ public class PhonePreference extends Activity{
 	public void onResume(){
 		super.onResume();
 		
- 	   if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+ 	   if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false)){
  		   Intent hello_service2 = new Intent(this, BackgroundService2.class);
  		   bindService( hello_service2, mConnection,Context.BIND_DEBUG_UNBIND);
  	   }
@@ -514,7 +514,7 @@ public class PhonePreference extends Activity{
 			e1.printStackTrace();
 			if(voice==null){
 				VoiceSingleton.reset();
-				SharedPreferences preferences = this.getSharedPreferences(Settings.PREFERENCENAME, 0);
+				SharedPreferences preferences = this.getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 				String username = preferences.getString("username", "");
 		    	String password = preferences.getString("password", "");
 		    	if(!username.equals("")&&!password.equals("")){

@@ -93,9 +93,9 @@ public class LocationsMenu extends ListActivity {
 
 			Bundle bundle = new Bundle();
 
-			bundle.putString(Settings.LOCATION_NAME_EXTRA/*"locationName"*/, LOCATIONS[position]);
+			bundle.putString(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/, LOCATIONS[position]);
 
-			Log.e("TECHVENTUS", bundle.getString(Settings.LOCATION_NAME_EXTRA/*"locationName"*/));
+			Log.e("TECHVENTUS", bundle.getString(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/));
 			// i.putExtra("locationName",LOCATIONS[position]);
 			i.putExtras(bundle);
 

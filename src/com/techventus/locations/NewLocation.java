@@ -81,18 +81,18 @@ public class NewLocation extends Activity{
 				
 				if((metresBox.getText().toString()).equals("")){
 					//Bundle bundle = new Bundle();
-					i.putExtra(Settings.LOCATION_NAME_EXTRA/*"locationName"*/, locationBox.getText().toString().replace("'","" ));
-					i.putExtra(Settings.RADIUS_EXTRA/*"radius"*/, 100);
+					i.putExtra(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/, locationBox.getText().toString().replace("'","" ));
+					i.putExtra(Settings.BundleKey.RADIUS_EXTRA/*"radius"*/, 100);
 					
-					System.out.println(i.getStringExtra(Settings.LOCATION_NAME_EXTRA/*"locationName"*/));
+					System.out.println(i.getStringExtra(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/));
 					//i.putExtra("location", bundle);
 				}else{
 					//Bundle bundle = new Bundle();
-					i.putExtra(Settings.LOCATION_NAME_EXTRA/*"locationName"*/, locationBox.getText().toString().replace("'","" ));
+					i.putExtra(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/, locationBox.getText().toString().replace("'","" ));
 					
-					i.putExtra(Settings.RADIUS_EXTRA/*"radius"*/, Integer.valueOf(metresBox.getText().toString()));
+					i.putExtra(Settings.BundleKey.RADIUS_EXTRA/*"radius"*/, Integer.valueOf(metresBox.getText().toString()));
 					//i.putExtra("location", bundle);
-					System.out.println(i.getStringExtra(Settings.LOCATION_NAME_EXTRA));
+					System.out.println(i.getStringExtra(Settings.BundleKey.LOCATION_NAME_EXTRA));
 				}
 				startActivity(i);
 				NewLocation.this.finish();

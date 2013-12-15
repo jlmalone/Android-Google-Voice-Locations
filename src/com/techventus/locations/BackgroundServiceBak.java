@@ -206,8 +206,8 @@ public class BackgroundServiceBak extends Service {
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(networkStateReceiver, filter);
 
-        preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
-        if(!preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+        preferences = getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
+        if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false)){
             this.stopSelf();
             return;
         }else
@@ -276,7 +276,7 @@ public class BackgroundServiceBak extends Service {
                 }
 
                 super.onPreExecute();
-                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+                if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
                 {
 
                     if(!Util.isNetworkConnected(BackgroundServiceBak.this))
@@ -375,18 +375,8 @@ public class BackgroundServiceBak extends Service {
             @Override
             protected void onPreExecute(){
                 super.onPreExecute();
-                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+                if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false)){
 
-//                    if(mSettings.getRestartServiceFlag()){
-//                        try {
-//                            this.cancel(true);
-//                            BackgroundServiceBak.this.mBinder.restart();
-//                            return;
-//                        } catch (Exception e) {
-//
-//                            e.printStackTrace();
-//                        }
-//                    }
 
 
                     if(!Util.isNetworkConnected(BackgroundServiceBak.this)){
@@ -396,7 +386,6 @@ public class BackgroundServiceBak extends Service {
                 }else{
                     this.cancel(true);
                     BackgroundServiceBak.this.stopSelf();
-//					cancel();
                 }
             }
         };
@@ -441,7 +430,7 @@ public class BackgroundServiceBak extends Service {
 
                 super.onPreExecute();
 
-                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+                if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false)){
 
 //                    if(mSettings.getRestartServiceFlag())
 //                    {
@@ -541,20 +530,6 @@ public class BackgroundServiceBak extends Service {
         }
     }
 
-    /**
-     * Run location check condition.
-     *
-     * @return true, if successful
-     */
-    //ELIMINATE PERHAPS
-    boolean runLocationCheckCondition(){
-
-        if(preferences.getInt(Settings.LOCATION_FREQUENCY, LocationFrequencyToggle.hourly)!=-1)
-        {
-            return true;
-        }
-        return false;
-    }
 
 
     //TODO CHANGE CRItERIA TO SETTINGS VALUES
@@ -562,14 +537,14 @@ public class BackgroundServiceBak extends Service {
         try
         {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            int locationpowercriteria = preferences.getInt(Settings.POWER_SETTING, Criteria.POWER_LOW);
-            int locationaccuracycriteria = preferences.getInt(Settings.ACCURACY_SETTING, Criteria.NO_REQUIREMENT);
+            int locationpowercriteria = preferences.getInt(Settings.SharedPrefKey.POWER_SETTING, Criteria.POWER_LOW);
+//            int locationaccuracycriteria = preferences.getInt(Settings.SharedPrefKey.ACCURACY_SETTING, Criteria.NO_REQUIREMENT);
             Criteria criteria= new Criteria();
             criteria.setCostAllowed(false);
             criteria.setAltitudeRequired(false);
             criteria.setBearingRequired(false);
             criteria.setPowerRequirement(locationpowercriteria);
-            criteria.setAccuracy(locationaccuracycriteria);
+//            criteria.setAccuracy(locationaccuracycriteria);
             String provider = "NETWORK";
             if(preferences.getString(Settings.LOCATION_PROVIDER_SETTING, "BEST_PROVIDER").equals("BEST_PROVIDER")){
                 provider = locationManager.getBestProvider(criteria, true);
@@ -581,11 +556,14 @@ public class BackgroundServiceBak extends Service {
                 Log.e(TAG, "**********GEOHANDLE REMOVED HOPEFULLY**********");
             }
 
-            if(runLocationCheckCondition()){
-                geoHandle = new GeoUpdateHandler();
-                locationManager.requestLocationUpdates( provider, preferences.getInt(Settings.LOCATION_FREQUENCY, LocationFrequencyToggle.fivemin)*60000 , 0, geoHandle);
 
-            }
+//              COMMEntED OUT BECAUSE WE ARE MOVING TO GEOFENCING
+//            if(runLocationCheckCondition()){
+//                geoHandle = new GeoUpdateHandler();
+//                locationManager.requestLocationUpdates( provider, preferences.getInt(Settings.SharedPrefKey.LOCATION_FREQUENCY, LocationFrequencyToggle.fivemin)*60000 ,
+//		                0, geoHandle);
+
+//            }
         }catch(Exception e){
             e.printStackTrace();
             Log.e("Techventus","No Location Service Available");
@@ -676,7 +654,7 @@ public class BackgroundServiceBak extends Service {
         @Override
         public void onLocationChanged(Location location) {
             //Do Not Execute if Service Disabled
-            if(!preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
+            if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
                 BackgroundServiceBak.this.stopSelf();
                 return;
             }
@@ -751,7 +729,7 @@ public class BackgroundServiceBak extends Service {
      * @param loc the loc
      */
     private void setLocation(int lat , int lon, String loc){
-        if(!preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
+        if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
             BackgroundServiceBak.this.stopSelf();
             return;
         }
@@ -811,11 +789,11 @@ public class BackgroundServiceBak extends Service {
      * @param location the location
      */
     private void notifyUserLocationChange(String location){
-        if(!preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
+        if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
             BackgroundServiceBak.this.stopSelf();
             return;
         }
-        if(preferences.getBoolean(Settings.NOTIFICATION_ACTIVE, false)){
+        if(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, false)){
 
 
             int icon = R.drawable.globesextanticon;        // icon from resources
@@ -827,7 +805,7 @@ public class BackgroundServiceBak extends Service {
 
             Intent notificationIntent;
 
-            if(preferences.getBoolean(Settings.NOTIFICATION_APP_LAUNCH, false))
+            if(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, false))
                 notificationIntent = new Intent(this, MainMenu.class);
             else
                 notificationIntent= new Intent(this, BlankIntent.class);
@@ -840,7 +818,7 @@ public class BackgroundServiceBak extends Service {
             Notification notification = new Notification(icon, tickerText, when);
             notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-            if(preferences.getBoolean(Settings.SOUND_ACTIVE,false )){
+            if(preferences.getBoolean(Settings.SharedPrefKey.SOUND_ACTIVE,false )){
                 notification.defaults |= Notification.DEFAULT_SOUND;
             }
 

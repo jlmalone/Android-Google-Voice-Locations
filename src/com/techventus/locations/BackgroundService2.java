@@ -68,6 +68,23 @@ public class BackgroundService2  extends Service implements
     AsyncTask<Void,Void,Void> mLocationChangeTask;
 
 
+	private void cancelAllBackgroundTasks ()
+	{
+		if(mStartupTask!=null)
+		{
+			mStartupTask.cancel(true);
+		}
+		if(mReconnectToVoiceTask!=null)
+		{
+			mReconnectToVoiceTask.cancel(true);
+		}
+		if(mLocationChangeTask!=null)
+		{
+			mLocationChangeTask.cancel(true);
+		}
+	}
+
+
     String mCurrentLocation = "Elsewhere";
 
     @Override
@@ -96,13 +113,9 @@ public class BackgroundService2  extends Service implements
             {
                 mStartupTask.cancel(true);
             }
-            status.reset();
-            try{VoiceSingleton.reset()/*voiceFact=null*/;}catch(Exception e){e.printStackTrace();Log.e(TAG+" Reset","voice Exception");}
 
+            Status.reset();
 
-            //TODO DO A BUNCH OF SHIT
-            //copied here. Consider it's redundancy
-            status.reset();
             VoiceSingleton.reset();
 
             //PULL THIS INTO A SEPARATE METHOD
@@ -136,10 +149,6 @@ public class BackgroundService2  extends Service implements
                 }
             }
 
-            if(mStartupTask!=null)
-            {
-                mStartupTask.cancel(true);
-            }
 
             mStartupTask = getStartupTask();
             mStartupTask.execute();
@@ -194,8 +203,8 @@ public class BackgroundService2  extends Service implements
         //Awareness of Network Change
         IntentFilter filter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
 
-        preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
-        if(!preferences.getBoolean(Settings.SERVICE_ENABLED, false)){
+        preferences = getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
+        if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false)){
             this.stopSelf();
             return;
         }else{
@@ -327,7 +336,7 @@ public class BackgroundService2  extends Service implements
             protected void onPreExecute()
             {
                 super.onPreExecute();
-                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+                if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
                 {
 
                     if(!Util.isNetworkConnected(BackgroundService2.this))
@@ -712,7 +721,7 @@ public class BackgroundService2  extends Service implements
                 }
 
                 super.onPreExecute();
-                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+                if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
                 {
 
                     if(!Util.isNetworkConnected(BackgroundService2.this))
@@ -975,7 +984,7 @@ public class BackgroundService2  extends Service implements
         @Override
         public void onLocationChanged(Location location) {
             //Do Not Execute if Service Disabled
-            if(!preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
+            if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
                 BackgroundService2.this.stopSelf();
                 return;
             }
@@ -1050,7 +1059,7 @@ public class BackgroundService2  extends Service implements
      * @param loc the loc
      */
     private void setLocation(int lat , int lon, String loc){
-        if(!preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
+        if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
             BackgroundService2.this.stopSelf();
             return;
         }
@@ -1073,7 +1082,7 @@ public class BackgroundService2  extends Service implements
     Timer timer = new Timer();
 
     /** The status. */
-    Status status;
+//    Status status;
 
 
 
@@ -1093,7 +1102,7 @@ public class BackgroundService2  extends Service implements
 
                 super.onPreExecute();
 
-                if(preferences.getBoolean(Settings.SERVICE_ENABLED, false))
+                if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
                 {
 
 
@@ -1200,12 +1209,12 @@ public class BackgroundService2  extends Service implements
      */
     private void notifyUserLocationChange(String location)
     {
-        if (!preferences.getBoolean(Settings.SERVICE_ENABLED, true))
+        if (!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true))
         {
             BackgroundService2.this.stopSelf();
             return;
         }
-        if (preferences.getBoolean(Settings.NOTIFICATION_ACTIVE, false))
+        if (preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, false))
         {
 
             int icon = R.drawable.globesextanticon;        // icon from resources
@@ -1217,7 +1226,7 @@ public class BackgroundService2  extends Service implements
 
             Intent notificationIntent;
 
-            if(preferences.getBoolean(Settings.NOTIFICATION_APP_LAUNCH, false))
+            if(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, false))
                 notificationIntent = new Intent(this, MainMenu.class);
             else
                 notificationIntent= new Intent(this, BlankIntent.class);
@@ -1230,7 +1239,7 @@ public class BackgroundService2  extends Service implements
             Notification notification = new Notification(icon, tickerText, when);
             notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-            if(preferences.getBoolean(Settings.SOUND_ACTIVE,false ))
+            if(preferences.getBoolean(Settings.SharedPrefKey.SOUND_ACTIVE,false ))
             {
                 notification.defaults |= Notification.DEFAULT_SOUND;
             }

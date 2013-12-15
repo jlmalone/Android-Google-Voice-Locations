@@ -3,7 +3,7 @@ package com.techventus.locations;
 import com.google.android.maps.GeoPoint;
 
 
-public class Status {
+public  class Status {
 
 	public static GeoPoint locationGeoPoint = new GeoPoint(0,0);
 	
@@ -11,7 +11,7 @@ public class Status {
 
     private static boolean doesNetworkConnectivityExist ;
 
-	public void reset()
+	public static void reset()
 	{
 		locationGeoPoint = new GeoPoint(0,0);
 		

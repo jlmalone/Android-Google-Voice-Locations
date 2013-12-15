@@ -78,7 +78,7 @@ public class QuickRingPreferences extends Activity{
                 .build();
         mAdView.loadAd(adRequest);
 	    
-	    preferences   = getSharedPreferences(Settings.PREFERENCENAME, 0);
+	    preferences   = getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 	       
 	    pending = (ProgressBar)findViewById(R.id.progressBar);
 	    
@@ -364,7 +364,7 @@ public class QuickRingPreferences extends Activity{
 	 */
 	void serviceDisable(){
 		Editor edit = preferences.edit();
-		edit.putBoolean(Settings.SERVICE_ENABLED, false);
+		edit.putBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false);
 		edit.commit();
 	}
 	
@@ -428,7 +428,7 @@ public class QuickRingPreferences extends Activity{
 			e1.printStackTrace();
 			if(voice==null){
 				VoiceSingleton.reset();
-				SharedPreferences preferences = this.getSharedPreferences(Settings.PREFERENCENAME, 0);
+				SharedPreferences preferences = this.getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 				String username = preferences.getString("username", "");
 		    	String password = preferences.getString("password", "");
 		    	if(!username.equals("")&&!password.equals("")){

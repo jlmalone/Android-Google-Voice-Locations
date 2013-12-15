@@ -68,10 +68,10 @@ public class LocationMap extends MapActivity {
 		Bundle receivedBundle = getIntent().getExtras();
 
 		locationName = receivedBundle
-				.getString(Settings.LOCATION_NAME_EXTRA/* "locationName" */);
+				.getString(Settings.BundleKey.LOCATION_NAME_EXTRA/* "locationName" */);
 
 		try {
-			radius = receivedBundle.getInt(Settings.RADIUS_EXTRA/* "radius" */);
+			radius = receivedBundle.getInt(Settings.BundleKey.RADIUS_EXTRA/* "radius" */);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -87,9 +87,9 @@ public class LocationMap extends MapActivity {
 		mapController.setZoom(4);
 		try {
 			int lat = receivedBundle
-					.getInt(Settings.LATITUDE_EXTRA/* "latitude" */);
+					.getInt(Settings.BundleKey.LATITUDE_EXTRA/* "latitude" */);
 			int lon = receivedBundle
-					.getInt(Settings.LONGITUDE_EXTRA/* "longitude" */);
+					.getInt(Settings.BundleKey.LONGITUDE_EXTRA/* "longitude" */);
 			if (lat != 0 && lon != 0 && lat != -1 && lon != -1) {
 				point = new GeoPoint(lat, lon);
 				Log.e("TECHVENTUS", "LAT LON SET " + lat + " " + lon);
@@ -180,10 +180,10 @@ public class LocationMap extends MapActivity {
 		public void onClick(View v) {
 			if(point.getLatitudeE6()!=0 && point.getLongitudeE6()!=0){
 				Intent setPrefIntent = new Intent(LocationMap.this,PhonePreference.class);
-				setPrefIntent.putExtra(Settings.LOCATION_NAME_EXTRA,locationName);
-				setPrefIntent.putExtra(Settings.LATITUDE_EXTRA, point.getLatitudeE6());
-				setPrefIntent.putExtra(Settings.LONGITUDE_EXTRA, point.getLongitudeE6());
-				setPrefIntent.putExtra(Settings.RADIUS_EXTRA, radius);
+				setPrefIntent.putExtra(Settings.BundleKey.LOCATION_NAME_EXTRA,locationName);
+				setPrefIntent.putExtra(Settings.BundleKey.LATITUDE_EXTRA, point.getLatitudeE6());
+				setPrefIntent.putExtra(Settings.BundleKey.LONGITUDE_EXTRA, point.getLongitudeE6());
+				setPrefIntent.putExtra(Settings.BundleKey.RADIUS_EXTRA, radius);
 				setPrefIntent.putExtra("isNew", isNewLocation);
 				startActivity(setPrefIntent);
 				LocationMap.this.finish();

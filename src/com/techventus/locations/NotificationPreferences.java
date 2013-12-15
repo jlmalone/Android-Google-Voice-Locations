@@ -7,15 +7,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ToggleButton;
-// TODO: Auto-generated Javadoc
-//import android.widget.Button;
 
 /**
  * The Class NotificationPreferences.
  */
 public class NotificationPreferences extends Activity{
 	
-//	String PREFERENCENAME = "TECHVENTUS";
 	/** The sound toggle button. */
 	ToggleButton soundToggleButton;
 	
@@ -29,10 +26,6 @@ public class NotificationPreferences extends Activity{
 	SharedPreferences preferences ;
 	
 
-//	/** The RESE t_ resul t_ code. */
-//	int RESET_RESULT_CODE = 999;
-	
-	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -45,15 +38,15 @@ public class NotificationPreferences extends Activity{
 		alertToggleButton = (ToggleButton)findViewById(R.id.alertToggleButton);
 		launchToggleButton = (ToggleButton)findViewById(R.id.launchActivityButton);
 		
-		preferences   = this.getSharedPreferences(Settings.PREFERENCENAME, 0);
+		preferences   = this.getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 	      
 		soundToggleButton.setOnClickListener(click);
 		alertToggleButton.setOnClickListener(click);
 		launchToggleButton.setOnClickListener(click);
 		
-		alertToggleButton.setChecked(preferences.getBoolean(Settings.NOTIFICATION_ACTIVE, false));
-		soundToggleButton.setChecked(preferences.getBoolean(Settings.SOUND_ACTIVE, false));
-		launchToggleButton.setChecked(preferences.getBoolean(Settings.NOTIFICATION_APP_LAUNCH, false));
+		alertToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, false));
+		soundToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.SOUND_ACTIVE, false));
+		launchToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, false));
 	}
 	
 
@@ -86,10 +79,9 @@ public class NotificationPreferences extends Activity{
 	 */
 	void alertToggle(){
 		Editor edit = preferences.edit();
-		edit.putBoolean(Settings.NOTIFICATION_ACTIVE, alertToggleButton.isChecked());
+		edit.putBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, alertToggleButton.isChecked());
 		edit.commit();
-		//setResult(RESET_RESULT_CODE);
-		
+
 	}
 	
 	/**
@@ -97,9 +89,8 @@ public class NotificationPreferences extends Activity{
 	 */
 	void soundToggle(){
 		Editor edit = preferences.edit();
-		edit.putBoolean(Settings.SOUND_ACTIVE, soundToggleButton.isChecked());
+		edit.putBoolean(Settings.SharedPrefKey.SOUND_ACTIVE, soundToggleButton.isChecked());
 		edit.commit();
-		//this.setResult(RESET_RESULT_CODE);
 	}
 	
 	/**
@@ -107,7 +98,7 @@ public class NotificationPreferences extends Activity{
 	 */
 	void launchToggle(){
 		Editor edit = preferences.edit();
-		edit.putBoolean(Settings.NOTIFICATION_APP_LAUNCH, launchToggleButton.isChecked());
+		edit.putBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, launchToggleButton.isChecked());
 		edit.commit();
 		
 	}

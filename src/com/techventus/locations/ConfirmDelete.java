@@ -33,9 +33,9 @@ public class ConfirmDelete extends Activity{
 		super.onCreate(bundle);
 		
 		 
-		  preferences = getSharedPreferences(Settings.PREFERENCENAME, 0);
+		  preferences = getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 		
-		if(preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
+		if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
 		    Intent hello_service = new Intent(this, BackgroundService2.class);
 			bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 		}
@@ -46,7 +46,7 @@ public class ConfirmDelete extends Activity{
 		
 		Bundle receivedBundle =getIntent().getExtras();
 		
-		locationName =receivedBundle.getString(Settings.LOCATION_NAME_EXTRA/*"locationName"*/);
+		locationName =receivedBundle.getString(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/);
 		
 		confirmResetButton = (Button)findViewById(R.id.confirmReset);
 		cancelResetButton  = (Button)findViewById(R.id.cancelReset);
@@ -111,7 +111,7 @@ public class ConfirmDelete extends Activity{
 	@Override 
 	public void onResume(){
 		super.onResume();
-		if(preferences.getBoolean(Settings.SERVICE_ENABLED, true)){
+		if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
 		    Intent hello_service = new Intent(this, BackgroundService2.class);
 			bindService( hello_service, mConnection,Context.BIND_AUTO_CREATE);
 		}

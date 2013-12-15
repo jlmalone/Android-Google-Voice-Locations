@@ -107,7 +107,7 @@ public class DeleteLocation extends ListActivity{
 				try{
 					
 					Bundle b = new Bundle();
-					b.putString(Settings.LOCATION_NAME_EXTRA/*"locationName"*/, locationName);
+					b.putString(Settings.BundleKey.LOCATION_NAME_EXTRA/*"locationName"*/, locationName);
 					Intent i = new Intent(DeleteLocation.this,ConfirmDelete.class);
 					i.putExtras( b);
 					DeleteLocation.this.startActivity(i);
