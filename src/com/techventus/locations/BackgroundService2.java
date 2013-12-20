@@ -7,8 +7,8 @@ import android.app.Service;
 import android.content.*;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.location.Location;
-import android.location.LocationListener;
+//import android.location.Location;
+//import android.location.LocationListener;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -22,7 +22,7 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationStatusCodes;
-import com.google.android.maps.GeoPoint;
+//import com.google.android.maps.GeoPoint;
 import com.techventus.server.voice.Voice;
 import com.techventus.server.voice.datatypes.AllSettings;
 import com.techventus.server.voice.datatypes.Phone;
@@ -85,7 +85,7 @@ public class BackgroundService2  extends Service implements
 	}
 
 
-    String mCurrentLocation = "Elsewhere";
+//    String mCurrentLocation = "Elsewhere";
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -149,6 +149,12 @@ public class BackgroundService2  extends Service implements
                 }
             }
 
+	        SharedPreferences.Editor editor = preferences.edit();
+	        editor.clear().commit();
+
+
+
+
 
             mStartupTask = getStartupTask();
             mStartupTask.execute();
@@ -163,6 +169,7 @@ public class BackgroundService2  extends Service implements
         @Override
         public void restart() throws RemoteException
         {
+	        BackgroundService2.this.restart();
             if(mStartupTask!=null)
             {
                 mStartupTask.cancel(true);
@@ -179,6 +186,19 @@ public class BackgroundService2  extends Service implements
 
 
     };
+
+
+
+
+	 void restart()
+	{
+		if(mStartupTask!=null)
+		{
+			mStartupTask.cancel(true);
+		}
+		mStartupTask = getStartupTask();
+		mStartupTask.execute();
+	}
 
 
     // Holds the location client
@@ -263,6 +283,8 @@ public class BackgroundService2  extends Service implements
         @Override
         public void onReceive(Context context, Intent intent) {
             Log.v(TAG, "geofences changed receiver");
+//	        mBinder.restart();
+	        restart();
         }
     };
 
@@ -695,12 +717,6 @@ public class BackgroundService2  extends Service implements
     }
 
 
-
-
-
-
-
-
     /**
      * Gets the startup task.
      *
@@ -712,8 +728,6 @@ public class BackgroundService2  extends Service implements
             @Override
             protected void onPreExecute(){
 //                mSettings.setRestartServiceFlag(false);
-
-
 
                 if(timer!=null)
                 {
@@ -972,110 +986,110 @@ public class BackgroundService2  extends Service implements
 
 
 
+//
+//    /**
+//     * The Class GeoUpdateHandler.
+//     */
+//    public class GeoUpdateHandler implements LocationListener {
+//
+//        /* (non-Javadoc)
+//         * @see android.location.LocationListener#onLocationChanged(android.location.Location)
+//         */
+//        @Override
+//        public void onLocationChanged(Location location) {
+//            //Do Not Execute if Service Disabled
+//            if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
+//                BackgroundService2.this.stopSelf();
+//                return;
+//            }
+//
+//
+//            Log.e(TAG,"Geopoint Update Handler - updating location GeoPoint from "+location.getProvider());
+//            Log.e(TAG,"Accuracy"+location.getAccuracy());
+//
+//
+//            int lat = (int) (location.getLatitude() * 1E6);
+//            int lng = (int) (location.getLongitude() * 1E6);
+//
+//            setLocation(lat,lng,Status.currentLocationString);
+//            boolean action = false;
+//            for(LPEPref lpe:mSettings.getPrefsList()){
+//                if(lpe.location.equals("Elsewhere")){
+//                    continue;
+//                }
+//                if(Settings.distInMetres(lpe.getGeoPoint(), Status.locationGeoPoint)<lpe.radius+location.getAccuracy()){
+//
+//                    Log.e("TECHVENTUS","CHANGING LOCATION from "+Status.currentLocationString+" to "+lpe.location);
+//                    action = true;
+//                    if(!lpe.location.equals(Status.currentLocationString)){
+//                        Status.currentLocationString = lpe.location;
+//                        Log.e("TECHVENTUS","CHANGING LOCATION to "+lpe.location);
+//                        LocationChangeTask().execute();
+//                        break;
+//                    }
+//                }
+//
+//            }
+//            if(!action && !Status.currentLocationString.equals("Elsewhere")){
+//                Log.e("TECHVENTUS","CHANGING LOCATION to ELSEWHERE from "+Status.currentLocationString);
+//                Status.currentLocationString = "Elsewhere";
+//                setLocation(Status.locationGeoPoint.getLatitudeE6(),Status.locationGeoPoint.getLongitudeE6(),"Elsewhere");
+//                LocationChangeTask().execute();
+//                Log.e("TECHVENTUS","LOCATION GEOPOINT SET "+Status.locationGeoPoint.getLatitudeE6());
+//            }
+//
+//        }
+//
+//        /* (non-Javadoc)
+//         * @see android.location.LocationListener#onProviderDisabled(java.lang.String)
+//         */
+//        @Override
+//        public void onProviderDisabled(String provider) {
+//
+//        }
+//
+//        /* (non-Javadoc)
+//         * @see android.location.LocationListener#onProviderEnabled(java.lang.String)
+//         */
+//        @Override
+//        public void onProviderEnabled(String provider) {
+//        }
+//
+//        /* (non-Javadoc)
+//         * @see android.location.LocationListener#onStatusChanged(java.lang.String, int, android.os.Bundle)
+//         */
+//        @Override
+//        public void onStatusChanged(String provider, int status, Bundle extras) {
+//            //TODO Raise Notification
+//        }
+//    }
 
-    /**
-     * The Class GeoUpdateHandler.
-     */
-    public class GeoUpdateHandler implements LocationListener {
-
-        /* (non-Javadoc)
-         * @see android.location.LocationListener#onLocationChanged(android.location.Location)
-         */
-        @Override
-        public void onLocationChanged(Location location) {
-            //Do Not Execute if Service Disabled
-            if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
-                BackgroundService2.this.stopSelf();
-                return;
-            }
-
-
-            Log.e(TAG,"Geopoint Update Handler - updating location GeoPoint from "+location.getProvider());
-            Log.e(TAG,"Accuracy"+location.getAccuracy());
-
-
-            int lat = (int) (location.getLatitude() * 1E6);
-            int lng = (int) (location.getLongitude() * 1E6);
-
-            setLocation(lat,lng,Status.currentLocationString);
-            boolean action = false;
-            for(LPEPref lpe:mSettings.getPrefsList()){
-                if(lpe.location.equals("Elsewhere")){
-                    continue;
-                }
-                if(Settings.distInMetres(lpe.getGeoPoint(), Status.locationGeoPoint)<lpe.radius+location.getAccuracy()){
-
-                    Log.e("TECHVENTUS","CHANGING LOCATION from "+Status.currentLocationString+" to "+lpe.location);
-                    action = true;
-                    if(!lpe.location.equals(Status.currentLocationString)){
-                        Status.currentLocationString = lpe.location;
-                        Log.e("TECHVENTUS","CHANGING LOCATION to "+lpe.location);
-                        LocationChangeTask().execute();
-                        break;
-                    }
-                }
-
-            }
-            if(!action && !Status.currentLocationString.equals("Elsewhere")){
-                Log.e("TECHVENTUS","CHANGING LOCATION to ELSEWHERE from "+Status.currentLocationString);
-                Status.currentLocationString = "Elsewhere";
-                setLocation(Status.locationGeoPoint.getLatitudeE6(),Status.locationGeoPoint.getLongitudeE6(),"Elsewhere");
-                LocationChangeTask().execute();
-                Log.e("TECHVENTUS","LOCATION GEOPOINT SET "+Status.locationGeoPoint.getLatitudeE6());
-            }
-
-        }
-
-        /* (non-Javadoc)
-         * @see android.location.LocationListener#onProviderDisabled(java.lang.String)
-         */
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-
-        /* (non-Javadoc)
-         * @see android.location.LocationListener#onProviderEnabled(java.lang.String)
-         */
-        @Override
-        public void onProviderEnabled(String provider) {
-        }
-
-        /* (non-Javadoc)
-         * @see android.location.LocationListener#onStatusChanged(java.lang.String, int, android.os.Bundle)
-         */
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            //TODO Raise Notification
-        }
-    }
-
-
-    /**
-     * Sets the location class variables for locationName and coordinates.
-     *
-     * @param lat the lat
-     * @param lon the lon
-     * @param loc the loc
-     */
-    private void setLocation(int lat , int lon, String loc){
-        if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
-            BackgroundService2.this.stopSelf();
-            return;
-        }
-        synchronized(this){
-            try{
-                Log.e("TECHVENTUS","SET LOCATION");
-
-                Status.currentLocationString = loc;
-                Status.locationGeoPoint = new GeoPoint(lat,lon);
-
-
-            }catch(Exception u){
-                u.printStackTrace();
-            }
-        }
-    }
+//
+//    /**
+//     * Sets the location class variables for locationName and coordinates.
+//     *
+//     * @param lat the lat
+//     * @param lon the lon
+//     * @param loc the loc
+//     */
+//    private void setLocation(int lat , int lon, String loc){
+//        if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true)){
+//            BackgroundService2.this.stopSelf();
+//            return;
+//        }
+//        synchronized(this){
+//            try{
+//                Log.e("TECHVENTUS","SET LOCATION");
+//
+//                Status.currentLocationString = loc;
+//                Status.locationGeoPoint = new GeoPoint(lat,lon);
+//
+//
+//            }catch(Exception u){
+//                u.printStackTrace();
+//            }
+//        }
+//    }
 
 
 
@@ -1214,7 +1228,7 @@ public class BackgroundService2  extends Service implements
             BackgroundService2.this.stopSelf();
             return;
         }
-        if (preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, false))
+        if (preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, true))
         {
 
             int icon = R.drawable.globesextanticon;        // icon from resources
@@ -1226,7 +1240,7 @@ public class BackgroundService2  extends Service implements
 
             Intent notificationIntent;
 
-            if(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, false))
+            if(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, true))
                 notificationIntent = new Intent(this, MainMenu.class);
             else
                 notificationIntent= new Intent(this, BlankIntent.class);
@@ -1239,7 +1253,7 @@ public class BackgroundService2  extends Service implements
             Notification notification = new Notification(icon, tickerText, when);
             notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-            if(preferences.getBoolean(Settings.SharedPrefKey.SOUND_ACTIVE,false ))
+            if(preferences.getBoolean(Settings.SharedPrefKey.SOUND_ACTIVE,true ))
             {
                 notification.defaults |= Notification.DEFAULT_SOUND;
             }

@@ -20,10 +20,9 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -65,8 +64,8 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	 */
 	String locationString = "Unknown";
 
-	Timer timer = new Timer();
-
+//	Timer timer = new Timer();
+	 Handler handler ;
 
 	/**
 	 * The version info.
@@ -220,7 +219,9 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 			// this gets an instance of the IRemoteInterface, which we can use to call on the service
 			mIRemoteService = GVLServiceInterface.Stub.asInterface(service);
 			//MAKE THIS A BACKGROUND TASK
-			DisplayTask().execute();
+//			DisplayTask().execute();
+			getDisplayValues();
+			setDisplay();
 		}
 
 		// Called when the connection with the service disconnects unexpectedly
@@ -321,8 +322,6 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 		//IF SERVICE_ENABLED, LAUNCH IT ON A PERSISTENT BASIS
 		if (preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
 		{
-			//    		Intent hello_service = new Intent(this, BackgroundService.class);
-			//    		startService(hello_service);
 			Intent hello_service2 = new Intent(this, BackgroundService2.class);
 			startService(hello_service2);
 		}
@@ -348,6 +347,8 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	{
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.main);
+
+		handler = new Handler();
 
 		mAdView = (AdView) this.findViewById(R.id.ad);
 		AdRequest adRequest = new AdRequest.Builder().addTestDevice(AdRequest.DEVICE_ID_EMULATOR).addTestDevice("TEST_DEVICE_ID").build();
@@ -454,40 +455,46 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 
 			INTERVAL = 5000;
 
+//			AsyncTask<Void, Void, Void> mDisplayTask;
 
-			TimerTask tt = new TimerTask()
-			{
 
-				@Override
-				public void run()
-				{
-					if (preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
-					{
-						try
-						{
-							INTERVAL = INTERVAL + (INTERVAL / 2) - 2000;
-							if (mActive)
-							{
-								DisplayTask().execute();
-							}
-						}
-						catch (Exception e)
-						{
-							e.printStackTrace();
-						}
-					}
-				}
 
-			};
-			if (timer != null)
-			{
-				timer.cancel();
-			}
-			timer = new Timer();
+
+//			TimerTask tt = new TimerTask()
+//			{
+//
+//				@Override
+//				public void run()
+//				{
+//					if (preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
+//					{
+//						try
+//						{
+//							INTERVAL = INTERVAL + (INTERVAL / 2) - 2000;
+//							if (mActive)
+//							{
+//
+//								getDisplayValues();
+//								setDisplay();
+//							}
+//						}
+//						catch (Exception e)
+//						{
+//							e.printStackTrace();
+//						}
+//					}
+//				}
+//
+//			};
+
+
+
+
 			//ARBITRARY - CONSIDER ADJUSTMENT
 			if (preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
 			{
-				timer.schedule(tt, (long) 5000, 14000 + INTERVAL);
+//				timer.schedule(tt, (long) 5000, 14000 + INTERVAL);
+				handler.postDelayed(mUpdateDisplayRunnable,INTERVAL);
 			}
 			else
 			{
@@ -499,16 +506,53 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	}
 
 
+	Runnable mUpdateDisplayRunnable = new Runnable() {
+		@Override
+		public void run() {
+
+			if (preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
+			{
+				try
+				{
+					INTERVAL = INTERVAL + (INTERVAL / 2) - 2000;
+					if (mActive)
+					{
+
+						getDisplayValues();
+					}
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+			}
+
+			setDisplay();
+
+			handler.postDelayed(mUpdateDisplayRunnable,INTERVAL);
+
+		}
+	};
+
+
 	@Override
 	public void onPause()
 	{
 		mAdView.pause();
+		try
+		{
+			handler.removeCallbacks(mUpdateDisplayRunnable);
+		} catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+
 		super.onPause();
 		this.mActive = false;
-		if (timer != null)
-		{
-			timer.cancel();
-		}
+//		if (timer != null)
+//		{
+//			timer.cancel();
+//		}
 
 		try
 		{
@@ -543,7 +587,7 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	 */
 	private void setDisplay()
 	{
-		if (lat != 0 && lon != 0 && lat != -1 && lon != -1)
+		if (lat != 0 && lon != 0 && lat != -1 && lon != -1 && preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
 		{
 			DecimalFormat nf = new DecimalFormat("###.00000");
 			gpsTextView.setText("LAT: " + nf.format(lat) + " LON: " + nf.format(lon));
@@ -557,64 +601,65 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	}
 
 
-	/**
-	 * Display task.
-	 *
-	 * @return the async task
-	 */
-	AsyncTask<Void, Void, Void> DisplayTask()
-	{
-		AsyncTask<Void, Void, Void> DisplayTask = new AsyncTask<Void, Void, Void>()
-		{
-			@Override
-			protected void onPreExecute()
-			{
-
-				super.onPreExecute();
-				if (!mActive)
-				{
-					this.cancel(true);
-				}
-			}
-
-			@Override
-			protected Void doInBackground(Void... params)
-			{
-				try
-				{
-					if (mActive)
-					{
-						getDisplayValues();
-					}
-
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-				return null;
-			}
-
-			@Override
-			protected void onPostExecute(Void result)
-			{
-				try
-				{
-					if (mActive)
-					{
-
-						setDisplay();
-						System.out.println("DisplayTask Finished");
-					}
-				}
-				catch (Exception e)
-				{
-					e.printStackTrace();
-				}
-			}
-		};
-		return DisplayTask;
-	}
+//	/**
+//	 * Display task.
+//	 *
+//	 * @return the async task
+//	 */
+//	AsyncTask<Void, Void, Void> DisplayTask()
+//	{
+//		AsyncTask<Void, Void, Void> DisplayTask = new AsyncTask<Void, Void, Void>()
+//		{
+//			@Override
+//			protected void onPreExecute()
+//			{
+//
+//				super.onPreExecute();
+//				if (!mActive)
+//				{
+//					this.cancel(true);
+//				}
+//			}
+//
+//			@Override
+//			protected Void doInBackground(Void... params)
+//			{
+//				try
+//				{
+//					if (mActive)
+//					{
+//						getDisplayValues();
+//					}
+//
+//				}
+//				catch (Exception e)
+//				{
+//					e.printStackTrace();
+//				}
+//				return null;
+//			}
+//
+//			@Override
+//			protected void onPostExecute(Void result)
+//			{
+//				try
+//				{
+//					if (mActive)
+//					{
+//
+//						setDisplay();
+//						System.out.println("DisplayTask Finished");
+//					}
+//				}
+//				catch (Exception e)
+//				{
+//					e.printStackTrace();
+//				}
+//			}
+//		};
+//
+//		return DisplayTask;
+//	}
 
 
 	public static String readRawTextFile(Context ctx, int resId)
@@ -638,14 +683,18 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 		{
 			return null;
 		}
+
 		return text.toString();
 	}
 
 
 	protected void startLocationTracking()
 	{
+		if(!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
+			return;
 
 		int errorCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+
 		if (errorCode != ConnectionResult.SUCCESS)
 		{
 			GooglePlayServicesUtil.getErrorDialog(errorCode, this, 0).show();
@@ -664,23 +713,15 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	private LocationListener mLocationListener = new LocationListener()
 	{
 
-		private long mLastEventTime = 0;
-
 		@Override
 		public void onLocationChanged(Location location)
 		{
-			double delayBtnEvents = (System.nanoTime() - mLastEventTime) / (1000000000.0);
-			mLastEventTime = System.nanoTime();
-
 
 			lat = location.getLatitude();
 			lon = location.getLongitude();
 
-
 			setDisplay();
 
-			Toast.makeText(MainMenu.this, "Play Location Changed " + location.getLatitude() + " " + location.getLongitude() + " " + location.getAccuracy(),
-					Toast.LENGTH_SHORT).show();
 
 		}
 	};
@@ -756,7 +797,7 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 			}
 			else
 			{
-				Toast.makeText(this, "This device is not supported.", Toast.LENGTH_LONG).show();
+				Toast.makeText(this, "Google Play Services Check. This device is not supported.", Toast.LENGTH_LONG).show();
 				finish();
 			}
 			return false;

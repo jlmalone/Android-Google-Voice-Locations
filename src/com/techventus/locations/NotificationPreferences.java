@@ -44,9 +44,9 @@ public class NotificationPreferences extends Activity{
 		alertToggleButton.setOnClickListener(click);
 		launchToggleButton.setOnClickListener(click);
 		
-		alertToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, false));
-		soundToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.SOUND_ACTIVE, false));
-		launchToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, false));
+		alertToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_ACTIVE, true));
+		soundToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.SOUND_ACTIVE, true));
+		launchToggleButton.setChecked(preferences.getBoolean(Settings.SharedPrefKey.NOTIFICATION_APP_LAUNCH, true));
 	}
 	
 

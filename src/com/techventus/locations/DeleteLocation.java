@@ -20,7 +20,8 @@ public class DeleteLocation extends ListActivity{
 	String[] LOCATIONS ;
 	
 	@Override
-	public void onCreate(Bundle bundle) {
+	public void onCreate(Bundle bundle)
+	{
 		super.onCreate(bundle);
 
 		this.setContentView(R.layout.deletelocation);
@@ -33,7 +34,8 @@ public class DeleteLocation extends ListActivity{
 	    	
 	    
 	    	
-	    	for(int i=0;i<LOCATIONS.length;i++){
+	    	for(int i=0;i<LOCATIONS.length;i++)
+		    {
 	    		LinearLayout ll = new LinearLayout(this);
 	    		ll.setOrientation(LinearLayout.VERTICAL);
 	    		TextView loc = new TextView(this);

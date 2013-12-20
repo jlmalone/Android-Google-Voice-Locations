@@ -83,14 +83,20 @@ public class ConfirmDelete extends Activity{
 			SQLiteDatabase sql = openOrCreateDatabase("db",0,null);
 			sql.execSQL("DELETE FROM LOCATIONPHONEENABLE WHERE locationName = '"+locationName+"';");
 			sql.close();
+
+			Intent intent = new Intent();
+			intent.setAction("com.techventus.locations.geofenceschanged");
+			sendBroadcast(intent);
+
+
 				
-			if(mIRemoteService!=null){
-				try {
-					mIRemoteService.restart();
-				} catch (RemoteException e) {
-					e.printStackTrace();
-				}
-			}
+//			if(mIRemoteService!=null){
+//				try {
+//					mIRemoteService.restart();
+//				} catch (RemoteException e) {
+//					e.printStackTrace();
+//				}
+//			}
 		
 			ConfirmDelete.this.finish();
 		}

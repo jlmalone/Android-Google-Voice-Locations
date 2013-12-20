@@ -115,21 +115,27 @@ public class Dialer extends Activity{
 	 * @return the AsyncTask
 	 */
 	AsyncTask<Void, Void, Boolean> setVoiceTask(){ 
-		AsyncTask<Void,Void,Boolean> ret= new AsyncTask<Void,Void,Boolean>(){
+		AsyncTask<Void,Void,Boolean> ret = new AsyncTask<Void,Void,Boolean>(){
 
 
 			@Override
-			protected void onPreExecute() {
+			protected void onPreExecute()
+			{
 				if(isNetworkConnected())
+				{
 					return;
-				else{
+				}
+				else
+				{
 					this.cancel(true);
 					networkExit();
 				}
 			}
 			@Override
-			protected Boolean doInBackground(Void... arg0) {	
+			protected Boolean doInBackground(Void... arg0) {
+				Log.v(TAG,"SET VOICE") ;
 				return setVoice();
+
 			}
 			@Override
 			protected void onPostExecute(Boolean result){
@@ -286,7 +292,7 @@ public class Dialer extends Activity{
 						voice = vs.getVoice();
 						
 		    		}catch (com.techventus.server.voice.exception.BadAuthenticationException ba){
-		    			Toast.makeText(getApplicationContext(), "Google Credentials Authentication Error.", Toast.LENGTH_LONG).show();
+
 		    			Intent i = new Intent(Dialer.this, LoginCredentials.class);
 		    			preferences.edit().remove("username").remove("password").apply();
 		    			startActivity(i);
@@ -597,20 +603,30 @@ public class Dialer extends Activity{
 				
 				 final ProgressDialog dialog = ProgressDialog.show(Dialer.this, "", 
                         "Initiating Call. Please wait...", true,true);
-
-				try{
-					boolean dialBool =dial(selectedPhone, mDialNumber.getText().toString());
-					if(!dialBool){
-						try{
-							dialog.dismiss();
-						}catch(Exception e){
-							e.printStackTrace();
-						}
-						Toast.makeText(Dialer.this, "ERROR PLACING CALL - CHECK CONNECTIVITY", Toast.LENGTH_LONG).show();
+				AsyncTask<Void,Void,Boolean> dialTask = new AsyncTask<Void, Void, Boolean>()
+				{
+					@Override
+					protected Boolean doInBackground(Void... voids)
+					{
+						boolean dialBool =dial(selectedPhone, mDialNumber.getText().toString());
+						return dialBool;
 					}
-				}catch(Exception r){
-					r.printStackTrace();
-				}
+
+					@Override
+					protected void onPostExecute(Boolean dialBool)
+					{
+						if(!dialBool){
+							try{
+								dialog.dismiss();
+							}catch(Exception e){
+								e.printStackTrace();
+							}
+							Toast.makeText(Dialer.this, "ERROR PLACING CALL - CHECK CONNECTIVITY", Toast.LENGTH_LONG).show();
+						}
+					}
+				}  ;
+				dialTask.execute();
+
 					
 				TimerTask endTask = new TimerTask(){
 					@Override
@@ -805,9 +821,10 @@ public class Dialer extends Activity{
 			try {
 				for(Phone phone:phones){
 				   if(phone.getName().equals(phoneString)){
-					   System.out.println("CALLING "+phone.getPhoneNumber()+" "+number);
-
+//					   System.out.println("CALLING "+phone.getPhoneNumber()+" "+number);
+					   Log.v(TAG, "CALLING " + phone.getName() + " " + phone.getPhoneNumber() + " " + number) ;
 					   voice.call(phone.getPhoneNumber(), number, String.valueOf(phone.getType()));
+					   Log.v(TAG,"Done CALLING ") ;
 
 					   return true;
 				   }

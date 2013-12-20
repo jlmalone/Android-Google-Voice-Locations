@@ -195,14 +195,12 @@ public class LocationDecisionMenu extends Activity{
        						db.delete("LOCATIONPHONEENABLE", "locationName = ?", new String[]{locationName});
                     	   db.close();
        						if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
-	       						if(mIRemoteService!=null){
-	       							try {
-										mIRemoteService.restart();
-									} catch (RemoteException e) {
-										// TODO Auto-generated catch block
-										e.printStackTrace();
-									}
-	       						}
+					        {
+						        Intent intent = new Intent();
+						        intent.setAction("com.techventus.locations.geofenceschanged");
+						        sendBroadcast(intent);
+					        }
+
        						LocationDecisionMenu.this.finish();
                     	   try{
                     		   dialogInterface.dismiss();
@@ -300,29 +298,30 @@ public class LocationDecisionMenu extends Activity{
 		
 		try{
 		
-		if(!locationName.equals("Elsewhere")){
+			if(!locationName.equals("Elsewhere"))
+			{
 
-			sql= openOrCreateDatabase("db",0,null);
-			
-			Cursor c =sql.rawQuery("SELECT locationLatitude,locationLongitude,radius, phoneEnable FROM LOCATIONPHONEENABLE where locationName = '"+locationName+"';", null);
-			
-			   if(c!=null){
-				   c.moveToNext();
-				   if(c.isFirst()){
-						   gpscoords[0] = c.getInt(0);
-						   gpscoords[1] =  c.getInt(1);
-						   radius= c.getInt(2);
-						   awareness= Boolean.valueOf(c.getString(3));
+				sql= openOrCreateDatabase("db",0,null);
+
+				Cursor c =sql.rawQuery("SELECT locationLatitude,locationLongitude,radius, phoneEnable FROM LOCATIONPHONEENABLE where locationName = '"+locationName+"';", null);
+
+				   if(c!=null){
+					   c.moveToNext();
+					   if(c.isFirst()){
+							   gpscoords[0] = c.getInt(0);
+							   gpscoords[1] =  c.getInt(1);
+							   radius= c.getInt(2);
+							   awareness= Boolean.valueOf(c.getString(3));
+					   }
+	                   else
+	                   {
+						   Log.e("TECHVENTUS","NOT FIRST");
+					   }
 				   }
-                   else
-                   {
-					   Log.e("TECHVENTUS","NOT FIRST");
-				   }
-			   }
-			c.close();
-			
-			
-		}	
+				c.close();
+
+
+			}
 		}
         catch(Exception e)
         {
