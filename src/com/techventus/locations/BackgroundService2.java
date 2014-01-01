@@ -216,7 +216,7 @@ public class BackgroundService2  extends Service implements
           super.onCreate();
 
         //TAKEN FROM ORIGINAL
-        Toast.makeText(this,"Start BackgroundService2 ",2000).show();
+//        Toast.makeText(this,"Start BackgroundService2 ",2000).show();
 
         mSettings = Settings.getInstance();
 
@@ -263,7 +263,7 @@ public class BackgroundService2  extends Service implements
         unregisterReceiver(mNetworkStateReceiver);
         unregisterReceiver(mGeofencesChangedReceiver);
         mLocationClientPlayServices.disconnect();
-        Toast.makeText(this,"DESTROYING SERVICE",Toast.LENGTH_LONG).show();
+//        Toast.makeText(this,"DESTROYING SERVICE",Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
 
@@ -514,7 +514,7 @@ public class BackgroundService2  extends Service implements
 
     public void onConnected(Bundle dataBundle)
     {
-        Toast.makeText(this,"ON CONNECTED TO PLAY SERVICES", Toast.LENGTH_LONG).show();
+//        Toast.makeText(this,"ON CONNECTED TO PLAY SERVICES", Toast.LENGTH_LONG).show();
         try {
 
 
@@ -541,7 +541,7 @@ public class BackgroundService2  extends Service implements
 
         }catch(Exception e)
         {
-            Toast.makeText(this,"Exception "+e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
+//            Toast.makeText(this,"Exception "+e.getLocalizedMessage(),Toast.LENGTH_LONG).show();
             mLocationClientPlayServices.connect();
         }
     }
@@ -685,7 +685,7 @@ public class BackgroundService2  extends Service implements
          */
         if (connectionResult.hasResolution()) {
 
-                Toast.makeText(this,"BackgroundService2 CONNECTION_FAILURE_RESOLUTION_REQUEST",Toast.LENGTH_LONG).show();
+//                Toast.makeText(this,"BackgroundService2 CONNECTION_FAILURE_RESOLUTION_REQUEST",Toast.LENGTH_LONG).show();
 
 
             // If no resolution is available, display an error dialog
@@ -694,7 +694,7 @@ public class BackgroundService2  extends Service implements
             int errorCode = connectionResult.getErrorCode();
             // Get the error dialog from Google Play services
 
-            Toast.makeText(this,"BackgroundService2 CONNECTION_FAILURE_RESOLUTION_REQUEST error code:"+errorCode,Toast.LENGTH_LONG).show();
+//            Toast.makeText(this,"BackgroundService2 CONNECTION_FAILURE_RESOLUTION_REQUEST error code:"+errorCode,Toast.LENGTH_LONG).show();
 
 
 

@@ -6,53 +6,89 @@
 	android:scrollbars="none"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:orientation="vertical" android:layout_width="match_parent"
-		android:layout_height="match_parent" android:layout_alignParentTop="true">
+	<LinearLayout
+		android:orientation="vertical"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_alignParentTop="true">
 
 		<LinearLayout
 		    android:id="@+id/WarningPanel"
 		    android:layout_width="match_parent"
 		    android:layout_height="wrap_content"
-		    android:orientation="vertical" android:background="#FF0000" android:visibility="gone">
+		    android:orientation="vertical"
+			android:background="#FF0000"
+			android:visibility="gone">
 
 			<TextView
 			    android:id="@+id/textView1"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
-			    android:text="Location Ring Service is OFF" android:textStyle="bold" android:textColor="#FFFFFF" android:layout_gravity="center_horizontal"/>
+			    android:text="Location Ring Service is OFF"
+				android:textStyle="bold"
+				android:textColor="#FFFFFF"
+				android:layout_gravity="center_horizontal"/>
 
 		</LinearLayout>
 
-		<TextView android:id="@+id/TextView03" android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:text="     "
+		<TextView android:id="@+id/TextView03"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="     "
 			android:paddingBottom="5dp" />
 
-		<TextView android:id="@+id/TextView01" android:layout_height="wrap_content"
-			android:text="GPS Coordinates:" android:gravity="center_horizontal"
-			android:layout_width="match_parent" android:textSize="22sp" />
+		<TextView android:id="@+id/TextView01"
+			android:layout_height="wrap_content"
+			android:text="GPS Coordinates:"
+			android:gravity="center_horizontal"
+			android:layout_width="match_parent"
+			android:textSize="22sp" />
 
-		<TextView android:layout_height="wrap_content" android:id="@+id/maingpscoords"
-			android:layout_width="match_parent" android:gravity="center_horizontal"
-			android:paddingTop="10dp" android:text="LAT: -XXX.XXXXX LON: -XXX.XXXXX"
-			android:textColor="#880044" android:textStyle="bold"
+		<TextView android:layout_height="wrap_content"
+			android:id="@+id/maingpscoords"
+			android:layout_width="match_parent"
+			android:gravity="center_horizontal"
+			android:paddingTop="10dp"
+			android:text="LAT: -XXX.XXXXX LON: -XXX.XXXXX"
+			android:textColor="#880044"
+			android:textStyle="bold"
 			android:textSize="17dp" />
 		<TextView android:layout_height="wrap_content"
-			android:layout_width="match_parent" android:text="Current Location:"
-			android:id="@+id/currentlocationtitle" android:gravity="center_horizontal"
-			android:paddingBottom="10dp" android:textSize="22sp"
+			android:layout_width="match_parent"
+			android:text="Current Location:"
+			android:id="@+id/currentlocationtitle"
+			android:gravity="center_horizontal"
+			android:paddingBottom="10dp"
+			android:textSize="22sp"
 			android:paddingTop="10dp" />
+
+		<ProgressBar
+				android:layout_width="fill_parent"
+				android:layout_height="wrap_content"
+				android:id="@+id/progressBar"
+				android:indeterminate="false"/>
+
 		<TextView android:layout_height="wrap_content"
-			android:layout_width="match_parent" android:id="@+id/currentlocationname"
-			android:text="Elsewhere" android:gravity="center_horizontal"
-			android:textColor="#880044" android:textStyle="bold"
+			android:layout_width="match_parent"
+			android:id="@+id/currentlocationname"
+			android:text=""
+			android:gravity="center_horizontal"
+			android:textColor="#880044"
+				android:visibility="gone"
+			android:textStyle="bold"
 			android:textSize="17sp" />
 	</LinearLayout>
 	<Button android:layout_width="wrap_content"
-		android:layout_height="wrap_content" android:layout_gravity="center_horizontal"
-		android:width="250dp" android:text="Settings" android:id="@+id/mainsettingsbutton"
-		android:layout_centerHorizontal="true" android:layout_alignParentBottom="true" android:layout_marginBottom="45dp"
-		android:layout_marginTop="10dp" android:visibility="gone"/>
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_horizontal"
+		android:width="250dp"
+		android:text="Settings"
+		android:id="@+id/mainsettingsbutton"
+		android:layout_centerHorizontal="true"
+		android:layout_alignParentBottom="true"
+		android:layout_marginBottom="45dp"
+		android:layout_marginTop="10dp"
+		android:visibility="gone"/>
 	<Button android:layout_width="wrap_content"
 		android:layout_height="wrap_content" android:width="250dp"
 		android:layout_gravity="center_horizontal" android:text="Locations"

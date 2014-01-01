@@ -108,6 +108,8 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	 */
 	TextView locationNameView;
 
+	ProgressBar progressSpinner;
+
 
 	/**
 	 * The m active.
@@ -328,6 +330,8 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 
 		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+		progressSpinner = (ProgressBar)findViewById(R.id.progressBar);
+
 		warningPanel = (LinearLayout) this.findViewById(R.id.WarningPanel);
 		Button locationsButton = (Button) findViewById(R.id.mainlocationsbutton);
 		Button settingsButton = (Button) findViewById(R.id.mainsettingsbutton);
@@ -500,6 +504,8 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 			{
 				gpsTextView.setText("LAT: -XXX.XXXXX LON: -XXX.XXXXX");
 				locationNameView.setText("Unknown");
+				locationNameView.setVisibility(View.GONE);
+				progressSpinner.setVisibility(View.VISIBLE);
 			}
 
 		}
@@ -549,10 +555,7 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 
 		super.onPause();
 		this.mActive = false;
-//		if (timer != null)
-//		{
-//			timer.cancel();
-//		}
+
 
 		try
 		{
@@ -592,74 +595,18 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 			DecimalFormat nf = new DecimalFormat("###.00000");
 			gpsTextView.setText("LAT: " + nf.format(lat) + " LON: " + nf.format(lon));
 			locationNameView.setText(locationString);
+			locationNameView.setVisibility(View.VISIBLE);
+			progressSpinner.setVisibility(View.GONE);
 		}
 		else
 		{
 			gpsTextView.setText("LAT: -XXX.XXXXX LON: -XXX.XXXXX");
 			locationNameView.setText("Unknown");
+			locationNameView.setVisibility(View.GONE);
+			progressSpinner.setVisibility(View.VISIBLE);
 		}
 	}
 
-
-//	/**
-//	 * Display task.
-//	 *
-//	 * @return the async task
-//	 */
-//	AsyncTask<Void, Void, Void> DisplayTask()
-//	{
-//		AsyncTask<Void, Void, Void> DisplayTask = new AsyncTask<Void, Void, Void>()
-//		{
-//			@Override
-//			protected void onPreExecute()
-//			{
-//
-//				super.onPreExecute();
-//				if (!mActive)
-//				{
-//					this.cancel(true);
-//				}
-//			}
-//
-//			@Override
-//			protected Void doInBackground(Void... params)
-//			{
-//				try
-//				{
-//					if (mActive)
-//					{
-//						getDisplayValues();
-//					}
-//
-//				}
-//				catch (Exception e)
-//				{
-//					e.printStackTrace();
-//				}
-//				return null;
-//			}
-//
-//			@Override
-//			protected void onPostExecute(Void result)
-//			{
-//				try
-//				{
-//					if (mActive)
-//					{
-//
-//						setDisplay();
-//						System.out.println("DisplayTask Finished");
-//					}
-//				}
-//				catch (Exception e)
-//				{
-//					e.printStackTrace();
-//				}
-//			}
-//		};
-//
-//		return DisplayTask;
-//	}
 
 
 	public static String readRawTextFile(Context ctx, int resId)
@@ -730,7 +677,7 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	@Override
 	public void onConnected(Bundle bundle)
 	{
-		Toast.makeText(this, "on Connected", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "on Connected", Toast.LENGTH_SHORT).show();
 
 		LocationRequest locationRequest = LocationRequest.create();
 		locationRequest.setNumUpdates(1);
@@ -743,7 +690,7 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 	@Override
 	public void onDisconnected()
 	{
-		Toast.makeText(this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
+//		Toast.makeText(this, "Disconnected. Please re-connect.", Toast.LENGTH_SHORT).show();
 	}
 
 	// Global constants
