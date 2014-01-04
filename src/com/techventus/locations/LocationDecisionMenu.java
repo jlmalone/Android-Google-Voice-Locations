@@ -15,7 +15,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.os.RemoteException;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -93,7 +92,8 @@ public class LocationDecisionMenu extends Activity{
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
-	public void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState)
+	{
         super.onCreate(savedInstanceState);
 
 
@@ -118,9 +118,11 @@ public class LocationDecisionMenu extends Activity{
         Bundle bundle = getIntent().getExtras();
         locationName = bundle.getString(Settings.BundleKey.LOCATION_NAME_EXTRA);
         
-        if(locationName.equals("Elsewhere")){
+        if(locationName.equals("Elsewhere"))
+        {
         	viewEditLocationButton.setVisibility(View.GONE);
-        }else{
+        }else
+        {
         	viewEditLocationButton.setVisibility(View.VISIBLE);
         	viewEditLocationButton.setOnClickListener(locationClick);
         }
@@ -128,15 +130,21 @@ public class LocationDecisionMenu extends Activity{
         getLocationVariables();
         
         if(gpscoords[0]!=0||gpscoords[1]!=0)
+        {
         	gpscoordsTextView.setText("LAT: "+String.valueOf(((double)gpscoords[0]/(double)1E6))
         			+" LON: "+String.valueOf(((double)gpscoords[1]/(double)1E6)));
+        }
         else
+        {
         	gpscoordsTextView.setText("LAT: -XXX.XXXXX LON: -XXX.XXXXX");
+        }
         
         awarenessTextView .setText(String.valueOf(awareness));
+
         if(locationName!=null)
+        {
         	locationNameTextView.setText(locationName);
-        
+        }
 
         viewEditPhoneButton = (Button)findViewById(R.id.locationdecisionphonebutton); 
         
@@ -151,7 +159,8 @@ public class LocationDecisionMenu extends Activity{
 	 * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
 	 */
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.layout.location_edit_menu, menu);
 	    return true;
@@ -161,24 +170,30 @@ public class LocationDecisionMenu extends Activity{
 	 * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
 	 */
 	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
 	    // Handle item selection
-	    switch (item.getItemId()) {
+	    switch (item.getItemId())
+	    {
 	    	
-	    	case R.id.preferences:{
+	    	case R.id.preferences:
+		    {
 	    		Intent i = new Intent(LocationDecisionMenu.this,PhonePreference.class);
 	    		i.putExtra(Settings.BundleKey.LOCATION_NAME_EXTRA, locationName);
 	    		i.putExtra(Settings.BundleKey.RADIUS_EXTRA, radius);
 	    		startActivity(i);
 	    		return true;
 	    	}
-		    case R.id.radius:{
+		    case R.id.radius:
+		    {
 		    	Toast.makeText(getApplicationContext(), "Editing of Radius Coming In the Next Version.", Toast.LENGTH_LONG).show();
 		        return true;
 		    }
-		    case R.id.delete:{
+		    case R.id.delete:
+		    {
 		    	
-		    	if(locationName.equals("Elsewhere")){
+		    	if(locationName.equals("Elsewhere"))
+			    {
 		    		Toast.makeText(LocationDecisionMenu.this, "You Cannot Delete the Default Location", Toast.LENGTH_LONG).show();
 		    		return true;
 		    	}
@@ -295,7 +310,7 @@ public class LocationDecisionMenu extends Activity{
 	 */
 	void getLocationVariables(){
 		SQLiteDatabase sql = null;
-		
+		Log.v(TAG,"start SQL query");
 		try{
 		
 			if(!locationName.equals("Elsewhere"))
@@ -303,20 +318,28 @@ public class LocationDecisionMenu extends Activity{
 
 				sql= openOrCreateDatabase("db",0,null);
 
-				Cursor c =sql.rawQuery("SELECT locationLatitude,locationLongitude,radius, phoneEnable FROM LOCATIONPHONEENABLE where locationName = '"+locationName+"';", null);
+				Cursor c =sql.rawQuery("SELECT locationLatitudeE6,locationLongitudeE6,radius, phoneEnable FROM LOCATIONPHONEENABLE where locationName = " +
+						"'"+locationName+"';", null);
 
-				   if(c!=null){
+				   if(c!=null)
+				   {
 					   c.moveToNext();
-					   if(c.isFirst()){
+					   if(c.isFirst())
+					   {
 							   gpscoords[0] = c.getInt(0);
 							   gpscoords[1] =  c.getInt(1);
 							   radius= c.getInt(2);
 							   awareness= Boolean.valueOf(c.getString(3));
+						   Log.v(TAG,"gps coords "+gpscoords[0]+" "+gpscoords[1]);
 					   }
 	                   else
 	                   {
 						   Log.e("TECHVENTUS","NOT FIRST");
 					   }
+				   }
+				   else
+				   {
+					   Log.v(TAG,"c is null");
 				   }
 				c.close();
 
@@ -361,28 +384,37 @@ public class LocationDecisionMenu extends Activity{
 						valid = true;
 					}
 				}
-				if(!phonePrefsStatusTextView.getText().equals("SET") && valid){
+				if (!phonePrefsStatusTextView.getText().equals("SET") && valid)
+				{
 					phonePrefsStatusTextView.setText("NOT SET");
-				}else if (!valid){
+				}
+				else if (!valid)
+				{
 					phonePrefsStatusTextView.setText("UNKNOWN");
 				}
 				c.close();
-			}else{
+			}
+			else
+			{
 				phonePrefsStatusTextView.setText("UNKNOWN");
 			}
 			sql.close();
-		
-		}catch(Exception u){
+
+		}
+		catch (Exception u)
+		{
 			u.printStackTrace();
 		}
 	}
 	
 	
 	/** The phone click. */
-	OnClickListener phoneClick = new OnClickListener(){
+	OnClickListener phoneClick = new OnClickListener()
+	{
 
 		@Override
-		public void onClick(View arg0) {
+		public void onClick(View arg0)
+		{
 			Intent i = new Intent(LocationDecisionMenu.this,PhonePreference.class);
 			Bundle b = new Bundle();
 			b.putString(Settings.BundleKey.LOCATION_NAME_EXTRA, locationName);
@@ -393,10 +425,13 @@ public class LocationDecisionMenu extends Activity{
 	};
 	
 	@Override
-	public void onPause(){
-		try{
+	public void onPause()
+	{
+		try
+		{
 			unbindService(mConnection);
-		}catch(Exception e){
+		}catch(Exception e)
+		{
 			e.printStackTrace();
 		}
 		super.onPause();

@@ -435,7 +435,6 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 		boolean hasBeenShown = preferences.getBoolean(eulaKey, false);
 		if (hasBeenShown)
 		{
-
 			{
 				Intent hello_service2 = new Intent(this, BackgroundService2.class);
 				if (preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
@@ -451,46 +450,11 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 				{
 					stopService(hello_service2);
 				}
-
 			}
-
 
 			checkServiceEnabled();
 
 			INTERVAL = 5000;
-
-//			AsyncTask<Void, Void, Void> mDisplayTask;
-
-
-
-
-//			TimerTask tt = new TimerTask()
-//			{
-//
-//				@Override
-//				public void run()
-//				{
-//					if (preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
-//					{
-//						try
-//						{
-//							INTERVAL = INTERVAL + (INTERVAL / 2) - 2000;
-//							if (mActive)
-//							{
-//
-//								getDisplayValues();
-//								setDisplay();
-//							}
-//						}
-//						catch (Exception e)
-//						{
-//							e.printStackTrace();
-//						}
-//					}
-//				}
-//
-//			};
-
 
 
 
