@@ -215,6 +215,8 @@ public class BackgroundService2  extends Service implements
     public void onCreate() {
           super.onCreate();
 
+	    Log.v(TAG, "START BACKGROUND SERVICE2 ") ;
+
         //TAKEN FROM ORIGINAL
 //        Toast.makeText(this,"Start BackgroundService2 ",2000).show();
 
@@ -1112,16 +1114,18 @@ public class BackgroundService2  extends Service implements
         AsyncTask<Void,Void,Void> ret = new AsyncTask<Void,Void,Void>()
         {
             @Override
-            protected void onPreExecute(){
-
+            protected void onPreExecute()
+            {
+	        Log.v(TAG,"Start Location Change task");
                 super.onPreExecute();
 
                 if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
                 {
-
+	                Log.v(TAG,"Location Service is enabled");
 
                     if(!Util.isNetworkConnected(BackgroundService2.this))
                     {
+	                    Log.v(TAG,"Network not connected");
                         mSettings.setPhoneUpdateFlag(true);
                         this.cancel(true);
                     }
@@ -1223,6 +1227,7 @@ public class BackgroundService2  extends Service implements
      */
     private void notifyUserLocationChange(String location)
     {
+	    Log.v(TAG, "NOTIFY LOCATION CHANGED");
         if (!preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true))
         {
             BackgroundService2.this.stopSelf();

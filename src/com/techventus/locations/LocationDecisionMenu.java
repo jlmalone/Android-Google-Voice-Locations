@@ -16,12 +16,14 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.android.gms.ads.AdRequest;
@@ -87,7 +89,9 @@ public class LocationDecisionMenu extends Activity{
 	 /** The preferences. */
 	SharedPreferences preferences ;
     AdView mAdView;
-	
+
+	private TextView radiusValueTextView;
+
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
@@ -111,6 +115,7 @@ public class LocationDecisionMenu extends Activity{
         
         locationNameTextView = (TextView)findViewById(R.id.locationdecisionlocation);
         gpscoordsTextView = (TextView)findViewById(R.id.locationdecisiongpscoords);
+		radiusValueTextView = (TextView)findViewById(R.id.radius_value);
         awarenessTextView = (TextView)findViewById(R.id.locationawarenessstatus);
         viewEditLocationButton = (Button)findViewById(R.id.locationdecisionlocationbutton); 
         phonePrefsStatusTextView = (TextView)findViewById(R.id.phoneprefsstatus);
@@ -126,32 +131,52 @@ public class LocationDecisionMenu extends Activity{
         	viewEditLocationButton.setVisibility(View.VISIBLE);
         	viewEditLocationButton.setOnClickListener(locationClick);
         }
-        
-        getLocationVariables();
-        
-        if(gpscoords[0]!=0||gpscoords[1]!=0)
-        {
-        	gpscoordsTextView.setText("LAT: "+String.valueOf(((double)gpscoords[0]/(double)1E6))
-        			+" LON: "+String.valueOf(((double)gpscoords[1]/(double)1E6)));
-        }
-        else
-        {
-        	gpscoordsTextView.setText("LAT: -XXX.XXXXX LON: -XXX.XXXXX");
-        }
-        
-        awarenessTextView .setText(String.valueOf(awareness));
 
-        if(locationName!=null)
-        {
-        	locationNameTextView.setText(locationName);
-        }
+		fillData();
 
-        viewEditPhoneButton = (Button)findViewById(R.id.locationdecisionphonebutton); 
-        
-        
-        viewEditPhoneButton.setOnClickListener(phoneClick);
-       
-        establishPhonePrefsStatus();
+	}
+
+
+	private void fillData()
+	{
+
+		getLocationVariables();
+
+		if(gpscoords[0]!=0||gpscoords[1]!=0)
+		{
+			gpscoordsTextView.setText("LAT: "+String.valueOf(((double)gpscoords[0]/(double)1E6))
+					+" LON: "+String.valueOf(((double)gpscoords[1]/(double)1E6)));
+		}
+		else
+		{
+			gpscoordsTextView.setText("LAT: -XXX.XXXXX LON: -XXX.XXXXX");
+		}
+
+		if(locationName.equalsIgnoreCase("Elsewhere"))
+		{
+			radiusValueTextView.setText("\u221E");
+			gpscoordsTextView.setVisibility(View.GONE);
+			findViewById(R.id.gpscoordstitle) .setVisibility(View.GONE);
+		}
+		else
+		{
+			radiusValueTextView.setText(radius+" metres");
+		}
+
+
+		awarenessTextView .setText(String.valueOf(awareness));
+
+		if(locationName!=null)
+		{
+			locationNameTextView.setText(locationName);
+		}
+
+		viewEditPhoneButton = (Button)findViewById(R.id.locationdecisionphonebutton);
+
+
+		viewEditPhoneButton.setOnClickListener(phoneClick);
+
+		establishPhonePrefsStatus();
 	}
 	
 
@@ -162,8 +187,67 @@ public class LocationDecisionMenu extends Activity{
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 	    MenuInflater inflater = getMenuInflater();
-	    inflater.inflate(R.layout.location_edit_menu, menu);
+	    inflater.inflate(R.menu.location_edit_menu, menu);
 	    return true;
+	}
+
+
+	private void callChangeRadiusDialog()
+	{
+
+		if(locationName.equalsIgnoreCase("Elsewhere"))
+		{
+			Toast.makeText(this,"Cannot change the default location radius",Toast.LENGTH_LONG).show();
+			return;
+		}
+
+
+
+		LayoutInflater inflater = getLayoutInflater();
+		View dialoglayout = inflater.inflate(R.layout.radius_change_dialog, null);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		builder.setView(dialoglayout);
+		final EditText et =(EditText) dialoglayout.findViewById(R.id.radius_input);
+		et.setText(String.valueOf(radius));
+		builder.setPositiveButton("Save", new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialogInterface, int i)
+			{
+
+				try{
+					 int rad = Integer.parseInt(et.getText().toString());
+					SQLiteDatabase sql =  openOrCreateDatabase("db",0,null);
+					sql.execSQL("update LOCATIONPHONEENABLE SET radius = "+rad+"  WHERE locationName = '"+locationName+"' ;");
+					sql.close();
+
+
+					fillData();
+
+					Intent intent = new Intent();
+					intent.setAction("com.techventus.locations.geofenceschanged");
+					sendBroadcast(intent);
+				}catch(NumberFormatException nf)
+				{
+					Toast.makeText(LocationDecisionMenu.this,"Error Formatting Number",Toast.LENGTH_LONG).show();
+
+				}
+
+
+
+				dialogInterface.dismiss();
+			}
+		})  ;
+		builder.setNegativeButton("Cancel",new DialogInterface.OnClickListener()
+		{
+			@Override
+			public void onClick(DialogInterface dialogInterface, int i)
+			{
+				dialogInterface.dismiss();
+			}
+		});
+		builder.show();
+
 	}
 	
 	/* (non-Javadoc)
@@ -186,7 +270,11 @@ public class LocationDecisionMenu extends Activity{
 	    	}
 		    case R.id.radius:
 		    {
-		    	Toast.makeText(getApplicationContext(), "Editing of Radius Coming In the Next Version.", Toast.LENGTH_LONG).show();
+			    callChangeRadiusDialog()  ;
+
+//			    (EditText) dialog.findViewById(R.id.radius_input);
+
+//		    	Toast.makeText(getApplicationContext(), "Editing of Radius Coming In the Next Version.", Toast.LENGTH_LONG).show();
 		        return true;
 		    }
 		    case R.id.delete:
@@ -197,8 +285,7 @@ public class LocationDecisionMenu extends Activity{
 		    		Toast.makeText(LocationDecisionMenu.this, "You Cannot Delete the Default Location", Toast.LENGTH_LONG).show();
 		    		return true;
 		    	}
-		    	
-		    	
+
 		           AlertDialog.Builder builder = new AlertDialog.Builder(LocationDecisionMenu.this)
                    .setTitle("DELETE LOCATION")
                    .setMessage("ARE YOU SURE YOU WANT TO DELETE "+locationName+"?")
@@ -235,10 +322,10 @@ public class LocationDecisionMenu extends Activity{
                     	   }catch(Exception e){
                     		   e.printStackTrace();
                     	   }
-                       }
+                     }
 
                    });
-           builder.create().show();
+                builder.create().show();
 		    	
 		  
 		        return true;
@@ -286,6 +373,7 @@ public class LocationDecisionMenu extends Activity{
 			if(prefList!=null && prefList.size()>0){
 				b.putInt(Settings.BundleKey.LATITUDE_EXTRA, prefList.get(0).latitude);
 				b.putInt(Settings.BundleKey.LONGITUDE_EXTRA, prefList.get(0).longitude);
+				Log.v(TAG,"PASS ALONG RADIUS. Radius variable. "+radius+" passing along "+ prefList.get(0).radius);
 				b.putInt(Settings.BundleKey.RADIUS_EXTRA, prefList.get(0).radius);
 				if(prefList.get(0).latitude!=-1 && prefList.get(0).longitude!=1){
 					i.putExtras(b);
@@ -363,14 +451,17 @@ public class LocationDecisionMenu extends Activity{
 	 * TODO This is a ridiculous method, although it does get the job done
 	 * Think about replacing with something more elegant.
 	 */
-	private void establishPhonePrefsStatus(){
+	private void establishPhonePrefsStatus()
+	{
 		Log.e("TECHVENTUS","Establish Phone Prefs Status");
-		try{
+		try
+		{
 			SQLiteDatabase sql =  openOrCreateDatabase("db",0,null);
 			
 			Cursor c = sql.rawQuery("SELECT phoneEnable FROM LOCATIONPHONEENABLE WHERE locationName = '"+locationName+"';", null);
 			
-			if(c!=null){
+			if(c!=null)
+			{
 				Log.e("TECHVENTUS","C not null");
 				boolean valid = false;
 				while(c.moveToNext()){

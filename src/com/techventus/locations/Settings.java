@@ -128,9 +128,13 @@ public class Settings
 			if (j < 0)
 				j += 52;
 			if (i == -1)
+			{
 				sb.append(c);
+			}
 			else
+			{
 				sb.append(basis.charAt(j));
+			}
 
 		}
 		return sb.toString();
@@ -143,7 +147,7 @@ public class Settings
 		    
 		    double lat1 =((double)point1.getLatitudeE6()/(double)1E6);
 		    double lat2 =((double)point2.getLatitudeE6()/(double)1E6);
-		   double lng1 = ((double)point1.getLongitudeE6()/(double)1E6);
+		    double lng1 = ((double)point1.getLongitudeE6()/(double)1E6);
 		    double lng2 =((double)point2.getLongitudeE6()/(double)1E6);
 		    
 		    double dLat = Math.toRadians(lat2-lat1);

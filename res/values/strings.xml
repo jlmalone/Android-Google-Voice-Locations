@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string name="hello">Hello</string>
     <string name="app_name">Google Voice Locations</string>
       <string name="locationsmenu_name">Locations</string>
       <string name="map_name">MapName</string>
@@ -38,4 +37,5 @@
 <string name="radius">Adj.Radius</string>
 <string name="delete">Delete</string> 
 <string name="currentpreftitle">Current Ring Preferences</string>
+	<string name="edit_radius_label">Edit Radius (metres)</string>
 </resources>

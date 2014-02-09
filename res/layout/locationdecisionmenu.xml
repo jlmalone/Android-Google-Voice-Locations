@@ -45,22 +45,32 @@
 
             <TextView android:id="@+id/locationdecisionlocation" android:layout_height="wrap_content"
                       android:text="Location" android:gravity="center_horizontal" android:layout_width="match_parent"
-                      android:paddingTop="20dp" android:paddingBottom="10dp" android:textSize="40sp"/>
+                      android:paddingTop="10dp" android:paddingBottom="5dp" android:textSize="40sp"/>
 
             <TextView android:id="@+id/gpscoordstitle" android:layout_height="wrap_content"
                       android:text="GPS Coordinates:" android:gravity="center_horizontal"
                       android:layout_width="match_parent" android:textSize="30sp"
-                      android:layout_marginTop="20dp"/>
+                      android:layout_marginTop="5dp"/>
 
             <TextView android:layout_height="wrap_content" android:id="@+id/locationdecisiongpscoords"
                       android:layout_width="match_parent" android:gravity="center_horizontal" android:paddingTop="10dp"
                       android:text="LAT: -XXX.XXXXX LON: -XXX.XXXXX" android:textColor="#880044"
                       android:textStyle="bold" android:textSize="18sp"/>
 
+	        <TextView android:id="@+id/radius_title" android:layout_height="wrap_content"
+			        android:text="Radius:" android:gravity="center_horizontal"
+			        android:layout_width="match_parent" android:textSize="30sp"
+			        android:layout_marginTop="5dp"/>
+
+	        <TextView android:layout_height="wrap_content" android:id="@+id/radius_value"
+			        android:layout_width="match_parent" android:gravity="center_horizontal" android:paddingTop="5dp"
+			        android:text="XXX" android:textColor="#880044"
+			        android:textStyle="bold" android:textSize="18sp"/>
+
 
             <TextView android:id="@+id/phonepreferencestitle" android:layout_height="wrap_content"
                       android:text="Phone Preferences:" android:gravity="center_horizontal"
-                      android:layout_width="match_parent" android:paddingTop="10dp" android:textSize="30sp"/>
+                      android:layout_width="match_parent" android:paddingTop="5dp" android:textSize="30sp"/>
 
 
             <TextView android:layout_height="wrap_content" android:id="@+id/phoneprefsstatus"
