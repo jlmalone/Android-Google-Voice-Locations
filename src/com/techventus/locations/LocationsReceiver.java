@@ -26,9 +26,9 @@ public class LocationsReceiver extends BroadcastReceiver
 
 		SharedPreferences preferences   = context.getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
         
-		if(preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, false))
+		if(preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, true))
         {
-			if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false))
+			if(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true))
             {
 				Intent serviceIntent = new Intent(context,BackgroundService2.class);
 				context.startService(serviceIntent);

@@ -49,18 +49,18 @@ public class SettingsMenu extends ListActivity {
 
         preferences = SettingsMenu.this.getSharedPreferences(Settings.SharedPrefKey.PREFERENCES, 0);
 
-        isServiceEnabled = preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false);
-        isStartupEnabled = preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, false);
+        isServiceEnabled = preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true);
+        isStartupEnabled = preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, true);
 
         serviceEnableToggle = (ToggleButton) findViewById(R.id.serviceEnableToggle);
         startupEnableToggle = (ToggleButton) findViewById(R.id.serviceStartupToggle);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         //SET Toggle to Appropriate Setting.
-        serviceEnableToggle.setChecked(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, false));
+        serviceEnableToggle.setChecked(preferences.getBoolean(Settings.SharedPrefKey.SERVICE_ENABLED, true));
         serviceEnableToggle.setOnClickListener(click);
 
-        startupEnableToggle.setChecked(preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, false));
+        startupEnableToggle.setChecked(preferences.getBoolean(Settings.SharedPrefKey.STARTUP_ENABLED, true));
         startupEnableToggle.setOnClickListener(click);
         initListView();
     }
