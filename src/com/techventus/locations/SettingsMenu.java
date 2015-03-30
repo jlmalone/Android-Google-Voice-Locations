@@ -105,6 +105,7 @@ public class SettingsMenu extends ListActivity {
             //Google Connectivity, Login
             case 0: {
                 Intent i = new Intent(SettingsMenu.this, LoginCredentials.class);
+	            i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 startActivityForResult(i, 0);
                 break;
             }

@@ -195,6 +195,7 @@ public class MainMenu extends FragmentActivity implements GooglePlayServicesClie
 		if (username.equals("") || password.equals(""))
 		{
 			Intent i = new Intent(MainMenu.this, LoginCredentials.class);
+			i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
 			startActivity(i);
 		}
 	}

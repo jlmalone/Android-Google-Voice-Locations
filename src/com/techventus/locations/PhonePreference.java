@@ -524,7 +524,8 @@ public class PhonePreference extends Activity{
 		    		}catch (com.techventus.server.voice.exception.BadAuthenticationException ba){
 			    			Toast.makeText(getApplicationContext(), "Google Credentials Authentication Error.", Toast.LENGTH_LONG).show();
 			    			Intent i = new Intent(PhonePreference.this, LoginCredentials.class);
-			    			preferences.edit().remove("username").remove("password").apply();
+					        i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+			    			preferences.edit().remove("username").remove("password").commit();
 			    			startActivity(i);
 					} catch (Exception e) {
 						e.printStackTrace();

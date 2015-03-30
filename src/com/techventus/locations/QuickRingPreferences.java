@@ -146,8 +146,9 @@ public class QuickRingPreferences extends Activity{
 			protected void onPostExecute(Boolean result){
 				if(!result){
 					Toast.makeText(getApplicationContext(), "No Voice Connection - CHECK NETWORK CONNECTIVITY - Exiting...", Toast.LENGTH_LONG);
-		    		Intent intent = new Intent(QuickRingPreferences.this,LoginCredentials.class);
-		    		startActivity(intent);
+		    		Intent i = new Intent(QuickRingPreferences.this,LoginCredentials.class);
+					i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		    		startActivity(i);
 		    		QuickRingPreferences.this.finish();
 				}else{
 					setPhonesTask(false).execute();
@@ -438,7 +439,8 @@ public class QuickRingPreferences extends Activity{
 		    		}catch (com.techventus.server.voice.exception.BadAuthenticationException ba){
 		    			Toast.makeText(getApplicationContext(), "Google Credentials Authentication Error.", Toast.LENGTH_LONG).show();
 		    			Intent i = new Intent(QuickRingPreferences.this, LoginCredentials.class);
-		    			preferences.edit().remove("username").remove("password").apply();
+					    i.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+		    			preferences.edit().remove("username").remove("password").commit();
 		    			
 		    			startActivity(i);
 					} catch (Exception e) {
