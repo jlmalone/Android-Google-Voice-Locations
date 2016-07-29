@@ -1,0 +1,41 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none" android:layout_gravity="center_vertical|center">
+
+
+        <LinearLayout
+                android:id="@+id/resetconfirm"
+                android:layout_width="match_parent"
+                android:layout_height="346dp"
+                android:layout_gravity="bottom|center_vertical|fill_vertical|center"
+                android:layout_marginTop="40px"
+                android:minHeight="270px"
+                android:orientation="vertical">
+
+            <Button android:text="RESET DATA (Irreversible)" android:id="@+id/confirmReset"
+                    android:layout_width="wrap_content" android:layout_gravity="center" android:width="250px"
+                    android:layout_height="match_parent"></Button>
+
+            <Button android:text="CANCEL" android:id="@+id/cancelReset" android:layout_gravity="center"
+                    android:width="250px" android:layout_height="match_parent" android:layout_width="wrap_content"
+                    android:layout_marginTop="110px"></Button>
+        </LinearLayout>
+
+    </ScrollView>
+
+    <!--<com.google.ads.AdView android:id="@+id/ad"-->
+                           <!--android:layout_width="match_parent"-->
+                           <!--android:layout_height="wrap_content"-->
+                           <!--android:layout_alignParentBottom="true"-->
+                           <!--ads:adUnitId="a14b77659e5ca68"-->
+                           <!--ads:adSize="BANNER"-->
+                           <!--ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"-->
+                           <!--ads:loadAdOnCreate="true"/>-->
+
+</RelativeLayout>

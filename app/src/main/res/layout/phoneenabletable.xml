@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="none">
+    <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_alignParentTop="true">
+
+        <LinearLayout
+                android:id="@+id/phoneenablelayout"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+        </LinearLayout>
+    </ScrollView>
+    <!--<com.google.ads.AdView android:id="@+id/ad"-->
+                           <!--android:layout_width="match_parent"-->
+                           <!--android:layout_height="wrap_content"-->
+                           <!--android:layout_alignParentBottom="true"-->
+                           <!--android:layout_centerHorizontal="true"-->
+                           <!--ads:adUnitId="a14b77659e5ca68"-->
+                           <!--ads:adSize="BANNER"-->
+                           <!--ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"-->
+                           <!--ads:loadAdOnCreate="true"/>-->
+</RelativeLayout>

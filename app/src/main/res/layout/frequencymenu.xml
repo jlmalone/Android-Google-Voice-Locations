@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:ads="http://schemas.android.com/apk/lib/com.google.ads"
+    android:id="@+id/mainlayout"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" android:layout_gravity="right">
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:scrollbars="none" android:layout_marginBottom="47px">
+
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <RelativeLayout
+            android:id="@+id/RelativeLayout02"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="15dp">
+
+            <Button
+                android:id="@+id/locationmethodbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="Change"/>
+
+            <TextView
+                android:id="@+id/locationmethodvalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="Error" android:layout_marginLeft="30dp" android:layout_toLeftOf="@+id/locationmethodbutton" android:layout_marginRight="30dp"/>
+
+            <TextView
+                android:id="@+id/locationmethodlabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textView2"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="Location Method" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/RelativeLayout01"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="15dp">
+
+            <Button
+                android:id="@+id/powerlevelbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="Change" />
+
+            <TextView
+                android:id="@+id/powerlevelvalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="Error" android:layout_toLeftOf="@+id/powerlevelbutton" android:layout_marginRight="30dp"/>
+
+            <TextView
+                android:id="@+id/powerlevellabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textView2"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:text="Power Level" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="15dp">
+
+            <Button
+                android:id="@+id/googlesyncbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="Change" />
+
+            <TextView
+                android:id="@+id/googlesyncvalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="999m" android:layout_marginRight="30dp" android:layout_toLeftOf="@+id/googlesyncbutton"/>
+
+            <TextView
+                android:id="@+id/googlesynclabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textView2"
+              
+                android:layout_alignParentLeft="true"
+                android:text="Google Sync"
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+        
+                  <RelativeLayout
+            android:id="@+id/relativeLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:layout_marginTop="15dp">
+
+            <Button
+                android:id="@+id/locationfreqbutton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:text="Change" />
+
+            <TextView
+                android:id="@+id/locationfreqvalue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_centerVertical="true"
+                android:text="999m" android:layout_toLeftOf="@+id/locationfreqbutton" android:layout_marginRight="30dp"/>
+
+            <TextView
+                android:id="@+id/locationfreqlabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/textView2"
+              
+                android:layout_alignParentLeft="true"
+                android:text="Location Update Freq."
+                android:layout_centerVertical="true"/>
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</ScrollView>
+
+
+    <!--<com.google.ads.AdView android:id="@+id/ad"-->
+                           <!--android:layout_width="match_parent"-->
+                           <!--android:layout_height="wrap_content"-->
+                           <!--android:layout_alignParentBottom="true"-->
+                           <!--ads:adUnitId="a14b77659e5ca68"-->
+                           <!--ads:adSize="BANNER"-->
+                           <!--ads:testDevices="TEST_EMULATOR, TEST_DEVICE_ID"-->
+                           <!--ads:loadAdOnCreate="true"/>-->
+
+</RelativeLayout>
+
