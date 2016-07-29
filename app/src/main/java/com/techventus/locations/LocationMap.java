@@ -3,15 +3,6 @@ package com.techventus.locations;
 //import java.util.ArrayList;
 import java.util.List;
 
-//import android.app.Activity;
-//import android.content.Context;
-//import android.content.ComponentName;
-//import android.content.Context;
-//import android.content.Intent;
-//import android.content.ServiceConnection;
-//import android.content.pm.ActivityInfo;
-//import android.database.Cursor;
-//import android.database.sqlite.SQLiteDatabase;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
