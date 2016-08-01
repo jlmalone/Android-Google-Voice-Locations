@@ -60,15 +60,15 @@
 		android:layout_above="@+id/mainsettingsbutton"
 		android:layout_marginTop="10dp" android:visibility="gone"/>
 
-    <!--<com.google.android.gms.ads.AdView-->
-            <!--xmlns:ads="http://schemas.android.com/apk/res-auto"-->
-            <!--android:id="@+id/ad"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:layout_centerHorizontal="true"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--ads:adUnitId="a14b77659e5ca68"-->
-            <!--ads:adSize="BANNER"/>-->
+    <com.google.android.gms.ads.AdView
+            xmlns:ads="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/ad"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            ads:adUnitId="a14b77659e5ca68"
+            ads:adSize="BANNER"/>
 
   <!--<com.google.ads.AdView android:id="@+id/ad"-->
                          <!--android:layout_width="match_parent"-->
