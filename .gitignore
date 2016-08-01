@@ -1,29 +1,7 @@
 
-.idea/encodings.xml
 
-.idea/copyright/profiles_settings.xml
 
-.idea/compiler.xml
-
-.idea/.name
-
-.idea/misc.xml
-
-.idea/libraries/GoogleAdMobAdsSdk_6_4_1.xml
-
-.idea/libraries/android_support_v4.xml
-
-.idea/libraries/google_voice_java_1_10_java6.xml
-
-.idea/modules.xml
-
-.idea/scopes/scope_settings.xml
-
-.idea/uiDesigner.xml
-
-.idea/vcs.xml
-
-.idea/workspace.xml
+.idea/*
 
 *.svn-base
 
@@ -46,5 +24,3 @@ gen/com/techventus/locations/Manifest.java
 bin/GVLocations5.apk
 
 bin/GVLocations5.unaligned.apk
-
-.idea/codeStyleSettings.xml
